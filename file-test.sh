@@ -27,7 +27,6 @@ NPROC=$(get_cpu_count)
 
 setup() {
   log "Initializing test environments..."
-  rm -rf "$ENV_A" "$ENV_B"
   mkdir -p "$ENV_A" "$ENV_B"
 }
 
