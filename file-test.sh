@@ -38,8 +38,8 @@ create_env_a() {
 }
 
 create_env_b() {
-  log "Creating environment B: ${N_FILES} directories each with a ${FILE_SIZE_MB}MB file"
-  seq 1 "$N_FILES" | xargs -n1 -P "$NPROC" -I{} bash -c 'dir="$1/dir_{}"; mkdir -p "$dir"; file="$dir/file.dat"; [ -e "$file" ] || dd if=/dev/urandom of="$file" bs=1M count="$2" status=none' _ "$ENV_B" "$FILE_SIZE_MB"
+  log "Creating environment B: ${N_FILES} directories each containing a copy from environment A"
+  seq 1 "$N_FILES" | xargs -n1 -P "$NPROC" -I% bash -c 'src="$1/file_%.dat"; dir="$2/dir_%"; dest="$dir/file.dat"; if [ -f "$src" ] && { [ ! -d "$dir" ] || [ ! -f "$dest" ]; }; then mkdir -p "$dir"; cp "$src" "$dest"; fi' _ "$ENV_A" "$ENV_B"
   log "Environment B created."
 }
 
