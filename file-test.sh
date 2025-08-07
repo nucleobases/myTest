@@ -33,13 +33,13 @@ setup() {
 
 create_env_a() {
   log "Creating environment A: ${N_FILES} files of ${FILE_SIZE_MB}MB each"
-  seq 1 "$N_FILES" | xargs -n1 -P "$NPROC" bash -c 'dd if=/dev/urandom of="$1/file_$2.dat" bs=1M count="$3" status=none' _ "$ENV_A" "{}" "$FILE_SIZE_MB"
+  seq 1 "$N_FILES" | xargs -n1 -P "$NPROC" -I{} bash -c 'dd if=/dev/urandom of="$1/file_{}.dat" bs=1M count="$2" status=none' _ "$ENV_A" "$FILE_SIZE_MB"
   log "Environment A created."
 }
 
 create_env_b() {
   log "Creating environment B: ${N_FILES} directories each with a ${FILE_SIZE_MB}MB file"
-  seq 1 "$N_FILES" | xargs -n1 -P "$NPROC" bash -c 'dir="$1/dir_$2"; mkdir -p "$dir"; dd if=/dev/urandom of="$dir/file.dat" bs=1M count="$3" status=none' _ "$ENV_B" "{}" "$FILE_SIZE_MB"
+  seq 1 "$N_FILES" | xargs -n1 -P "$NPROC" -I{} bash -c 'dir="$1/dir_{}"; mkdir -p "$dir"; dd if=/dev/urandom of "$dir/file.dat" bs=1M count="$2" status=none' _ "$ENV_B" "$FILE_SIZE_MB"
   log "Environment B created."
 }
 
@@ -59,7 +59,13 @@ measure_command() {
   local log_file="${label// /_}.log"
   /usr/bin/time -v "$@" > /dev/null 2> "$log_file"
   metrics=$(parse_metrics "$log_file")
-  IFS=";" read -r real user sys cpu mem <<< "$metrics"
+  local IFS=';'
+  set -- $metrics
+  real=$1
+  user=$2
+  sys=$3
+  cpu=$4
+  mem=$5
   printf '| %s | %s | %s | %s | %s | %s |\n' "$label" "$real" "$user" "$sys" "$cpu" "$mem" >> "$REPORT"
   rm -f "$log_file"
 }
