@@ -1,6 +1,6 @@
 #!/bin/bash
 # Script to generate test environments and measure ls/find performance
-set -euo pipefail
+set -eu
 
 log() {
   echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"
