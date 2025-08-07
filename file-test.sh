@@ -12,7 +12,18 @@ TEST_ROOT="test_env"
 ENV_A="$TEST_ROOT/A"
 ENV_B="$TEST_ROOT/B"
 REPORT="test-report.md"
-NPROC=$(nproc)
+
+get_cpu_count() {
+  if command -v getconf >/dev/null 2>&1; then
+    getconf _NPROCESSORS_ONLN
+  elif [ -f /proc/cpuinfo ]; then
+    grep -c '^processor' /proc/cpuinfo
+  else
+    echo 1
+  fi
+}
+
+NPROC=$(get_cpu_count)
 
 setup() {
   log "Initializing test environments..."
