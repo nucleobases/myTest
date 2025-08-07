@@ -6,7 +6,7 @@ log() {
   echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"
 }
 
-N_FILES=100000
+N_FILES=50000
 FILE_SIZE_MB=5
 TEST_ROOT="test_env"
 ENV_A="$TEST_ROOT/A"
@@ -33,13 +33,13 @@ setup() {
 
 create_env_a() {
   log "Creating environment A: ${N_FILES} files of ${FILE_SIZE_MB}MB each"
-  seq 1 "$N_FILES" | xargs -n1 -P "$NPROC" -I{} bash -c 'dd if=/dev/urandom of="$1/file_{}.dat" bs=1M count="$2" status=none' _ "$ENV_A" "$FILE_SIZE_MB"
+  seq 1 "$N_FILES" | xargs -n1 -P "$NPROC" -I{} bash -c 'file="$1/file_{}.dat"; [ -e "$file" ] || dd if=/dev/urandom of="$file" bs=1M count="$2" status=none' _ "$ENV_A" "$FILE_SIZE_MB"
   log "Environment A created."
 }
 
 create_env_b() {
   log "Creating environment B: ${N_FILES} directories each with a ${FILE_SIZE_MB}MB file"
-  seq 1 "$N_FILES" | xargs -n1 -P "$NPROC" -I{} bash -c 'dir="$1/dir_{}"; mkdir -p "$dir"; dd if=/dev/urandom of "$dir/file.dat" bs=1M count="$2" status=none' _ "$ENV_B" "$FILE_SIZE_MB"
+  seq 1 "$N_FILES" | xargs -n1 -P "$NPROC" -I{} bash -c 'dir="$1/dir_{}"; mkdir -p "$dir"; file="$dir/file.dat"; [ -e "$file" ] || dd if=/dev/urandom of="$file" bs=1M count="$2" status=none' _ "$ENV_B" "$FILE_SIZE_MB"
   log "Environment B created."
 }
 
