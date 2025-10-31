@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Subscription Portal</title>
+  <style>
+    html,body{margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;background:#f4f6f8;color:#0f172a}
+    .container{max-width:920px;margin:0 auto;padding:40px}
+    .header{position:fixed;top:0;left:0;right:0;height:60px;background:#ffffff;color:#0f172a;display:flex;align-items:center;justify-content:space-between;padding:0 24px;box-shadow:0 3px 12px rgba(0,0,0,.08);z-index:20}
+    .header .title{font-size:20px;font-weight:600;letter-spacing:.5px}
+    .header .actions button{background:#22b07d;color:#ffffff;border:0;border-radius:8px;height:40px;padding:0 20px;cursor:pointer;font-weight:600;font-size:14px;transition:background .2s}
+    .header .actions button:hover{background:#1a9a61}
+    .hero{margin-top:100px}
+    .card{background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:32px;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+    .center{display:flex;align-items:center;justify-content:center}
+    .section-title{font-size:22px;font-weight:700;margin-bottom:24px;color:#22b07d}
+    .input{width:100%;max-width:360px;height:44px;border:1px solid #cbd5e1;border-radius:8px;padding:0 14px;font-size:15px;background:#ffffff;color:#0f172a}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:#22b07d;color:#ffffff;border:0;border-radius:12px;height:44px;padding:0 22px;font-weight:700;font-size:15px;cursor:pointer;transition:background .2s}
+    .btn.secondary{background:#10b981;color:#ffffff}
+    .btn.warn{background:#ef4444;color:#ffffff}
+    .btn:disabled{opacity:.4;cursor:not-allowed}
+    .desc{margin-top:12px;color:#64748b;font-size:14px}
+    .footer{margin-top:32px;color:#94a3b8;font-size:12px}
+    .hidden{display:none}
+    .modal-mask{position:fixed;inset:0;background:rgba(244,246,248,.9);display:none;align-items:center;justify-content:center;z-index:50}
+    .modal{background:#ffffff;border-radius:14px;min-width:360px;max-width:90vw;border:1px solid #e2e8f0;box-shadow:0 12px 32px rgba(0,0,0,.16)}
+    .modal .modal-body{padding:24px;color:#0f172a}
+    .modal .modal-title{font-weight:800;margin-bottom:12px;color:#22b07d;font-size:18px}
+    .modal .modal-actions{display:flex;justify-content:flex-end;gap:16px;padding:16px;border-top:1px solid #e2e8f0;background:#f9fafb;border-bottom-left-radius:14px;border-bottom-right-radius:14px}
+    .tabs{display:flex;gap:8px;border-bottom:2px solid #e2e8f0;margin-bottom:20px}
+    .tab{padding:12px 20px;border:1px solid #e2e8f0;border-bottom:0;border-top-left-radius:10px;border-top-right-radius:10px;background:#f9fafb;color:#64748b;cursor:pointer;font-weight:600;transition:background .2s,color .2s}
+    .tab.active{background:#ffffff;color:#22b07d;border-color:#10b981}
+    .select{height:44px;border:1px solid #cbd5e1;border-radius:8px;padding:0 12px;background:#ffffff;color:#0f172a;font-size:15px;appearance:none;outline:none;cursor:pointer}
+    .form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+    .kv{display:flex;flex-direction:column}
+    .kv label{font-size:14px;font-weight:600;color:#64748b;margin-bottom:6px}
+    .table{width:100%;border-collapse:separate;border-spacing:0;font-size:14px;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;background:#ffffff}
+    .table thead th{background:#f9fafb;text-align:left;padding:12px 16px;border-bottom:1px solid #e2e8f0;color:#64748b;font-weight:700}
+    .table tbody td{padding:12px 16px;border-bottom:1px solid #eef2f7;vertical-align:middle;color:#0f172a}
+    .table tbody tr:last-child td{border-bottom:0}
+    .inline{display:inline-flex;gap:16px;align-items:center}
+    .badge{display:inline-block;background:#10b981;color:#ffffff;border:1px solid #0d805f;border-radius:999px;padding:4px 12px;font-size:12px;font-weight:800}
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="title">Subscription Portal</div>
+    <div class="actions">
+      <button id="btn_login_open">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4S8 5.79 8 8s1.79 4 4 4z" stroke="#ffffff" stroke-width="2"/>
+          <path d="M4 20v-1c0-2.76 2.24-5 5-5h6c2.76 0 5 2.24 5 5v1" stroke="#ffffff" stroke-width="2"/>
+        </svg>
+        Login
+      </button>
+    </div>
+  </div>
+
+  <div id="view_public" class="container hero">
+    <div class="card center" style="flex-direction:column;gap:32px">
+      <div class="section-title">Download Trial License</div>
+      <input id="email_input" class="input" type="email" placeholder="Enter your Email">
+      <button id="btn_trial" class="btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <path d="M12 3v12" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+          <path d="M7 10l5 5 5-5" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M5 21h14" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        Download License
+      </button>
+      <div class="desc">Enter your email and click download to receive a 30-day trial license.</div>
+      <div class="badge">Public Mode</div>
+    </div>
+  </div>
+
+  <div id="view_console" class="container hero hidden">
+    <div class="card" style="padding:32px 32px 40px 32px">
+      <div class="tabs">
+        <div class="tab active" data-tab="gen">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" stroke="#64748b" stroke-width="2"/>
+            <path d="M9 12l2 2 4-4" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Generate
+        </div>
+        <div class="tab" data-tab="scan">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M3 3h18v18H3V3z" stroke="#64748b" stroke-width="2"/>
+            <path d="M4 10h16" stroke="#64748b" stroke-width="2"/>
+            <path d="M10 4v16" stroke="#64748b" stroke-width="2"/>
+          </svg>
+          Scan Unused
+        </div>
+      </div>
+      <div id="tab_gen">
+        <div class="form-grid">
+          <div class="kv">
+            <label>License Type</label>
+            <select id="sel_type" class="select">
+              <option value="Base">Base</option>
+              <option value="Bonus">Bonus</option>
+              <option value="Trial">Trial</option>
+            </select>
+          </div>
+          <div class="kv">
+            <label>Days</label>
+            <select id="sel_days" class="select">
+              <option value="360" selected>360</option>
+              <option value="720">720</option>
+              <option value="1080">1080</option>
+            </select>
+          </div>
+          <div class="kv">
+            <label>QReplica Feature</label>
+            <select id="feat_qreplica" class="select">
+              <option value="Disabled">Disabled</option>
+              <option value="Enabled">Enabled</option>
+            </select>
+          </div>
+          <div class="kv">
+            <label>Snapshot Feature</label>
+            <select id="feat_snapshot" class="select">
+              <option value="Disabled">Disabled</option>
+              <option value="Enabled">Enabled</option>
+            </select>
+          </div>
+          <div class="kv">
+            <label>Scale-out Feature</label>
+            <select id="feat_scaleout" class="select">
+              <option value="Disabled">Disabled</option>
+              <option value="Enabled">Enabled</option>
+            </select>
+          </div>
+          <div class="kv">
+            <label>CloudSync Feature</label>
+            <select id="feat_cloudsync" class="select">
+              <option value="Disabled">Disabled</option>
+              <option value="Enabled">Enabled</option>
+            </select>
+          </div>
+          <div class="kv">
+            <label>XMirror Feature</label>
+            <select id="feat_xmirror" class="select">
+              <option value="Disabled">Disabled</option>
+              <option value="Enabled">Enabled</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:32px;text-align:right">
+          <button id="btn_generate_download" class="btn secondary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path d="M12 3v12" stroke="#0f172a" stroke-width="2" stroke-linecap="round"/>
+              <path d="M7 10l5 5 5-5" stroke="#0f172a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M5 21h14" stroke="#0f172a" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Download
+          </button>
+        </div>
+        <div class="footer">This is a front-end mock-up only. No back-end integration.</div>
+      </div>
+      <div id="tab_scan" class="hidden">
+        <table class="table" id="table_unused">
+          <thead>
+            <tr>
+              <th>Profile ID</th>
+              <th>Name</th>
+              <th>OEM</th>
+              <th>Card Type</th>
+              <th>Created At</th>
+              <th>Pending Features</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div class="footer" style="margin-top:20px">Remove rows by clicking the Delete button. (Front-end only)</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal_mask" class="modal-mask">
+    <div class="modal">
+      <div class="modal-body">
+        <div class="modal-title" id="modal_title">Message</div>
+        <div id="modal_msg"></div>
+      </div>
+      <div class="modal-actions" id="modal_actions"></div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script>
+    function license_init(){
+      $("#btn_login_open").on("click",function(){license_login_open();})
+      $("#btn_trial").on("click",function(){license_trial_download();})
+      $(".tab").on("click",function(){license_tab_switch($(this).data("tab"));})
+      $("#btn_generate_download").on("click",function(){license_generate_download();})
+      license_seed_unused();
+      return true;
+    }
+    function license_seed_unused(){
+      var rows=[
+        {id:"803a9012-ac30-4bcb-8c01-ddd76aa03bb7",name:"Test Profile3",oem:"Qsss",type:"Bonus",ts:"2025-10-31 15:22:55",pending:2},
+        {id:"e243d0f4-6b96-488a-897d-77c07bb59615",name:"Test Profile1",oem:"Qsss",type:"Base",ts:"2025-10-31 16:00:57",pending:3},
+        {id:"bbd0dd57-ea6c-49b8-a1a7-0f6b78609ab8",name:"Test Profile3",oem:"Qsss",type:"Bonus",ts:"2025-10-31 16:01:00",pending:2},
+        {id:"4f2b9d3a-9f88-4b93-a0a5-2c12b7b9d921",name:"Alpha Eval",oem:"Qsss",type:"Trial",ts:"2025-10-30 10:12:08",pending:1},
+        {id:"9a1e7b02-27c8-41da-9f17-5d4e3f2b77a1",name:"Beta Lab",oem:"Qsss",type:"Base",ts:"2025-10-29 09:01:22",pending:4}
+      ];
+      var tbody=$("#table_unused tbody");
+      tbody.empty();
+      for(var i=0;i<rows.length;i++){
+        var r=rows[i];
+        var tr=$("<tr></tr>");
+        tr.append($("<td></td>").text(r.id));
+        tr.append($("<td></td>").text(r.name));
+        tr.append($("<td></td>").text(r.oem));
+        tr.append($("<td></td>").text(r.type));
+        tr.append($("<td></td>").text(r.ts));
+        tr.append($("<td></td>").text(r.pending));
+        var btn=$('<button class="btn warn" type="button">Delete</button>');
+        btn.on("click",function(){license_scan_delete_row(this);});
+        var td=$("<td></td>").append(btn);
+        tr.append(td);
+        tbody.append(tr);
+      }
+      return true;
+    }
+    function license_login_open(){
+      var body=$('<div style="display:grid;gap:16px"></div>');
+      var u=$('<input type="text" id="login_user" class="input" placeholder="Username">');
+      var p=$('<input type="password" id="login_pass" class="input" placeholder="Password">');
+      body.append(u).append(p);
+      var ok=$('<button class="btn secondary" type="button">OK</button>');
+      var cancel=$('<button class="btn" type="button">Cancel</button>');
+      ok.on("click",function(){license_login_submit();});
+      cancel.on("click",function(){license_hide_modal();});
+      var actions=$('<div></div>').append(cancel).append(ok);
+      license_show_modal("Login",body,actions);
+      return true;
+    }
+    function license_login_submit(){
+      license_hide_modal();
+      license_switch_view("console");
+      return true;
+    }
+    function license_switch_view(view){
+      if(view==="console"){
+        $("#view_public").addClass("hidden");
+        $("#view_console").removeClass("hidden");
+      } else {
+        $("#view_console").addClass("hidden");
+        $("#view_public").removeClass("hidden");
+      }
+      return true;
+    }
+    function license_tab_switch(tab){
+      $(".tab").removeClass("active");
+      if(tab==="gen"){
+        $('.tab[data-tab="gen"]').addClass("active");
+        $("#tab_gen").removeClass("hidden");
+        $("#tab_scan").addClass("hidden");
+      } else {
+        $('.tab[data-tab="scan"]').addClass("active");
+        $("#tab_scan").removeClass("hidden");
+        $("#tab_gen").addClass("hidden");
+      }
+      return true;
+    }
+    function license_validate_email(v){
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+    }
+    function license_trial_download(){
+      var email=$("#email_input").val().trim();
+      if(!license_validate_email(email)){
+        license_alert("Please enter a valid email");
+        return false;
+      }
+      var msg=$('<div style="display:grid;gap:10px"></div>');
+      msg.append($('<div></div>').text("30-Day Trial License downloaded"));
+      msg.append($('<div style="color:#64748b;font-size:13px;"></div>').text("Email: "+email));
+      var ok=$('<button class="btn secondary" type="button">OK</button>');
+      ok.on("click",function(){license_hide_modal();});
+      var actions=$('<div></div>').append(ok);
+      license_show_modal("Completed",msg,actions);
+      return true;
+    }
+    function license_generate_download(){
+      var t=$("#sel_type").val();
+      var d=$("#sel_days").val();
+      var features=[
+        {k:"QReplica",v:$("#feat_qreplica").val()},
+        {k:"Snapshot",v:$("#feat_snapshot").val()},
+        {k:"Scale-out",v:$("#feat_scaleout").val()},
+        {k:"CloudSync",v:$("#feat_cloudsync").val()},
+        {k:"XMirror",v:$("#feat_xmirror").val()}
+      ];
+      var list=$('<div style="display:grid;gap:6px"></div>');
+      list.append($('<div></div>').text("Type: "+t));
+      list.append($('<div></div>').text("Days: "+d));
+      for(var i=0;i<features.length;i++){
+        list.append($('<div></div>').text(features[i].k+": "+features[i].v));
+      }
+      var wrap=$('<div style="display:grid;gap:12px;"></div>');
+      wrap.append($('<div style="font-weight:600;font-size:16px;"></div>').text("Downloading…"));
+      wrap.append(list);
+      var ok=$('<button class="btn secondary" type="button">OK</button>');
+      ok.on("click",function(){license_hide_modal();});
+      var actions=$('<div></div>').append(ok);
+      license_show_modal("Message",wrap,actions);
+      return true;
+    }
+    function license_scan_delete_row(btn){
+      var tr=$(btn).closest("tr");
+      var id=tr.children().eq(0).text();
+      var msg=$('<div></div>').text("Are you sure you want to delete "+id+" ?");
+      var cancel=$('<button class="btn" type="button">Cancel</button>');
+      var ok=$('<button class="btn warn" type="button">Delete</button>');
+      cancel.on("click",function(){license_hide_modal();});
+      ok.on("click",function(){tr.remove();license_hide_modal();});
+      var actions=$('<div></div>').append(cancel).append(ok);
+      license_show_modal("Confirm Deletion",msg,actions);
+      return true;
+    }
+    function license_alert(text){
+      var msg=$('<div></div>').text(text);
+      var ok=$('<button class="btn secondary" type="button">OK</button>');
+      ok.on("click",function(){license_hide_modal();});
+      var actions=$('<div></div>').append(ok);
+      license_show_modal("Alert",msg,actions);
+      return true;
+    }
+    function license_show_modal(title,content,actions){
+      $("#modal_title").text(title);
+      $("#modal_msg").empty().append(content);
+      $("#modal_actions").empty().append(actions);
+      $("#modal_mask").css("display","flex");
+      return true;
+    }
+    function license_hide_modal(){
+      $("#modal_mask").css("display","none");
+      $("#modal_title").text("");
+      $("#modal_msg").empty();
+      $("#modal_actions").empty();
+      return true;
+    }
+    $(function(){license_init();});
+  </script>
+</body>
+</html>
