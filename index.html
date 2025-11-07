@@ -36,18 +36,21 @@
     .tabs{display:flex;gap:8px;border-bottom:2px solid #e2e8f0;margin-bottom:20px}
     .tab{padding:12px 20px;border:1px solid #e2e8f0;border-bottom:0;border-top-left-radius:10px;border-top-right-radius:10px;background:#f9fafb;color:#64748b;cursor:pointer;font-weight:600;transition:background .2s,color .2s;display:inline-flex;align-items:center;gap:8px}
     .tab.active{background:#ffffff;color:#22b07d;border-color:#10b981}
-    .select{height:44px;border:1px solid #cbd5e1;border-radius:8px;padding:0 12px;background:#ffffff;color:#0f172a;font-size:15px;appearance:none;outline:none;cursor:pointer}
+    .select{height:40px;border:1px solid #cbd5e1;border-radius:8px;padding:0 10px;background:#ffffff;color:#0f172a;font-size:14px;appearance:none;outline:none;cursor:pointer}
     .form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
     .kv{display:flex;flex-direction:column}
     .kv label{font-size:14px;font-weight:600;color:#64748b;margin-bottom:6px}
+    .info{font-size:14px;color:#0f172a;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px}
     .table{width:100%;border-collapse:separate;border-spacing:0;font-size:14px;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;background:#ffffff}
     .table thead th{background:#f9fafb;text-align:left;padding:12px 16px;border-bottom:1px solid #e2e8f0;color:#64748b;font-weight:700}
     .table tbody td{padding:12px 16px;border-bottom:1px solid #eef2f7;vertical-align:middle;color:#0f172a}
     .table tbody tr:last-child td{border-bottom:0}
     .inline{display:inline-flex;gap:16px;align-items:center}
     .badge{display:inline-block;background:#10b981;color:#ffffff;border:1px solid #0d805f;border-radius:999px;padding:4px 12px;font-size:12px;font-weight:800}
-    .grid-features{display:grid;grid-template-columns:repeat(2,minmax(140px,1fr));gap:10px}
+    .grid-features{display:grid;grid-template-columns:repeat(2,minmax(320px,1fr));gap:10px}
+    .feat-row{display:flex;align-items:center;gap:10px}
     .checkbox{display:flex;align-items:center;gap:8px}
+    .feat-meta{display:inline-flex;align-items:center;gap:8px}
     .toolbar{display:flex;gap:16px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
     .chip{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border:1px solid #cbd5e1;border-radius:999px;background:#f9fafb;color:#0f172a;font-size:13px}
     .chip input{margin:0}
@@ -58,10 +61,7 @@
     <div class="title">Subscription Portal</div>
     <div class="actions">
       <button id="btn_login_open" class="btn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M12 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4Z" stroke="#fff" stroke-width="2"/>
-          <path d="M4 20v-1c0-2.8 2.2-5 5-5h6c2.8 0 5 2.2 5 5v1" stroke="#fff" stroke-width="2"/>
-        </svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4Z" stroke="#fff" stroke-width="2"/><path d="M4 20v-1c0-2.8 2.2-5 5-5h6c2.8 0 5 2.2 5 5v1" stroke="#fff" stroke-width="2"/></svg>
         Login
       </button>
     </div>
@@ -70,16 +70,12 @@
   <div id="view_public" class="container hero">
     <div class="card center" style="flex-direction:column;gap:24px">
       <div class="section-title">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M12 3v12M7 10l5 5 5-5M5 21h14" stroke="#22b07d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14" stroke="#22b07d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         Download Trial License
       </div>
       <input id="email_input" class="input" type="email" placeholder="Enter your email">
       <button id="btn_trial" class="btn">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M7 10l5 5 5-5M12 3v12M5 21h14" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 10l5 5 5-5M12 3v12M5 21h14" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         Download License
       </button>
       <div class="desc">Enter your email to start a 30-day trial.</div>
@@ -109,12 +105,11 @@
               <option value="Trial">Trial</option>
             </select>
           </div>
-          <div class="kv">
-            <label>Days</label>
-            <select id="sel_days" class="select"></select>
+          <div class="kv" style="grid-column:1/-1">
+            <div id="gen_days_info" class="info hidden">License expiration in 90 days.</div>
           </div>
           <div class="kv" style="grid-column:1/-1">
-            <label>Features (select up to 8)</label>
+            <label>Features</label>
             <div id="gen_features" class="grid-features"></div>
           </div>
         </div>
@@ -181,9 +176,9 @@
       $("#btn_generate_download").on("click",function(){license_generate_download()})
       license_seed_unused()
       license_init_gen_features()
-      license_update_days()
-      $("#sel_type").on("change",function(){license_update_days()})
+      $("#sel_type").on("change",function(){license_on_type_change()})
       $("#filter_types input, #filter_days").on("change",function(){license_apply_scan_filters()})
+      license_on_type_change()
       return true
     }
 
@@ -283,7 +278,7 @@
       var email=$("#email_input").val().trim()
       if(!license_validate_email(email)){license_alert("Please enter a valid email");return false}
       var wrap=$('<div style="display:grid;gap:12px"></div>')
-      wrap.append($('<div style="font-weight:600"></div>').text("Select trial features (up to 8):"))
+      wrap.append($('<div style="font-weight:600"></div>').text("Select trial features (up to 2):"))
       var grid=$('<div class="grid-features"></div>')
       for(var i=1;i<=8;i++){
         var id="trial_feat_"+i
@@ -293,6 +288,10 @@
         grid.append(item)
       }
       wrap.append(grid)
+      wrap.on("change",".trial-feature",function(){
+        var cnt=wrap.find(".trial-feature:checked").length
+        if(cnt>2){$(this).prop("checked",false);license_alert("Trial allows up to 2 features")}
+      })
       var cancel=$('<button class="btn ghost" type="button">Cancel</button>')
       var ok=$('<button class="btn secondary" type="button">Start Download</button>')
       cancel.on("click",function(){license_hide_modal()})
@@ -315,48 +314,100 @@
       var box=$("#gen_features");box.empty()
       for(var i=1;i<=12;i++){
         var id="gen_feat_"+i
-        var item=$('<label class="checkbox"></label>')
-        item.append($('<input type="checkbox" class="gen-feature">').attr("id",id).attr("value","Feature"+i))
-        item.append($('<span></span>').text("Feature"+i))
-        box.append(item)
+        var row=$('<div class="feat-row"></div>')
+        var label=$('<label class="checkbox"></label>')
+        var cb=$('<input type="checkbox" class="gen-feature">').attr("id",id).attr("value","Feature"+i)
+        var text=$('<span></span>').text("Feature"+i)
+        label.append(cb).append(text)
+
+        var meta=$('<div class="feat-meta hidden"></div>')
+        var metaText=$('<span class="feat-meta-text">Expiration in</span>')
+        var dd=$('<select class="select feat-days"></select>')
+        dd.append('<option value="30">30 days</option>')
+        dd.append('<option value="60">60 days</option>')
+        dd.append('<option value="90">90 days</option>')
+        dd.append('<option value="360">360 days</option>')
+        meta.append(metaText).append(dd)
+
+        row.append(label).append(meta)
+        box.append(row)
       }
       $(".gen-feature").on("change",function(){
-        var checked=$(".gen-feature:checked").length
-        if(checked>8){$(this).prop("checked",false);license_alert("You can select up to 8 features only")}
+        var type=$("#sel_type").val()
+        var row=$(this).closest(".feat-row")
+        if(type==="Trial"){
+          var checked=$(".gen-feature:checked").length
+          if(checked>2){$(this).prop("checked",false);license_alert("Trial allows up to 2 features")}
+          row.find(".feat-meta").addClass("hidden")
+        }else{
+          row.find(".feat-meta").toggleClass("hidden",!$(this).is(":checked"))
+        }
       })
       return true
     }
 
-    function license_update_days(){
-      var t=$("#sel_type").val(),days=$("#sel_days");days.empty()
+    function license_on_type_change(){
+      var t=$("#sel_type").val()
       if(t==="Trial"){
-        $('<option value="90">90</option>').appendTo(days)
+        $("#gen_days_info").removeClass("hidden")
+        $(".feat-meta").addClass("hidden")
+        enforce_trial_cap()
       }else{
-        $('<option value="360">360</option>').appendTo(days)
-        $('<option value="720">720</option>').appendTo(days)
-        $('<option value="1080">1080</option>').appendTo(days)
+        $("#gen_days_info").addClass("hidden")
+        $(".feat-row").each(function(){
+          var cb=$(this).find(".gen-feature")
+          $(this).find(".feat-meta").toggleClass("hidden",!cb.is(":checked"))
+        })
       }
       return true
     }
 
+    function enforce_trial_cap(){
+      var checked=$(".gen-feature:checked")
+      if(checked.length>2){checked.slice(2).prop("checked",false)}
+      return true
+    }
+
     function license_generate_download(){
-      var t=$("#sel_type").val(),d=$("#sel_days").val()
-      if(t==="Trial"&&d!=="90"){license_alert("Trial type supports 90 days only");return false}
-      if(t==="Bonus"&&["360","720","1080"].indexOf(d)===-1){license_alert("Bonus must be 360/720/1080 days");return false}
-      var count=$(".gen-feature:checked").length
-      if(count===0){license_alert("Select at least one feature");return false}
-      var feats=[];$(".gen-feature:checked").each(function(){feats.push($(this).val())})
-      var list=$('<div style="display:grid;gap:6px"></div>')
-      list.append($('<div></div>').text("Type: "+t))
-      list.append($('<div></div>').text("Days: "+d))
-      list.append($('<div></div>').text("Features: "+feats.join(", ")))
-      var wrap=$('<div style="display:grid;gap:12px"></div>')
-      wrap.append($('<div style="font-weight:600"></div>').text("Downloading…"))
-      wrap.append(list)
-      var close=$('<button class="btn ghost" type="button">Close</button>').on("click",function(){license_hide_modal()})
-      var ok=$('<button class="btn secondary" type="button">OK</button>').on("click",function(){license_hide_modal()})
-      var actions=$('<div class="actions-row"></div>').append(close).append(ok)
-      license_show_modal("Message",wrap,actions);return true
+      var t=$("#sel_type").val()
+      if(t==="Trial"){
+        var feats=[]
+        $(".gen-feature:checked").each(function(){feats.push($(this).val())})
+        if(feats.length===0){license_alert("Select at least one feature");return false}
+        if(feats.length>2){license_alert("Trial allows up to 2 features");return false}
+        var list=$('<div style="display:grid;gap:6px"></div>')
+        list.append($('<div></div>').text("Type: Trial"))
+        list.append($('<div></div>').text("License expiration in 90 days."))
+        list.append($('<div></div>').text("Features: "+feats.join(", ")))
+        var wrap=$('<div style="display:grid;gap:12px"></div>')
+        wrap.append($('<div style="font-weight:600"></div>').text("Downloading…"))
+        wrap.append(list)
+        var close=$('<button class="btn ghost" type="button">Close</button>').on("click",function(){license_hide_modal()})
+        var ok=$('<button class="btn secondary" type="button">OK</button>').on("click",function(){license_hide_modal()})
+        var actions=$('<div class="actions-row"></div>').append(close).append(ok)
+        license_show_modal("Message",wrap,actions);return true
+      }else{
+        var items=[]
+        $(".feat-row").each(function(){
+          var cb=$(this).find(".gen-feature")
+          if(cb.is(":checked")){
+            var name=cb.val()
+            var days=$(this).find(".feat-days").val()
+            items.push(name+" ("+days+" days)")
+          }
+        })
+        if(items.length===0){license_alert("Select at least one feature");return false}
+        var list=$('<div style="display:grid;gap:6px"></div>')
+        list.append($('<div></div>').text("Type: Bonus"))
+        list.append($('<div></div>').text("Features: "+items.join(", ")))
+        var wrap=$('<div style="display:grid;gap:12px"></div>')
+        wrap.append($('<div style="font-weight:600"></div>').text("Downloading…"))
+        wrap.append(list)
+        var close=$('<button class="btn ghost" type="button">Close</button>').on("click",function(){license_hide_modal()})
+        var ok=$('<button class="btn secondary" type="button">OK</button>').on("click",function(){license_hide_modal()})
+        var actions=$('<div class="actions-row"></div>').append(close).append(ok)
+        license_show_modal("Message",wrap,actions);return true
+      }
     }
 
     function license_scan_delete_row(btn){
