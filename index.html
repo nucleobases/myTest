@@ -1,445 +1,3679 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="zh-Hant">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Subscription Portal</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Payroll System Demo — 前端操作介面展示</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+TC:wght@300;400;500;600;700&family=Noto+Serif+TC:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/dayjs.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
   <style>
-    *,*::before,*::after{box-sizing:border-box}
-    html,body{margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;background:#f4f6f8;color:#0f172a}
-    .container{max-width:920px;margin:0 auto;padding:40px}
-    .header{position:fixed;top:0;left:0;right:0;height:60px;background:#ffffff;color:#0f172a;display:flex;align-items:center;justify-content:space-between;padding:0 24px;box-shadow:0 3px 12px rgba(0,0,0,.08);z-index:20}
-    .header .title{font-size:20px;font-weight:600;letter-spacing:.5px}
-    .header .actions .btn{background:#22b07d;color:#ffffff;border:0;border-radius:8px;height:40px;padding:0 20px;cursor:pointer;font-weight:600;font-size:14px;transition:background .2s;display:inline-flex;align-items:center;gap:8px}
-    .header .actions .btn:hover{background:#1a9a61}
-    .hero{margin-top:100px}
-    .card{background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:32px;box-shadow:0 8px 24px rgba(0,0,0,.12)}
-    .center{display:flex;align-items:center;justify-content:center}
-    .section-title{font-size:22px;font-weight:700;margin-bottom:24px;color:#22b07d;display:flex;align-items:center;gap:8px}
-    .input{width:100%;max-width:360px;height:44px;border:1px solid #cbd5e1;border-radius:8px;padding:0 14px;font-size:15px;background:#ffffff;color:#0f172a;display:block}
-    .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:#22b07d;color:#ffffff;border:0;border-radius:12px;height:44px;padding:0 22px;font-weight:700;font-size:15px;cursor:pointer;transition:background .2s}
-    .btn.secondary{background:#10b981;color:#ffffff}
-    .btn.warn{background:#ef4444;color:#ffffff}
-    .btn.ghost{background:#ffffff;color:#0f172a;border:1px solid #cbd5e1}
-    .btn:disabled{opacity:.4;cursor:not-allowed}
-    .desc{margin-top:12px;color:#64748b;font-size:14px}
-    .hidden{display:none}
-    .modal-mask{position:fixed;inset:0;background:rgba(17,24,39,.35);display:none;align-items:center;justify-content:center;z-index:50}
-    .modal{background:#ffffff;border-radius:14px;min-width:380px;max-width:92vw;border:1px solid #e2e8f0;box-shadow:0 12px 32px rgba(0,0,0,.16)}
-    .modal .modal-body{padding:24px;color:#0f172a}
-    .modal .modal-title{font-weight:800;margin-bottom:12px;color:#22b07d;font-size:18px;display:flex;align-items:center;gap:8px}
-    .modal .modal-actions{display:flex;justify-content:flex-end;gap:16px;padding:16px;border-top:1px solid #e2e8f0;background:#f9fafb;border-bottom-left-radius:14px;border-bottom-right-radius:14px}
-    .actions-row{display:flex;justify-content:flex-end;gap:16px;width:100%}
-    #modal_msg{display:grid;gap:12px;width:100%}
-    .modal .modal-form{display:grid;gap:12px;width:100%}
-    .modal .input{width:100%;max-width:100%;min-width:0}
-    .tabs{display:flex;gap:8px;border-bottom:2px solid #e2e8f0;margin-bottom:20px}
-    .tab{padding:12px 20px;border:1px solid #e2e8f0;border-bottom:0;border-top-left-radius:10px;border-top-right-radius:10px;background:#f9fafb;color:#64748b;cursor:pointer;font-weight:600;transition:background .2s,color .2s;display:inline-flex;align-items:center;gap:8px}
-    .tab.active{background:#ffffff;color:#22b07d;border-color:#10b981}
-    .select{height:40px;border:1px solid #cbd5e1;border-radius:8px;padding:0 10px;background:#ffffff;color:#0f172a;font-size:14px;appearance:none;outline:none;cursor:pointer}
-    .form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
-    .kv{display:flex;flex-direction:column}
-    .kv label{font-size:14px;font-weight:600;color:#64748b;margin-bottom:6px}
-    .info{font-size:14px;color:#0f172a;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px}
-    .table{width:100%;border-collapse:separate;border-spacing:0;font-size:14px;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;background:#ffffff}
-    .table thead th{background:#f9fafb;text-align:left;padding:12px 16px;border-bottom:1px solid #e2e8f0;color:#64748b;font-weight:700}
-    .table tbody td{padding:12px 16px;border-bottom:1px solid #eef2f7;vertical-align:middle;color:#0f172a}
-    .table tbody tr:last-child td{border-bottom:0}
-    .inline{display:inline-flex;gap:16px;align-items:center}
-    .badge{display:inline-block;background:#10b981;color:#ffffff;border:1px solid #0d805f;border-radius:999px;padding:4px 12px;font-size:12px;font-weight:800}
-    .grid-features{display:grid;grid-template-columns:repeat(2,minmax(320px,1fr));gap:10px}
-    .feat-row{display:flex;align-items:center;gap:10px}
-    .checkbox{display:flex;align-items:center;gap:8px}
-    .feat-meta{display:inline-flex;align-items:center;gap:8px}
-    .toolbar{display:flex;gap:16px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
-    .chip{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border:1px solid #cbd5e1;border-radius:999px;background:#f9fafb;color:#0f172a;font-size:13px}
-    .chip input{margin:0}
+    :root {
+      color-scheme: light;
+      --ink: #231f1a;
+      --muted: #6b5f53;
+      --paper: #f7f0e8;
+      --cream: #fff8f1;
+      --accent: #c65c2c;
+      --accent-deep: #8f3a1f;
+      --teal: #2f7f7b;
+      --lime: #c9d58c;
+      --chart-gross: #2f7f7b;
+      --chart-deduction: #c65c2c;
+      --chart-net: #2a4a3f;
+      --shadow: rgba(35, 31, 26, 0.12);
+      --border: rgba(35, 31, 26, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "IBM Plex Sans TC", sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at 15% 10%, #ffe7d3 0%, #fef7ef 35%, #f4ece1 100%);
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(120deg, rgba(198, 92, 44, 0.16), transparent 55%),
+        radial-gradient(circle at 80% 20%, rgba(47, 127, 123, 0.12), transparent 50%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .demo {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 20px 80px;
+    }
+
+    .demo__header {
+      display: grid;
+      gap: 24px;
+    }
+
+    .demo__actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      font-size: 14px;
+    }
+
+    .btn:focus-visible {
+      outline: 2px solid rgba(198, 92, 44, 0.5);
+      outline-offset: 2px;
+    }
+
+    .btn--primary {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 12px 24px -18px rgba(198, 92, 44, 0.6);
+    }
+
+    .btn--ghost {
+      background: #fff;
+      border: 1px solid var(--border);
+      color: var(--ink);
+    }
+
+    .btn--soft {
+      background: rgba(47, 127, 123, 0.12);
+      color: var(--teal);
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .demo__stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .demo__status {
+      margin-top: 18px;
+    }
+
+    .status-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+      align-items: center;
+      box-shadow: 0 16px 28px -24px var(--shadow);
+    }
+
+    .status-card__label {
+      font-size: 12px;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .status-card__value {
+      font-weight: 600;
+    }
+
+    .stat-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      padding: 18px 20px;
+      border-radius: 18px;
+      box-shadow: 0 18px 30px -26px var(--shadow);
+    }
+
+    .stat-card__label {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .stat-card__value {
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .stat-card__note {
+      color: var(--teal);
+      font-size: 12px;
+      margin-top: 6px;
+    }
+
+    .demo__nav {
+      margin-top: 26px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.7);
+      padding: 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+    }
+
+    .tab {
+      border: none;
+      background: transparent;
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .tab--active {
+      background: var(--ink);
+      color: #fff;
+    }
+
+    .demo__main {
+      margin-top: 26px;
+      display: grid;
+      gap: 30px;
+    }
+
+    .panel {
+      display: none;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      padding: 26px;
+      box-shadow: 0 22px 40px -30px var(--shadow);
+      animation: fadeUp 0.6s ease;
+    }
+
+    .panel--active {
+      display: block;
+    }
+
+    .panel__header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .panel__title {
+      font-family: "Noto Serif TC", serif;
+      font-size: 24px;
+      margin: 0;
+    }
+
+    .panel__desc {
+      color: var(--muted);
+      margin: 6px 0 0;
+      line-height: 1.6;
+    }
+
+    .panel__grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      margin-top: 16px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      padding: 18px;
+      box-shadow: 0 16px 28px -24px var(--shadow);
+    }
+
+    .card__title {
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .card__body {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      background: rgba(47, 127, 123, 0.12);
+      color: var(--teal);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    .table th,
+    .table td {
+      padding: 12px 10px;
+      border-bottom: 1px solid rgba(35, 31, 26, 0.08);
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    .table th {
+      font-size: 12px;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .table tbody tr:hover {
+      background: rgba(198, 92, 44, 0.06);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      background: rgba(35, 31, 26, 0.08);
+    }
+
+    .badge--active {
+      background: rgba(47, 127, 123, 0.18);
+      color: var(--teal);
+    }
+
+    .badge--pending {
+      background: rgba(201, 213, 140, 0.4);
+      color: #5a6619;
+    }
+
+    .badge--warning {
+      background: rgba(198, 92, 44, 0.2);
+      color: var(--accent-deep);
+    }
+
+    .panel__toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 14px 0 20px;
+      align-items: center;
+    }
+
+    .toolbar__field {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .toolbar__field .form-input {
+      min-width: 140px;
+    }
+
+    .panel__chart {
+      margin-top: 20px;
+      background: #fff;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      padding: 16px;
+    }
+
+    .chart__toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .chart__range {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chart-range {
+      padding: 8px 14px;
+    }
+
+    .chart-range--active {
+      background: var(--ink);
+      color: #fff;
+      border: 1px solid var(--ink);
+    }
+
+    .chart-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 12px;
+      color: var(--muted);
+      align-items: center;
+    }
+
+    .chart-legend__item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+    }
+
+    .chart-legend__swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--ink);
+    }
+
+    .chart-legend__swatch[data-color="gross"] {
+      background: var(--chart-gross);
+    }
+
+    .chart-legend__swatch[data-color="deduction"] {
+      background: var(--chart-deduction);
+    }
+
+    .chart-legend__swatch[data-color="net"] {
+      background: var(--chart-net);
+    }
+
+    .panel__note {
+      margin-top: 18px;
+    }
+
+    .panel__block {
+      margin: 18px 0;
+    }
+
+    .grade-version__actions {
+      margin-top: 12px;
+    }
+
+    .grade-version__table {
+      margin-top: 12px;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(35, 31, 26, 0.35);
+      z-index: 1000;
+    }
+
+    .modal--open {
+      display: flex;
+    }
+
+    .modal__panel {
+      width: min(760px, 92vw);
+      max-height: 90vh;
+      overflow: auto;
+      background: #fff;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      box-shadow: 0 24px 48px -28px var(--shadow);
+      padding: 20px;
+    }
+
+    .modal__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .modal__title {
+      margin: 0;
+      font-family: "Noto Serif TC", serif;
+      font-size: 20px;
+    }
+
+    .modal__close {
+      padding: 8px 14px;
+    }
+
+    .employee-form {
+      display: grid;
+      gap: 18px;
+    }
+
+    .form-section__title {
+      font-weight: 700;
+      margin: 0 0 10px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 14px;
+      align-items: center;
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-label {
+      font-size: 12px;
+      letter-spacing: 0.4px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .form-input {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 14px;
+      background: #fff;
+      color: var(--ink);
+    }
+
+    .form-input--align-right {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .form-input--uppercase {
+      text-transform: uppercase;
+    }
+
+    .form-input[readonly] {
+      background: #f6f2ec;
+      color: var(--muted);
+    }
+
+    textarea.form-input {
+      min-height: 84px;
+      resize: vertical;
+    }
+
+    .form-hint {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .list__item {
+      background: #fff;
+      border: 1px solid var(--border);
+      padding: 12px 14px;
+      border-radius: 14px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .list__meta {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--ink);
+      color: #fff;
+      padding: 12px 16px;
+      border-radius: 12px;
+      box-shadow: 0 16px 30px -18px rgba(35, 31, 26, 0.6);
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      z-index: 20;
+      font-size: 14px;
+    }
+
+    .toast--show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    dialog {
+      border: none;
+      border-radius: 20px;
+      padding: 24px;
+      max-width: 520px;
+      width: 90%;
+      background: var(--cream);
+      box-shadow: 0 18px 40px -30px var(--shadow);
+    }
+
+    dialog::backdrop {
+      background: rgba(35, 31, 26, 0.4);
+    }
+
+    .dialog__title {
+      font-family: "Noto Serif TC", serif;
+      margin-top: 0;
+    }
+
+    .dialog__list {
+      margin: 12px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 720px) {
+      .demo__nav {
+        border-radius: 18px;
+      }
+
+      .panel {
+        padding: 20px;
+      }
+
+      .panel__header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .list__item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="header">
-    <div class="title">Subscription Portal</div>
-    <div class="actions">
-      <button id="btn_login_open" class="btn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4Z" stroke="#fff" stroke-width="2"/><path d="M4 20v-1c0-2.8 2.2-5 5-5h6c2.8 0 5 2.2 5 5v1" stroke="#fff" stroke-width="2"/></svg>
-        Login
-      </button>
+  <div class="demo">
+    <header class="demo__header">
+      <section class="demo__stats" id="summaryCards"></section>
+    </header>
+
+    <nav class="demo__nav" aria-label="功能分頁">
+      <button class="tab tab--active" data-tab="overview" data-nav="overview">總覽</button>
+      <button class="tab" data-tab="employees" data-nav="employees">員工管理</button>
+      <button class="tab" data-tab="insurance" data-nav="insurance">保險版本</button>
+      <button class="tab" data-tab="payroll" data-nav="payroll">薪資計算</button>
+      <button class="tab" data-tab="reports" data-nav="reports">報表中心</button>
+    </nav>
+
+    <section class="demo__status">
+      <div class="status-card">
+        <div class="status-card__label">最新動作</div>
+        <div class="status-card__value" id="actionText">已載入資料，請點選功能按鈕查看頁面內容。</div>
+      </div>
+    </section>
+
+    <main class="demo__main">
+      <section class="panel panel--active" id="overview" data-title="總覽">
+        <div class="panel__header">
+          <div>
+            <h2 class="panel__title">總覽儀表板</h2>
+            <p class="panel__desc">彙整本月薪資狀態、保險費用與操作摘要，供主管快速掌握。</p>
+          </div>
+          <div class="chip-group" id="overviewChips"></div>
+        </div>
+        <div class="panel__grid" id="overviewCards"></div>
+        <div class="panel__chart">
+          <div class="chart__toolbar">
+            <div class="chart__range">
+              <button class="btn btn--ghost chart-range chart-range--active" data-range="6">最近 6 個月</button>
+              <button class="btn btn--ghost chart-range" data-range="12">最近 12 個月</button>
+            </div>
+            <div class="chart-legend">
+              <span class="chart-legend__item"><span class="chart-legend__swatch" data-color="gross"></span>應發總額</span>
+              <span class="chart-legend__item"><span class="chart-legend__swatch" data-color="deduction"></span>扣款總額</span>
+              <span class="chart-legend__item"><span class="chart-legend__swatch" data-color="net"></span>實領總額</span>
+            </div>
+          </div>
+          <canvas id="payrollChart" height="140"></canvas>
+        </div>
+        <div class="panel__grid">
+          <div class="card">
+            <div class="card__title">近期操作紀錄</div>
+            <ul class="list" id="activityList"></ul>
+          </div>
+          <div class="card">
+            <div class="card__title">本月費用結構</div>
+            <div class="card__body" id="costSummary"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="employees" data-title="員工管理">
+        <div class="panel__header">
+          <div>
+            <h2 class="panel__title">員工管理</h2>
+            <p class="panel__desc">提供員工新增、查詢與薪資結構管理，包含姓名、證號、部門、職稱、學歷與銀行資訊。</p>
+          </div>
+          <button class="btn btn--primary" id="addEmployee">新增員工</button>
+        </div>
+        <div class="panel__toolbar">
+          <span class="chip">國別：本國／外國</span>
+          <span class="chip">身分別：月薪／時薪</span>
+          <span class="chip">最低工資：27,470 元</span>
+          <span class="chip">眷屬數上限：3</span>
+        </div>
+        <div class="card">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>員工編號</th>
+                <th>中文姓名</th>
+                <th>英文姓名</th>
+                <th>部門</th>
+                <th>對內職稱</th>
+                <th>職等</th>
+                <th>國別</th>
+                <th>身分別</th>
+                <th>在職狀態</th>
+                <th>到職日</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="employeeTable"></tbody>
+          </table>
+        </div>
+        <div class="panel__grid">
+          <div class="card" id="employeePreview">
+            <div class="card__title">員工資料摘要</div>
+            <div class="card__body">點選「查看」或「新增員工」以顯示資料摘要。</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="insurance" data-title="保險版本">
+        <div class="panel__header">
+          <div>
+            <h2 class="panel__title">保險版本與級距</h2>
+            <p class="panel__desc">呈現勞保/健保版本、投保薪資級距與費率設定（節錄）。</p>
+          </div>
+          <div class="demo__actions">
+            <button class="btn btn--ghost" id="toggleVersion">切換啟用版本</button>
+            <button class="btn btn--soft" data-nav="labor-grade" data-label="勞保級距維護">勞保級距維護</button>
+            <button class="btn btn--soft" data-nav="health-grade" data-label="健保級距維護">健保級距維護</button>
+          </div>
+        </div>
+        <div class="panel__grid">
+          <div class="card">
+            <div class="card__title">啟用中版本</div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>保險類型</th>
+                  <th>版本代碼</th>
+                  <th>生效日</th>
+                  <th>狀態</th>
+                </tr>
+              </thead>
+              <tbody id="versionTable"></tbody>
+            </table>
+          </div>
+          <div class="card">
+            <div class="card__title">投保薪資級距（節錄）</div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>級距代碼</th>
+                  <th>薪資區間</th>
+                  <th>投保薪資</th>
+                </tr>
+              </thead>
+              <tbody id="gradeTable"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card" style="margin-top: 18px;">
+          <div class="card__title">費率與分攤比例</div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>保險類型</th>
+                <th>費率</th>
+                <th>員工負擔</th>
+                <th>雇主負擔</th>
+                <th>政府負擔</th>
+              </tr>
+            </thead>
+            <tbody id="rateTable"></tbody>
+          </table>
+        </div>
+        <div class="card panel__note" id="insuranceNotice">
+          <div class="card__title">版本狀態</div>
+          <div class="card__body">點選「切換啟用版本」以更新最新法規版本。</div>
+        </div>
+      </section>
+
+      <section class="panel" id="payroll" data-title="薪資計算">
+        <div class="panel__header">
+          <div>
+            <h2 class="panel__title">薪資計算與試算</h2>
+            <p class="panel__desc">根據本薪、津貼與加班費試算薪資，並套用勞保/健保/勞退規範。</p>
+          </div>
+          <button class="btn btn--primary" id="recalcPayroll">執行試算</button>
+        </div>
+        <div class="panel__toolbar">
+          <div class="toolbar__field">
+            <span class="list__meta">計算月份</span>
+            <select class="form-input" id="payrollMonth"></select>
+          </div>
+          <span class="chip">加班費：前 2 小時 1.34 倍、其後 1.67 倍</span>
+          <span class="chip">勞退雇主提繳 6%</span>
+        </div>
+        <div class="card">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>薪資編號</th>
+                <th>員工</th>
+                <th>應發</th>
+                <th>投保薪資</th>
+                <th>勞保(員工)</th>
+                <th>健保(員工)</th>
+                <th>實領</th>
+                <th>狀態</th>
+                <th>明細</th>
+              </tr>
+            </thead>
+            <tbody id="payrollTable"></tbody>
+          </table>
+        </div>
+        <div class="card panel__note" id="payrollNotice">
+          <div class="card__title">試算結果摘要</div>
+          <div class="card__body">點選「執行試算」後顯示本月試算摘要。</div>
+        </div>
+      </section>
+
+      <section class="panel" id="reports" data-title="報表中心">
+        <div class="panel__header">
+          <div>
+            <h2 class="panel__title">報表中心</h2>
+            <p class="panel__desc">產生薪資總表與個人薪資單，追蹤匯出狀態與下載紀錄。</p>
+          </div>
+          <div class="demo__actions">
+            <button class="btn btn--primary" id="exportSummary">產生薪資總表</button>
+            <button class="btn btn--ghost" id="exportPayslip">產生個人薪資單</button>
+          </div>
+        </div>
+        <div class="card">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>報表編號</th>
+                <th>類型</th>
+                <th>格式</th>
+                <th>產生時間</th>
+                <th>狀態</th>
+                <th>查看</th>
+              </tr>
+            </thead>
+            <tbody id="reportTable"></tbody>
+          </table>
+        </div>
+        <div class="card panel__note" id="reportNotice">
+          <div class="card__title">匯出檔案</div>
+          <div class="card__body">點選匯出按鈕後，將顯示最新產生的報表資訊。</div>
+        </div>
+      </section>
+
+      <section class="panel" id="employee-create" data-title="新增員工">
+        <div class="panel__header">
+          <div>
+            <h2 class="panel__title" id="employeeFormTitle">新增員工</h2>
+            <p class="panel__desc" id="employeeFormDesc">填寫員工基本資料、職務資訊與帳務資料，欄位規範依人事資料結構。</p>
+          </div>
+          <div class="demo__actions">
+            <button class="btn btn--primary" id="submitEmployeeCreate">送出新增</button>
+            <button class="btn btn--ghost" data-nav="employees">返回員工管理</button>
+          </div>
+        </div>
+        <div class="card" id="employeeCreateForm">
+          <div class="card__title">員工資料</div>
+          <div class="card__body">尚未產生待新增的員工資料。</div>
+        </div>
+      </section>
+
+      <section class="panel" id="employee-detail" data-title="員工明細">
+        <div class="panel__header">
+          <div>
+            <h2 class="panel__title">員工明細</h2>
+            <p class="panel__desc">檢視員工資料與最新薪資摘要。</p>
+          </div>
+          <button class="btn btn--ghost" data-nav="employees">返回員工管理</button>
+        </div>
+        <div class="panel__grid">
+          <div class="card" id="employeeDetailBody">
+            <div class="card__title">員工資料</div>
+            <div class="card__body">尚未選擇員工。</div>
+          </div>
+          <div class="card" id="employeeDetailPayroll">
+            <div class="card__title">最新薪資摘要</div>
+            <div class="card__body">尚未載入薪資資訊。</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="insurance-detail" data-title="保險版本明細">
+        <div class="panel__header">
+          <div>
+            <h2 class="panel__title">保險版本明細</h2>
+            <p class="panel__desc">查看啟用版本與生效資訊。</p>
+          </div>
+          <button class="btn btn--ghost" data-nav="insurance">返回保險版本</button>
+        </div>
+        <div class="panel__grid">
+          <div class="card" id="insuranceDetailBody">
+            <div class="card__title">版本摘要</div>
+            <div class="card__body">尚未載入版本資訊。</div>
+          </div>
+          <div class="card" id="insuranceDetailRates">
+            <div class="card__title">費率資訊</div>
+            <div class="card__body">尚未載入費率資訊。</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="labor-grade" data-title="勞保級距維護">
+        <div class="panel__header">
+          <div>
+            <h2 class="panel__title">勞保投保薪資級距維護</h2>
+            <p class="panel__desc">管理勞保投保薪資級距，包含級距範圍與版本狀態。</p>
+          </div>
+          <div class="demo__actions">
+            <button class="btn btn--primary" data-grade-action="create" data-grade-type="labor">新增級距</button>
+            <button class="btn btn--ghost" data-nav="insurance">返回保險版本</button>
+          </div>
+        </div>
+        <div class="card panel__block" id="laborGradeVersion">
+          <div class="card__title">版本狀態</div>
+          <div class="card__body">尚未載入版本狀態。</div>
+        </div>
+        <div class="panel__grid">
+          <div class="card">
+            <div class="card__title">勞保投保薪資級距</div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>級距代碼</th>
+                  <th>版本代碼</th>
+                  <th>薪資區間</th>
+                  <th>投保薪資</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="laborGradeTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="health-grade" data-title="健保級距維護">
+        <div class="panel__header">
+          <div>
+            <h2 class="panel__title">健保投保薪資級距維護</h2>
+            <p class="panel__desc">管理健保投保薪資級距，支援調整投保薪資、區間與版本狀態。</p>
+          </div>
+          <div class="demo__actions">
+            <button class="btn btn--primary" data-grade-action="create" data-grade-type="health">新增級距</button>
+            <button class="btn btn--ghost" data-nav="insurance">返回保險版本</button>
+          </div>
+        </div>
+        <div class="card panel__block" id="healthGradeVersion">
+          <div class="card__title">版本狀態</div>
+          <div class="card__body">尚未載入版本狀態。</div>
+        </div>
+        <div class="panel__grid">
+          <div class="card">
+            <div class="card__title">健保投保薪資級距</div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>級距代碼</th>
+                  <th>版本代碼</th>
+                  <th>薪資區間</th>
+                  <th>投保薪資</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="healthGradeTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="payroll-detail" data-title="薪資明細">
+        <div class="panel__header">
+          <div>
+            <h2 class="panel__title">薪資明細</h2>
+            <p class="panel__desc">檢視單筆薪資計算細節與保險扣款。</p>
+          </div>
+          <button class="btn btn--ghost" data-nav="payroll">返回薪資計算</button>
+        </div>
+        <div class="panel__grid">
+          <div class="card" id="payrollDetailBody">
+            <div class="card__title">薪資明細</div>
+            <div class="card__body">尚未選擇薪資資料。</div>
+          </div>
+          <div class="card" id="payrollDetailInsurance">
+            <div class="card__title">保險扣款與雇主成本</div>
+            <div class="card__body">尚未載入保險資訊。</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="report-detail" data-title="報表明細">
+        <div class="panel__header">
+          <div>
+            <h2 class="panel__title">報表明細</h2>
+            <p class="panel__desc">檢視報表資訊與資料預覽。</p>
+          </div>
+          <button class="btn btn--ghost" data-nav="reports">返回報表中心</button>
+        </div>
+        <div class="panel__grid">
+          <div class="card" id="reportDetailBody">
+            <div class="card__title">報表資訊</div>
+            <div class="card__body">尚未選擇報表。</div>
+          </div>
+          <div class="card" id="reportDetailPreview">
+            <div class="card__title">資料預覽</div>
+            <div class="card__body">尚未載入資料。</div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal" id="gradeModal" aria-hidden="true">
+    <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="gradeModalTitle">
+      <div class="modal__header">
+        <h3 class="modal__title" id="gradeModalTitle">級距編輯</h3>
+        <button class="btn btn--ghost modal__close" type="button" id="gradeModalClose">關閉</button>
+      </div>
+      <div class="modal__body" id="gradeModalBody"></div>
     </div>
   </div>
 
-  <div id="view_public" class="container hero">
-    <div class="card center" style="flex-direction:column;gap:24px">
-      <div class="section-title">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14" stroke="#22b07d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Download Trial License
+  <div class="modal" id="gradeVersionModal" aria-hidden="true">
+    <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="gradeVersionModalTitle">
+      <div class="modal__header">
+        <h3 class="modal__title" id="gradeVersionModalTitle">級距版本代碼</h3>
+        <button class="btn btn--ghost modal__close" type="button" id="gradeVersionModalClose">關閉</button>
       </div>
-      <input id="email_input" class="input" type="email" placeholder="Enter your email">
-      <button id="btn_trial" class="btn">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 10l5 5 5-5M12 3v12M5 21h14" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Download License
-      </button>
-      <div class="desc">Enter your email to start a 30-day trial.</div>
-      <div class="badge">Public Mode</div>
+      <div class="modal__body" id="gradeVersionModalBody"></div>
     </div>
   </div>
 
-  <div id="view_console" class="container hero hidden">
-    <div class="card" style="padding:32px 32px 40px 32px">
-      <div class="tabs">
-        <div class="tab active" data-tab="gen">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" stroke="#64748b" stroke-width="2"/><path d="M8 12h8M8 8h8M8 16h6" stroke="#64748b" stroke-width="2" stroke-linecap="round"/></svg>
-          Generate
-        </div>
-        <div class="tab" data-tab="scan">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 5h18M6 10h12M6 15h12M3 19h18" stroke="#64748b" stroke-width="2" stroke-linecap="round"/></svg>
-          Scan Unused
-        </div>
-      </div>
+  <div class="toast" id="toast"></div>
 
-      <div id="tab_gen">
-        <div class="form-grid">
-          <div class="kv">
-            <label>License Type</label>
-            <select id="sel_type" class="select">
-              <option value="Bonus">Bonus</option>
-              <option value="Trial">Trial</option>
-            </select>
-          </div>
-          <div class="kv" style="grid-column:1/-1">
-            <div id="gen_days_info" class="info hidden">License expiration in 90 days.</div>
-          </div>
-          <div class="kv" style="grid-column:1/-1">
-            <label>Features</label>
-            <div id="gen_features" class="grid-features"></div>
-          </div>
-        </div>
-        <div style="margin-top:24px;text-align:right">
-          <button id="btn_generate_download" class="btn secondary">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 10l5 5 5-5M12 3v12M5 21h14" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Download
-          </button>
-        </div>
-      </div>
-
-      <div id="tab_scan" class="hidden">
-        <div class="toolbar">
-          <div class="inline" id="filter_types">
-            <label class="chip"><input type="checkbox" value="Base"> Base</label>
-            <label class="chip"><input type="checkbox" value="Bonus" checked> Bonus</label>
-            <label class="chip"><input type="checkbox" value="Trial" checked> Trial</label>
-          </div>
-          <div class="inline">
-            <span style="font-weight:600;color:#64748b">Filter by expiration</span>
-            <select id="filter_days" class="select">
-              <option value="90">90</option>
-              <option value="360">360</option>
-              <option value="720">720</option>
-              <option value="1080">1080</option>
-            </select>
-          </div>
-        </div>
-
-        <table class="table" id="table_unused">
-          <thead>
-            <tr>
-              <th>Profile ID</th>
-              <th>Name</th>
-              <th>OEM</th>
-              <th>Card Type</th>
-              <th>Created At</th>
-              <th>Pending</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <div id="modal_mask" class="modal-mask">
-    <div class="modal">
-      <div class="modal-body">
-        <div class="modal-title" id="modal_title">Message</div>
-        <div id="modal_msg"></div>
-      </div>
-      <div class="modal-actions" id="modal_actions"></div>
-    </div>
-  </div>
-
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script>
-    function license_init(){
-      $("#btn_login_open").on("click",function(){license_login_open()})
-      $("#btn_trial").on("click",function(){license_trial_download()})
-      $(".tab").on("click",function(){license_tab_switch($(this).data("tab"))})
-      $("#btn_generate_download").on("click",function(){license_generate_download()})
-      license_seed_unused()
-      license_init_gen_features()
-      $("#sel_type").on("change",function(){license_on_type_change()})
-      $("#filter_types input, #filter_days").on("change",function(){license_apply_scan_filters()})
-      license_on_type_change()
-      return true
-    }
+    const formatter = new Intl.NumberFormat("zh-Hant-TW");
+    const currency = new Intl.NumberFormat("zh-Hant-TW", { style: "currency", currency: "TWD", maximumFractionDigits: 0 });
+    const rules = {
+      minWage: 27470,
+      laborRate: 0.12,
+      laborShare: { employee: 0.2, employer: 0.7, government: 0.1 },
+      healthRate: 0.0517,
+      healthShare: { employee: 0.3, employer: 0.6, government: 0.1 },
+      pensionEmployerRate: 0.06,
+      maxDependents: 3
+    };
 
-    function license_seed_unused(){
-      var rows=[
-        {id:"803a9012-ac30-4bcb-8c01-ddd76aa03bb7",name:"Test Profile3",oem:"Qsss",type:"Bonus",days:360,ts:"2025-10-31 15:22:55",pending:2},
-        {id:"e243d0f4-6b96-488a-897d-77c07bb59615",name:"Test Profile1",oem:"Qsss",type:"Base",days:720,ts:"2025-10-31 16:00:57",pending:3},
-        {id:"bbd0dd57-ea6c-49b8-a1a7-0f6b78609ab8",name:"Gamma Pilot",oem:"Qsss",type:"Bonus",days:1080,ts:"2025-10-31 16:01:00",pending:2},
-        {id:"4f2b9d3a-9f88-4b93-a0a5-2c12b7b9d921",name:"Alpha Eval",oem:"Qsss",type:"Trial",days:90,ts:"2025-10-30 10:12:08",pending:1},
-        {id:"9a1e7b02-27c8-41da-9f17-5d4e3f2b77a1",name:"Beta Lab",oem:"Qsss",type:"Base",days:360,ts:"2025-10-29 09:01:22",pending:4},
-        {id:"a1111111-1111-1111-1111-111111111111",name:"Delta PoC",oem:"Qsss",type:"Trial",days:90,ts:"2025-10-28 11:05:30",pending:2},
-        {id:"b2222222-2222-2222-2222-222222222222",name:"Epsilon QA",oem:"Qsss",type:"Bonus",days:720,ts:"2025-10-27 14:42:10",pending:3},
-        {id:"c3333333-3333-3333-3333-333333333333",name:"Zeta Staging",oem:"Qsss",type:"Base",days:1080,ts:"2025-10-26 08:20:49",pending:2},
-        {id:"d4444444-4444-4444-4444-444444444444",name:"Eta Sandbox",oem:"Qsss",type:"Bonus",days:360,ts:"2025-10-25 17:33:11",pending:5},
-        {id:"e5555555-5555-5555-5555-555555555555",name:"Theta UAT",oem:"Qsss",type:"Trial",days:90,ts:"2025-10-24 09:12:02",pending:1},
-        {id:"f6666666-6666-6666-6666-666666666666",name:"Iota Field",oem:"Qsss",type:"Base",days:720,ts:"2025-10-23 12:47:55",pending:3},
-        {id:"g7777777-7777-7777-7777-777777777777",name:"Kappa Demo",oem:"Qsss",type:"Bonus",days:1080,ts:"2025-10-22 15:29:41",pending:4}
-      ]
-      var tbody=$("#table_unused tbody")
-      tbody.empty()
-      for(var i=0;i<rows.length;i++){
-        var r=rows[i]
-        var tr=$("<tr></tr>").attr("data-type",r.type).attr("data-days",r.days)
-        tr.append($("<td></td>").text(r.id))
-        tr.append($("<td></td>").text(r.name))
-        tr.append($("<td></td>").text(r.oem))
-        tr.append($("<td></td>").text(r.type))
-        tr.append($("<td></td>").text(r.ts))
-        tr.append($("<td></td>").text(r.pending))
-        var btn=$('<button class="btn warn" type="button">Delete</button>').on("click",function(){license_scan_delete_row(this)})
-        tr.append($("<td></td>").append(btn))
-        tbody.append(tr)
-      }
-      license_apply_scan_filters()
-      return true
-    }
+    const gradeTable = [
+      { code: "L01", min: 27470, max: 27470, insured: 27470 },
+      { code: "L02", min: 27471, max: 28800, insured: 28800 },
+      { code: "L03", min: 28801, max: 30300, insured: 30300 },
+      { code: "L04", min: 30301, max: 31800, insured: 31800 },
+      { code: "L05", min: 31801, max: 33300, insured: 33300 },
+      { code: "L06", min: 33301, max: 34800, insured: 34800 },
+      { code: "L07", min: 34801, max: 36300, insured: 36300 },
+      { code: "L08", min: 36301, max: 38200, insured: 38200 },
+      { code: "L09", min: 38201, max: 40100, insured: 40100 },
+      { code: "L10", min: 40101, max: 42000, insured: 42000 },
+      { code: "L11", min: 42001, max: 43900, insured: 43900 },
+      { code: "L12", min: 43901, max: 45800, insured: 45800 },
+      { code: "L13", min: 45801, max: 47700, insured: 47700 },
+      { code: "L14", min: 47701, max: 50600, insured: 50600 },
+      { code: "L15", min: 50601, max: 53000, insured: 53000 },
+      { code: "L16", min: 53001, max: 57800, insured: 57800 },
+      { code: "L17", min: 57801, max: 60800, insured: 60800 },
+      { code: "L18", min: 60801, max: 63800, insured: 63800 }
+    ];
 
-    function license_apply_scan_filters(){
-      var types=[]
-      $("#filter_types input:checked").each(function(){types.push($(this).val())})
-      var day=$("#filter_days").val()
-      $("#table_unused tbody tr").each(function(){
-        var okType=types.indexOf($(this).attr("data-type"))!==-1
-        var okDay=String($(this).attr("data-days"))===String(day)
-        if(okType && okDay){$(this).show()}else{$(this).hide()}
-      })
-      return true
-    }
+    const state = {
+      employees: [],
+      insuranceVersions: [],
+      insuranceRates: [],
+      gradeData: {},
+      gradeFormState: {},
+      gradeVersion: {},
+      payrolls: [],
+      reports: [],
+      activities: [],
+      pendingEmployee: null,
+      employeeFormMode: "create",
+      editingEmployeeId: null,
+      insuranceSnapshots: null,
+      monthlyHistory: [],
+      historyRange: 6
+    };
 
-    function license_login_open(){
-      var form=$('<div class="modal-form"></div>')
-      form.append($('<input type="text" id="login_user" class="input" placeholder="Username">'))
-      form.append($('<input type="password" id="login_pass" class="input" placeholder="Password">'))
-      var cancel=$('<button class="btn ghost" type="button">Cancel</button>')
-      var ok=$('<button class="btn secondary" type="button">OK</button>')
-      cancel.on("click",function(){license_hide_modal()})
-      ok.on("click",function(){license_login_submit()})
-      var actions=$('<div class="actions-row"></div>').append(cancel).append(ok)
-      license_show_modal("Login",form,actions)
-      return true
-    }
+    const nameSeeds = ["雅婷", "冠宇", "佩珊", "明哲", "昱廷", "家瑜", "彥成", "佳穎", "柏翰", "姿妤", "承翰", "佩臻", "子瑜", "宇豪", "宜蓉", "柏宏", "婉婷", "修平"];
+    const surnames = ["陳", "林", "黃", "張", "李", "王", "吳", "蔡", "楊", "郭", "洪", "曾"];
+    const englishFirstNames = ["Alex", "Ivy", "Kevin", "Sophie", "Lucas", "Mia", "Ethan", "Olivia", "Daniel", "Chloe", "Jason", "Nina"];
+    const englishLastNames = ["Chen", "Lin", "Huang", "Chang", "Lee", "Wang", "Wu", "Tsai", "Yang", "Kuo", "Hung", "Tseng"];
+    const departments = [
+      { code: "D001", name: "研發處" },
+      { code: "D002", name: "營運處" },
+      { code: "D003", name: "人資處" },
+      { code: "D004", name: "財會處" },
+      { code: "D005", name: "客服處" }
+    ];
+    const jobTitlesExternal = ["工程師", "專案經理", "資深工程師", "人資專員", "財務分析師", "營運主管", "客服經理"];
+    const jobTitlesInternal = ["軟體工程師", "系統工程師", "專案副理", "人資夥伴", "財會專員", "營運管理師", "客服專員"];
+    const educations = ["高中", "專科", "學士", "碩士", "博士"];
+    const schools = ["國立臺灣大學", "國立清華大學", "國立陽明交通大學", "國立成功大學", "國立政治大學", "國立臺灣科技大學", "輔仁大學", "淡江大學"];
+    const majors = ["資訊工程", "企業管理", "財務金融", "人力資源", "電機工程", "工業工程", "會計學", "資訊管理"];
+    const bankCodes = ["004", "005", "006", "007", "008", "009", "012", "013"];
+    const idLetters = ["A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "U", "V", "X", "Y", "W", "Z", "I", "O"];
 
-    function license_login_submit(){
-      license_hide_modal()
-      license_switch_view("console")
-      return true
-    }
+    const randomChoice = (list) => list[Math.floor(Math.random() * list.length)];
+    const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+    const padNumber = (value, length) => String(value).padStart(length, "0");
 
-    function license_switch_view(view){
-      if(view==="console"){
-        $("#view_public").addClass("hidden")
-        $("#view_console").removeClass("hidden")
-      } else {
-        $("#view_console").addClass("hidden")
-        $("#view_public").removeClass("hidden")
-      }
-      return true
-    }
+    const generateIdNumber = (gender) => {
+      const letter = randomChoice(idLetters);
+      const firstDigit = gender === "M" ? "1" : "2";
+      const rest = padNumber(randomInt(0, 99999999), 8);
+      return `${letter}${firstDigit}${rest}`;
+    };
 
-    function license_tab_switch(tab){
-      $(".tab").removeClass("active")
-      if(tab==="gen"){
-        $('.tab[data-tab="gen"]').addClass("active")
-        $("#tab_gen").removeClass("hidden")
-        $("#tab_scan").addClass("hidden")
-      } else {
-        $('.tab[data-tab="scan"]').addClass("active")
-        $("#tab_scan").removeClass("hidden")
-        $("#tab_gen").addClass("hidden")
-      }
-      return true
-    }
-
-    function license_validate_email(v){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)}
-
-    function license_trial_download(){
-      var email=$("#email_input").val().trim()
-      if(!license_validate_email(email)){license_alert("Please enter a valid email");return false}
-      var wrap=$('<div style="display:grid;gap:12px"></div>')
-      wrap.append($('<div style="font-weight:600"></div>').text("Select trial features (up to 2):"))
-      var grid=$('<div class="grid-features"></div>')
-      for(var i=1;i<=8;i++){
-        var id="trial_feat_"+i
-        var item=$('<label class="checkbox"></label>')
-        item.append($('<input type="checkbox" class="trial-feature">').attr("id",id).attr("value","Feature"+i))
-        item.append($('<span></span>').text("Feature"+i))
-        grid.append(item)
-      }
-      wrap.append(grid)
-      wrap.on("change",".trial-feature",function(){
-        var cnt=wrap.find(".trial-feature:checked").length
-        if(cnt>2){$(this).prop("checked",false);license_alert("Trial allows up to 2 features")}
-      })
-      var cancel=$('<button class="btn ghost" type="button">Cancel</button>')
-      var ok=$('<button class="btn secondary" type="button">Start Download</button>')
-      cancel.on("click",function(){license_hide_modal()})
-      ok.on("click",function(){
-        license_hide_modal()
-        var msg=$('<div style="display:grid;gap:8px"></div>')
-        msg.append($('<div></div>').text("30-Day Trial License downloaded"))
-        msg.append($('<div style="color:#64748b;font-size:13px"></div>').text("Email: "+email))
-        var close=$('<button class="btn ghost" type="button">Close</button>').on("click",function(){license_hide_modal()})
-        var ok2=$('<button class="btn secondary" type="button">OK</button>').on("click",function(){license_hide_modal()})
-        var actions2=$('<div class="actions-row"></div>').append(close).append(ok2)
-        license_show_modal("Completed",msg,actions2)
-      })
-      var actions=$('<div class="actions-row"></div>').append(cancel).append(ok)
-      license_show_modal("Trial Features",wrap,actions)
-      return true
-    }
-
-    function license_init_gen_features(){
-      var box=$("#gen_features");box.empty()
-      for(var i=1;i<=12;i++){
-        var id="gen_feat_"+i
-        var row=$('<div class="feat-row"></div>')
-        var label=$('<label class="checkbox"></label>')
-        var cb=$('<input type="checkbox" class="gen-feature">').attr("id",id).attr("value","Feature"+i)
-        var text=$('<span></span>').text("Feature"+i)
-        label.append(cb).append(text)
-
-        var meta=$('<div class="feat-meta hidden"></div>')
-        var metaText=$('<span class="feat-meta-text">Expiration in</span>')
-        var dd=$('<select class="select feat-days"></select>')
-        dd.append('<option value="30">30 days</option>')
-        dd.append('<option value="60">60 days</option>')
-        dd.append('<option value="90">90 days</option>')
-        dd.append('<option value="360">360 days</option>')
-        meta.append(metaText).append(dd)
-
-        row.append(label).append(meta)
-        box.append(row)
-      }
-      $(".gen-feature").on("change",function(){
-        var type=$("#sel_type").val()
-        var row=$(this).closest(".feat-row")
-        if(type==="Trial"){
-          var checked=$(".gen-feature:checked").length
-          if(checked>2){$(this).prop("checked",false);license_alert("Trial allows up to 2 features")}
-          row.find(".feat-meta").addClass("hidden")
-        }else{
-          row.find(".feat-meta").toggleClass("hidden",!$(this).is(":checked"))
+    const createEmployee = (index) => {
+      const baseSalary = randomInt(28000, 62000);
+      const allowances = {
+        meal: randomInt(1500, 3000),
+        professional: randomInt(1000, 4000),
+        transport: randomInt(500, 2000)
+      };
+      const dependents = randomInt(0, 3);
+      const gender = Math.random() > 0.5 ? "M" : "F";
+      const birthDate = dayjs().subtract(randomInt(22, 58), "year").subtract(randomInt(0, 364), "day");
+      const hireDate = dayjs().subtract(randomInt(30, 1500), "day");
+      const probationStart = hireDate;
+      const probationEnd = hireDate.add(3, "month").subtract(1, "day");
+      const department = randomChoice(departments);
+      const nationalityCode = Math.random() > 0.85 ? "2" : "1";
+      const employmentTypeCode = Math.random() > 0.2 ? "1" : "2";
+      const employmentTypeLabel = employmentTypeCode === "1" ? "月薪" : "時薪";
+      const employmentStatus = Math.random() > 0.12 ? "在職" : "離職";
+      let leaveDate = null;
+      if (employmentStatus === "離職") {
+        leaveDate = hireDate.add(randomInt(200, 1200), "day");
+        if (leaveDate.isAfter(dayjs())) {
+          leaveDate = dayjs().subtract(randomInt(1, 180), "day");
         }
-      })
-      return true
-    }
-
-    function license_on_type_change(){
-      var t=$("#sel_type").val()
-      if(t==="Trial"){
-        $("#gen_days_info").removeClass("hidden")
-        $(".feat-meta").addClass("hidden")
-        enforce_trial_cap()
-      }else{
-        $("#gen_days_info").addClass("hidden")
-        $(".feat-row").each(function(){
-          var cb=$(this).find(".gen-feature")
-          $(this).find(".feat-meta").toggleClass("hidden",!cb.is(":checked"))
-        })
       }
-      return true
-    }
+      const bankCode = randomChoice(bankCodes);
+      const branchCode = `${bankCode}${padNumber(randomInt(0, 9999), 4)}`;
+      const account = padNumber(randomInt(0, 99999999999999), 14);
+      return {
+        employeeId: padNumber(index + 1, 5),
+        chineseName: `${randomChoice(surnames)}${randomChoice(nameSeeds)}`,
+        englishName: `${randomChoice(englishFirstNames)} ${randomChoice(englishLastNames)}`,
+        idNumber: generateIdNumber(gender),
+        birthYear: String(birthDate.year()),
+        birthMonth: padNumber(birthDate.month() + 1, 2),
+        birthDay: padNumber(birthDate.date(), 2),
+        age: String(dayjs().diff(birthDate, "year")),
+        gender,
+        mobile: `09${padNumber(randomInt(0, 99999999), 8)}`,
+        phone: `02${padNumber(randomInt(0, 99999999), 8)}`,
+        departmentCode: department.code,
+        departmentName: department.name,
+        jobTitleExternal: randomChoice(jobTitlesExternal),
+        jobTitleInternal: randomChoice(jobTitlesInternal),
+        jobLevel: String(randomInt(1, 13)),
+        note: "到職資料已完成核對",
+        education: randomChoice(educations),
+        school: randomChoice(schools),
+        major: randomChoice(majors),
+        hireYear: String(hireDate.year()),
+        hireMonth: padNumber(hireDate.month() + 1, 2),
+        hireDay: padNumber(hireDate.date(), 2),
+        tenureYears: String(Math.max(0, (leaveDate || dayjs()).diff(hireDate, "year"))),
+        leaveYear: leaveDate ? String(leaveDate.year()) : "",
+        leaveMonth: leaveDate ? padNumber(leaveDate.month() + 1, 2) : "",
+        leaveDay: leaveDate ? padNumber(leaveDate.date(), 2) : "",
+        badgeCardNumber: padNumber(randomInt(0, 9999999999), 10),
+        keyAccess: Math.random() > 0.7 ? "Y" : "N",
+        securityAccess: Math.random() > 0.7 ? "Y" : "N",
+        bankCode,
+        branchCode,
+        account,
+        probationStart: probationStart.format("YYYY-MM-DD"),
+        probationEnd: probationEnd.format("YYYY-MM-DD"),
+        nationalityCode,
+        employmentTypeCode,
+        employmentTypeLabel,
+        baseSalary,
+        allowances,
+        dependentsCount: dependents,
+        employmentStatus,
+        hireDate: hireDate.format("YYYY-MM-DD"),
+        leaveDate: leaveDate ? leaveDate.format("YYYY-MM-DD") : "",
+        department: department.name
+      };
+    };
 
-    function enforce_trial_cap(){
-      var checked=$(".gen-feature:checked")
-      if(checked.length>2){checked.slice(2).prop("checked",false)}
-      return true
-    }
+    /**
+     * Build insurance grade data for a specific type.
+     * @param {string} type
+     * @returns {{code: string, min: number, max: number, insured: number}[]}
+     */
+    const buildGradeData = (type, versionCode) => {
+      const prefix = type === "health" ? "H" : "L";
+      return gradeTable.map((item, index) => ({
+        code: type === "labor" ? item.code : `${prefix}${padNumber(index + 1, 2)}`,
+        min: item.min,
+        max: item.max,
+        insured: item.insured,
+        versionCode
+      }));
+    };
 
-    function license_generate_download(){
-      var t=$("#sel_type").val()
-      if(t==="Trial"){
-        var feats=[]
-        $(".gen-feature:checked").each(function(){feats.push($(this).val())})
-        if(feats.length===0){license_alert("Select at least one feature");return false}
-        if(feats.length>2){license_alert("Trial allows up to 2 features");return false}
-        var list=$('<div style="display:grid;gap:6px"></div>')
-        list.append($('<div></div>').text("Type: Trial"))
-        list.append($('<div></div>').text("License expiration in 90 days."))
-        list.append($('<div></div>').text("Features: "+feats.join(", ")))
-        var wrap=$('<div style="display:grid;gap:12px"></div>')
-        wrap.append($('<div style="font-weight:600"></div>').text("Downloading…"))
-        wrap.append(list)
-        var close=$('<button class="btn ghost" type="button">Close</button>').on("click",function(){license_hide_modal()})
-        var ok=$('<button class="btn secondary" type="button">OK</button>').on("click",function(){license_hide_modal()})
-        var actions=$('<div class="actions-row"></div>').append(close).append(ok)
-        license_show_modal("Message",wrap,actions);return true
-      }else{
-        var items=[]
-        $(".feat-row").each(function(){
-          var cb=$(this).find(".gen-feature")
-          if(cb.is(":checked")){
-            var name=cb.val()
-            var days=$(this).find(".feat-days").val()
-            items.push(name+" ("+days+" days)")
+    /**
+     * Return grade list for the specified type.
+     * @param {string} type
+     * @returns {{code: string, min: number, max: number, insured: number}[]}
+     */
+    const getGradeData = (type) => {
+      const list = state.gradeData?.[type] || [];
+      if (list.length) {
+        return list;
+      }
+      const prefix = type === "health" ? "H" : "L";
+      const versionCode = state.gradeVersion?.[type]?.activeCode || "";
+      return gradeTable.map((item, index) => ({
+        code: type === "labor" ? item.code : `${prefix}${padNumber(index + 1, 2)}`,
+        min: item.min,
+        max: item.max,
+        insured: item.insured,
+        versionCode
+      }));
+    };
+
+    /**
+     * Build the next grade code based on existing data.
+     * @param {string} type
+     * @returns {string}
+     */
+    const getNextGradeCode = (type) => {
+      const prefix = type === "health" ? "H" : "L";
+      const grades = getGradeData(type);
+      const maxValue = grades.reduce((max, item) => {
+        const numeric = Number(item.code.replace(prefix, ""));
+        return Number.isNaN(numeric) ? max : Math.max(max, numeric);
+      }, 0);
+      return `${prefix}${padNumber(maxValue + 1, 2)}`;
+    };
+
+    /**
+     * Get insured salary based on grade ranges.
+     * @param {number} salaryBasis
+     * @returns {{insuredSalary: number, gradeCode: string}}
+     */
+    const getInsuredSalary = (salaryBasis) => {
+      const gradeList = getGradeData("labor");
+      const versionData = state.gradeVersion?.labor;
+      const activeVersion = versionData?.versions?.find((item) => item.code === versionData.activeCode && item.status === "啟用");
+      const activeGrades = activeVersion ? gradeList.filter((item) => item.versionCode === activeVersion.code) : gradeList;
+      const grade = activeGrades.find((item) => salaryBasis >= item.min && salaryBasis <= item.max);
+      if (grade) {
+        return { insuredSalary: grade.insured, gradeCode: grade.code };
+      }
+      const last = activeGrades[activeGrades.length - 1] || gradeList[gradeList.length - 1] || gradeTable[gradeTable.length - 1];
+      return { insuredSalary: last.insured, gradeCode: last.code };
+    };
+
+    const calculatePayroll = (employee, monthLabel) => {
+      const allowancesTotal = employee.allowances.meal + employee.allowances.professional + employee.allowances.transport;
+      const overtimeHours = randomInt(0, 16);
+      const hourlyRate = employee.baseSalary / 30 / 8;
+      const overtimePay = Math.round((Math.min(overtimeHours, 2) * 1.34 + Math.max(0, overtimeHours - 2) * 1.67) * hourlyRate);
+      const grossSalary = employee.baseSalary + allowancesTotal + overtimePay;
+      const insuredBase = employee.baseSalary + allowancesTotal;
+      const { insuredSalary, gradeCode } = getInsuredSalary(insuredBase);
+      const laborPremiumTotal = Math.round(insuredSalary * rules.laborRate);
+      const laborEmployee = Math.round(laborPremiumTotal * rules.laborShare.employee);
+      const dependents = Math.min(employee.dependentsCount, rules.maxDependents);
+      const healthMultiplier = 1 + dependents;
+      const healthPremiumTotal = Math.round(insuredSalary * rules.healthRate * healthMultiplier);
+      const healthEmployee = Math.round(healthPremiumTotal * rules.healthShare.employee);
+      const netSalary = grossSalary - laborEmployee - healthEmployee;
+      return {
+        payrollId: `P${monthLabel.replace("-", "")}-${employee.employeeId}`,
+        employeeName: employee.chineseName,
+        employeeId: employee.employeeId,
+        grossSalary,
+        insuredSalary,
+        gradeCode,
+        laborEmployee,
+        healthEmployee,
+        netSalary,
+        overtimeHours,
+        allowancesTotal,
+        department: employee.departmentName,
+        status: Math.random() > 0.15 ? "已結算" : "待結算"
+      };
+    };
+
+    const generateInsuranceVersions = () => [
+      { type: "勞保", code: "L2024-01", effectiveDate: "2024-01-01", status: "啟用" },
+      { type: "健保", code: "H2024-01", effectiveDate: "2024-01-01", status: "啟用" }
+    ];
+
+    const generateInsuranceRates = () => [
+      { type: "勞保", rate: "12%", employee: "20%", employer: "70%", government: "10%" },
+      { type: "健保", rate: "5.17%", employee: "30%", employer: "60%", government: "10%" }
+    ];
+
+    const generateReports = (employees) => {
+      const now = dayjs();
+      return [
+        { reportId: `RPT-${now.format("YYYYMM")}-SUM`, type: "薪資總表", format: "CSV", createdAt: now.subtract(1, "day").format("YYYY-MM-DD HH:mm"), status: "已完成" },
+        { reportId: `RPT-${now.format("YYYYMM")}-PS-${employees[0].employeeId}`, type: "個人薪資單", format: "PDF", createdAt: now.subtract(2, "hour").format("YYYY-MM-DD HH:mm"), status: "已完成" }
+      ];
+    };
+
+    const generateMonthlyHistory = (months, baseGross, baseDeduction) => {
+      const history = [];
+      for (let i = months - 1; i >= 0; i -= 1) {
+        const month = dayjs().subtract(i, "month").format("YYYY-MM");
+        const grossFactor = 0.92 + Math.random() * 0.16;
+        const deductionFactor = 0.92 + Math.random() * 0.16;
+        const grossTotal = Math.round(baseGross * grossFactor);
+        const deductionTotal = Math.round(baseDeduction * deductionFactor);
+        const netTotal = Math.max(0, grossTotal - deductionTotal);
+        history.push({ month, grossTotal, deductionTotal, netTotal });
+      }
+      return history;
+    };
+
+    const updateMonthlyHistory = () => {
+      const baseGross = state.payrolls.reduce((sum, item) => sum + item.grossSalary, 0);
+      const baseDeduction = state.payrolls.reduce((sum, item) => sum + item.laborEmployee + item.healthEmployee, 0);
+      const months = state.historyRange;
+      state.monthlyHistory = generateMonthlyHistory(months, baseGross || 1, baseDeduction || 1);
+    };
+
+    const generateActivities = () => {
+      const now = dayjs();
+      return [
+        { text: "完成 2024-09 薪資結算", time: now.subtract(2, "hour").format("MM/DD HH:mm") },
+        { text: "更新健保版本 H2024-01", time: now.subtract(5, "hour").format("MM/DD HH:mm") },
+        { text: "新增員工資料：專案助理", time: now.subtract(1, "day").format("MM/DD HH:mm") }
+      ];
+    };
+
+    const renderSummary = () => {
+      const totalEmployees = state.employees.length;
+      const totalGross = state.payrolls.reduce((sum, item) => sum + item.grossSalary, 0);
+      const totalNet = state.payrolls.reduce((sum, item) => sum + item.netSalary, 0);
+      const laborTotal = state.payrolls.reduce((sum, item) => sum + item.laborEmployee, 0);
+      const healthTotal = state.payrolls.reduce((sum, item) => sum + item.healthEmployee, 0);
+      const summaryCards = document.getElementById("summaryCards");
+      summaryCards.innerHTML = `
+        <div class="stat-card">
+          <div class="stat-card__label">本月在職人數</div>
+          <div class="stat-card__value">${formatter.format(totalEmployees)} 人</div>
+          <div class="stat-card__note">符合最低工資範圍</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__label">本月應發總額</div>
+          <div class="stat-card__value">${currency.format(totalGross)}</div>
+          <div class="stat-card__note">含本薪 + 津貼 + 加班</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__label">本月實領總額</div>
+          <div class="stat-card__value">${currency.format(totalNet)}</div>
+          <div class="stat-card__note">扣除勞保/健保</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__label">保險扣款合計</div>
+          <div class="stat-card__value">${currency.format(laborTotal + healthTotal)}</div>
+          <div class="stat-card__note">僅計員工負擔額</div>
+        </div>
+      `;
+
+      document.getElementById("overviewCards").innerHTML = `
+        <div class="card">
+          <div class="card__title">薪資結算完成率</div>
+          <div class="card__body">本月已結算 ${state.payrolls.filter((item) => item.status === "已結算").length} 筆，待結算 ${state.payrolls.filter((item) => item.status === "待結算").length} 筆。</div>
+        </div>
+        <div class="card">
+          <div class="card__title">勞保與健保扣款</div>
+          <div class="card__body">勞保扣款 ${currency.format(laborTotal)}，健保扣款 ${currency.format(healthTotal)}，符合分攤比例。</div>
+        </div>
+        <div class="card">
+          <div class="card__title">勞退提繳</div>
+          <div class="card__body">雇主提繳預估 ${currency.format(Math.round(totalGross * rules.pensionEmployerRate))}，不影響員工實領。</div>
+        </div>
+      `;
+
+      document.getElementById("overviewChips").innerHTML = `
+        <span class="chip">最低工資 ${currency.format(rules.minWage)}</span>
+        <span class="chip">勞保費率 ${rules.laborRate * 100}%</span>
+        <span class="chip">健保費率 ${rules.healthRate * 100}%</span>
+      `;
+
+      const costSummary = document.getElementById("costSummary");
+      costSummary.innerHTML = `
+        <p>勞保與健保均依投保薪資級距計算，員工負擔額已自薪資扣除。</p>
+        <p>勞退提繳採雇主 6% 計算，費用將列入雇主成本。</p>
+      `;
+    };
+
+    const renderEmployees = () => {
+      const rows = state.employees
+        .map((employee) => {
+          const nationalityLabel = employee.nationalityCode === "1" ? "本國" : "外國";
+          return `
+            <tr>
+              <td>${employee.employeeId}</td>
+              <td>${employee.chineseName}</td>
+              <td>${employee.englishName}</td>
+              <td>${employee.departmentCode} ${employee.departmentName}</td>
+              <td>${employee.jobTitleInternal}</td>
+              <td>${employee.jobLevel}</td>
+              <td>${nationalityLabel}</td>
+              <td>${employee.employmentTypeLabel}</td>
+              <td><span class="badge ${employee.employmentStatus === "在職" ? "badge--active" : "badge--warning"}">${employee.employmentStatus}</span></td>
+              <td>${employee.hireDate}</td>
+              <td>
+                <button
+                  class="btn btn--ghost"
+                  data-action="view-employee"
+                  data-employee-id="${employee.employeeId}"
+                  data-employee-name="${employee.chineseName}"
+                >查看</button>
+                <button
+                  class="btn btn--ghost"
+                  data-action="edit-employee"
+                  data-employee-id="${employee.employeeId}"
+                  data-employee-name="${employee.chineseName}"
+                >編輯</button>
+              </td>
+            </tr>
+          `;
+        })
+        .join("");
+      document.getElementById("employeeTable").innerHTML = rows;
+    };
+
+    const renderEmployeePreview = (employee, note) => {
+      const preview = document.getElementById("employeePreview");
+      if (!preview) {
+        return;
+      }
+      if (!employee) {
+        preview.innerHTML = `
+          <div class="card__title">員工資料摘要</div>
+          <div class="card__body">點選「查看」或「新增員工」以顯示資料摘要。</div>
+        `;
+        return;
+      }
+      const allowancesTotal = employee.allowances.meal + employee.allowances.professional + employee.allowances.transport;
+      const insuredBasis = employee.baseSalary + allowancesTotal;
+      const insuredInfo = getInsuredSalary(insuredBasis);
+      const nationalityLabel = employee.nationalityCode === "1" ? "本國" : "外國";
+      preview.innerHTML = `
+        <div class="card__title">員工資料摘要</div>
+        <div class="card__body">
+          <div>員工：${employee.chineseName} / ${employee.englishName} (${employee.employeeId})</div>
+          <div>身分證字號：${employee.idNumber} ・ 性別：${employee.gender} ・ 年齡：${employee.age}</div>
+          <div>生日：${employee.birthYear}-${employee.birthMonth}-${employee.birthDay}</div>
+          <div>部門：${employee.departmentCode} ${employee.departmentName} ・ 職等：${employee.jobLevel}</div>
+          <div>對內職稱：${employee.jobTitleInternal} ・ 對外職稱：${employee.jobTitleExternal}</div>
+          <div>國別：${nationalityLabel} ・ 身分別：${employee.employmentTypeLabel}</div>
+          <div>到職日：${employee.hireDate} ・ 試用期：${employee.probationStart} ～ ${employee.probationEnd}</div>
+          <div>薪資結構：本薪 ${currency.format(employee.baseSalary)} / 津貼 ${currency.format(allowancesTotal)}</div>
+          <div>投保薪資級距：${insuredInfo.gradeCode}（${currency.format(insuredInfo.insuredSalary)}）</div>
+          <div>眷屬數：${Math.min(employee.dependentsCount, rules.maxDependents)} 人</div>
+          <div class="list__meta">${note || "資料供流程參考，實際依申報資料為準。"}</div>
+        </div>
+      `;
+    };
+
+    /**
+     * Normalize input to digits only.
+     * @param {string} value
+     * @returns {string}
+     */
+    const normalizeDigits = (value) => String(value || "").replace(/\D/g, "");
+
+    /**
+     * Pad numeric string to the target length with leading zeros.
+     * @param {string} value
+     * @param {number} length
+     * @returns {string}
+     */
+    const padDigits = (value, length) => {
+      const digits = normalizeDigits(value);
+      if (!digits) {
+        return "";
+      }
+      if (digits.length >= length) {
+        return digits.slice(0, length);
+      }
+      return digits.padStart(length, "0");
+    };
+
+    /**
+     * Build a Dayjs date from separate year/month/day strings.
+     * @param {string} year
+     * @param {string} month
+     * @param {string} day
+     * @returns {object|null}
+     */
+    const buildDateFromParts = (year, month, day) => {
+      if (!year || !month || !day) {
+        return null;
+      }
+      const date = dayjs(`${year}-${month}-${day}`);
+      return date.isValid() ? date : null;
+    };
+
+    /**
+     * Update derived form fields such as age, tenure, and probation dates.
+     * @returns {void}
+     */
+    const updateEmployeeCreateDerivedFields = () => {
+      const birthYear = document.getElementById("birthYearInput")?.value.trim();
+      const birthMonth = document.getElementById("birthMonthInput")?.value.trim();
+      const birthDay = document.getElementById("birthDayInput")?.value.trim();
+      const hireYear = document.getElementById("hireYearInput")?.value.trim();
+      const hireMonth = document.getElementById("hireMonthInput")?.value.trim();
+      const hireDay = document.getElementById("hireDayInput")?.value.trim();
+      const leaveYear = document.getElementById("leaveYearInput")?.value.trim();
+      const leaveMonth = document.getElementById("leaveMonthInput")?.value.trim();
+      const leaveDay = document.getElementById("leaveDayInput")?.value.trim();
+
+      const birthDate = buildDateFromParts(birthYear, birthMonth, birthDay);
+      const hireDate = buildDateFromParts(hireYear, hireMonth, hireDay);
+      const leaveDate = leaveYear && leaveMonth && leaveDay ? buildDateFromParts(leaveYear, leaveMonth, leaveDay) : null;
+
+      const ageInput = document.getElementById("ageInput");
+      if (ageInput) {
+        ageInput.value = birthDate ? String(dayjs().diff(birthDate, "year")) : "";
+      }
+      const tenureInput = document.getElementById("tenureInput");
+      if (tenureInput) {
+        tenureInput.value = hireDate ? String(Math.max(0, (leaveDate || dayjs()).diff(hireDate, "year"))) : "";
+      }
+      const probationStartInput = document.getElementById("probationStartInput");
+      const probationEndInput = document.getElementById("probationEndInput");
+      if (hireDate && probationStartInput && probationEndInput) {
+        const start = hireDate.format("YYYY-MM-DD");
+        const end = hireDate.add(3, "month").subtract(1, "day").format("YYYY-MM-DD");
+        probationStartInput.value = start.replaceAll("-", "");
+        probationEndInput.value = end.replaceAll("-", "");
+      } else if (probationStartInput && probationEndInput) {
+        probationStartInput.value = "";
+        probationEndInput.value = "";
+      }
+    };
+
+    /**
+     * Bind input handlers for the employee create/edit form.
+     * @returns {void}
+     */
+    const bindEmployeeCreateFormHandlers = () => {
+      const form = document.getElementById("employeeCreateFormFields");
+      if (!form) {
+        return;
+      }
+      form.addEventListener("input", () => {
+        updateEmployeeCreateDerivedFields();
+      });
+      form.querySelectorAll("[data-pad-length]").forEach((input) => {
+        input.addEventListener("blur", () => {
+          const length = Number(input.dataset.padLength);
+          if (!length) {
+            return;
           }
-        })
-        if(items.length===0){license_alert("Select at least one feature");return false}
-        var list=$('<div style="display:grid;gap:6px"></div>')
-        list.append($('<div></div>').text("Type: Bonus"))
-        list.append($('<div></div>').text("Features: "+items.join(", ")))
-        var wrap=$('<div style="display:grid;gap:12px"></div>')
-        wrap.append($('<div style="font-weight:600"></div>').text("Downloading…"))
-        wrap.append(list)
-        var close=$('<button class="btn ghost" type="button">Close</button>').on("click",function(){license_hide_modal()})
-        var ok=$('<button class="btn secondary" type="button">OK</button>').on("click",function(){license_hide_modal()})
-        var actions=$('<div class="actions-row"></div>').append(close).append(ok)
-        license_show_modal("Message",wrap,actions);return true
+          const padded = padDigits(input.value, length);
+          input.value = padded;
+        });
+      });
+      form.querySelectorAll("[data-uppercase]").forEach((input) => {
+        input.addEventListener("blur", () => {
+          input.value = input.value.toUpperCase();
+        });
+      });
+      updateEmployeeCreateDerivedFields();
+    };
+
+    /**
+     * Collect and validate employee form data.
+     * @param {object|null} baseEmployee
+     * @returns {object|null}
+     */
+    const collectEmployeeFormData = (baseEmployee = null) => {
+      const form = document.getElementById("employeeCreateFormFields");
+      if (!form) {
+        return null;
       }
-    }
+      form.querySelectorAll("[data-pad-length]").forEach((input) => {
+        const length = Number(input.dataset.padLength);
+        if (length) {
+          input.value = padDigits(input.value, length);
+        }
+      });
+      form.querySelectorAll("[data-uppercase]").forEach((input) => {
+        input.value = input.value.toUpperCase();
+      });
+      updateEmployeeCreateDerivedFields();
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return null;
+      }
 
-    function license_scan_delete_row(btn){
-      var tr=$(btn).closest("tr"),id=tr.children().eq(0).text()
-      var msg=$('<div></div>').text("Are you sure you want to delete "+id+" ?")
-      var cancel=$('<button class="btn ghost" type="button">Cancel</button>')
-      var ok=$('<button class="btn warn" type="button">Delete</button>')
-      cancel.on("click",function(){license_hide_modal()})
-      ok.on("click",function(){tr.remove();license_hide_modal()})
-      var actions=$('<div class="actions-row"></div>').append(cancel).append(ok)
-      license_show_modal("Confirm Deletion",msg,actions);return true
-    }
+      const getValue = (id) => document.getElementById(id)?.value.trim() || "";
+      const birthYear = getValue("birthYearInput");
+      const birthMonth = getValue("birthMonthInput");
+      const birthDay = getValue("birthDayInput");
+      const hireYear = getValue("hireYearInput");
+      const hireMonth = getValue("hireMonthInput");
+      const hireDay = getValue("hireDayInput");
+      const leaveYear = getValue("leaveYearInput");
+      const leaveMonth = getValue("leaveMonthInput");
+      const leaveDay = getValue("leaveDayInput");
+      const leaveParts = [leaveYear, leaveMonth, leaveDay].filter(Boolean).length;
+      if (leaveParts > 0 && leaveParts < 3) {
+        showToast("離職日期需填寫完整年月日");
+        return null;
+      }
 
-    function license_alert(text){
-      var msg=$('<div></div>').text(text)
-      var close=$('<button class="btn ghost" type="button">Close</button>').on("click",function(){license_hide_modal()})
-      var ok=$('<button class="btn secondary" type="button">OK</button>').on("click",function(){license_hide_modal()})
-      var actions=$('<div class="actions-row"></div>').append(close).append(ok)
-      license_show_modal("Alert",msg,actions);return true
-    }
+      const birthDate = buildDateFromParts(birthYear, birthMonth, birthDay);
+      if (!birthDate) {
+        showToast("生日日期格式錯誤");
+        return null;
+      }
+      const hireDate = buildDateFromParts(hireYear, hireMonth, hireDay);
+      if (!hireDate) {
+        showToast("到職日期格式錯誤");
+        return null;
+      }
+      const leaveDate = leaveParts === 3 ? buildDateFromParts(leaveYear, leaveMonth, leaveDay) : null;
+      if (leaveParts === 3 && !leaveDate) {
+        showToast("離職日期格式錯誤");
+        return null;
+      }
+      if (leaveDate && hireDate && leaveDate.isBefore(hireDate)) {
+        showToast("離職日不可早於到職日");
+        return null;
+      }
 
-    function license_show_modal(title,content,actions){
-      $("#modal_title").text(title)
-      $("#modal_msg").empty().append(content)
-      $("#modal_actions").empty().append(actions)
-      $("#modal_mask").css("display","flex");return true
-    }
-    function license_hide_modal(){
-      $("#modal_mask").css("display","none")
-      $("#modal_title").text("");$("#modal_msg").empty();$("#modal_actions").empty();return true
-    }
-    $(function(){license_init()})
+      const employeeId = getValue("employeeIdInput");
+      const chineseName = getValue("chineseNameInput");
+      const englishName = getValue("englishNameInput");
+      const idNumber = getValue("idNumberInput");
+      const gender = getValue("genderSelect");
+      const nationalityCode = getValue("nationalitySelect");
+      const employmentTypeCode = getValue("employmentTypeSelect");
+      const employmentTypeLabel = employmentTypeCode === "1" ? "月薪" : "時薪";
+      const mobile = getValue("mobileInput");
+      const phone = getValue("phoneInput");
+      const departmentCode = getValue("departmentCodeInput");
+      const departmentName = getValue("departmentNameInput");
+      const jobTitleExternal = getValue("jobTitleExternalInput");
+      const jobTitleInternal = getValue("jobTitleInternalInput");
+      const jobLevel = getValue("jobLevelSelect");
+      const education = getValue("educationInput");
+      const school = getValue("schoolInput");
+      const major = getValue("majorInput");
+      const badgeCardNumber = getValue("badgeCardInput");
+      const keyAccess = getValue("keySelect");
+      const securityAccess = getValue("securitySelect");
+      const bankCode = getValue("bankCodeInput");
+      const branchCode = getValue("branchCodeInput");
+      const account = getValue("accountInput");
+      const note = getValue("noteInput");
+
+      const age = String(dayjs().diff(birthDate, "year"));
+      const tenureYears = String(Math.max(0, (leaveDate || dayjs()).diff(hireDate, "year")));
+      const probationStart = hireDate.format("YYYY-MM-DD");
+      const probationEnd = hireDate.add(3, "month").subtract(1, "day").format("YYYY-MM-DD");
+      const employmentStatus = leaveDate ? "離職" : "在職";
+
+      const safeBase = baseEmployee || state.pendingEmployee || createEmployee(state.employees.length);
+      return {
+        employeeId,
+        chineseName,
+        englishName,
+        idNumber,
+        birthYear,
+        birthMonth,
+        birthDay,
+        age,
+        gender,
+        mobile,
+        phone,
+        departmentCode,
+        departmentName,
+        jobTitleExternal,
+        jobTitleInternal,
+        jobLevel,
+        note,
+        education,
+        school,
+        major,
+        hireYear,
+        hireMonth,
+        hireDay,
+        tenureYears,
+        leaveYear: leaveDate ? leaveYear : "",
+        leaveMonth: leaveDate ? leaveMonth : "",
+        leaveDay: leaveDate ? leaveDay : "",
+        badgeCardNumber,
+        keyAccess,
+        securityAccess,
+        bankCode,
+        branchCode,
+        account,
+        probationStart,
+        probationEnd,
+        nationalityCode,
+        employmentTypeCode,
+        employmentTypeLabel,
+        baseSalary: safeBase.baseSalary,
+        allowances: safeBase.allowances,
+        dependentsCount: safeBase.dependentsCount,
+        employmentStatus,
+        hireDate: hireDate.format("YYYY-MM-DD"),
+        leaveDate: leaveDate ? leaveDate.format("YYYY-MM-DD") : "",
+        department: departmentName
+      };
+    };
+
+    /**
+     * Render the employee create/edit form.
+     * @param {object|null} employee
+     * @returns {void}
+     */
+    const renderEmployeeCreate = (employee) => {
+      const form = document.getElementById("employeeCreateForm");
+      if (!form) {
+        return;
+      }
+      const isEditMode = state.employeeFormMode === "edit";
+      const cardTitle = isEditMode ? "員工資料編輯" : "員工新增申請表";
+      if (!employee) {
+        const emptyMessage = isEditMode ? "尚未載入可編輯的員工資料。" : "尚未產生待新增的員工資料。";
+        form.innerHTML = `
+          <div class="card__title">${cardTitle}</div>
+          <div class="card__body">${emptyMessage}</div>
+        `;
+        return;
+      }
+      const nationalityCode = employee.nationalityCode || "1";
+      const employmentTypeCode = employee.employmentTypeCode || "1";
+      const gender = employee.gender || "M";
+      const jobLevel = employee.jobLevel || "1";
+      const probationStartCompact = employee.probationStart ? employee.probationStart.replaceAll("-", "") : "";
+      const probationEndCompact = employee.probationEnd ? employee.probationEnd.replaceAll("-", "") : "";
+      const departmentCodeOptions = departments
+        .map((dept) => `<option value="${dept.code}">${dept.name}</option>`)
+        .join("");
+      const departmentNameOptions = departments.map((dept) => `<option value="${dept.name}"></option>`).join("");
+      const jobTitleExternalOptions = jobTitlesExternal.map((title) => `<option value="${title}"></option>`).join("");
+      const jobTitleInternalOptions = jobTitlesInternal.map((title) => `<option value="${title}"></option>`).join("");
+      const educationOptions = educations.map((item) => `<option value="${item}"></option>`).join("");
+      const schoolOptions = schools.map((item) => `<option value="${item}"></option>`).join("");
+      const majorOptions = majors.map((item) => `<option value="${item}"></option>`).join("");
+      const jobLevelOptions = Array.from({ length: 13 }, (_, index) => {
+        const value = String(index + 1);
+        return `<option value="${value}" ${value === jobLevel ? "selected" : ""}>${value}</option>`;
+      }).join("");
+
+      form.innerHTML = `
+        <div class="card__title">${cardTitle}</div>
+        <form class="employee-form" id="employeeCreateFormFields">
+          <div class="form-section">
+            <div class="form-section__title">基本資料</div>
+            <div class="form-grid">
+              <label class="form-field">
+                <span class="form-label">員工編號</span>
+                <input
+                  class="form-input"
+                  id="employeeIdInput"
+                  type="text"
+                  inputmode="numeric"
+                  maxlength="5"
+                  pattern="\\d{5}"
+                  data-pad-length="5"
+                  value="${employee.employeeId || ""}"
+                  required
+                />
+                <span class="form-hint">5 碼，不足補 0</span>
+              </label>
+              <label class="form-field">
+                <span class="form-label">中文名字</span>
+                <input class="form-input" id="chineseNameInput" type="text" maxlength="12" value="${employee.chineseName || ""}" required />
+                <span class="form-hint">文字 12 字元</span>
+              </label>
+              <label class="form-field">
+                <span class="form-label">英文名字</span>
+                <input class="form-input" id="englishNameInput" type="text" maxlength="20" value="${employee.englishName || ""}" required />
+                <span class="form-hint">文字 20 字元</span>
+              </label>
+              <label class="form-field">
+                <span class="form-label">身分證字號</span>
+                <input
+                  class="form-input form-input--uppercase"
+                  id="idNumberInput"
+                  type="text"
+                  maxlength="10"
+                  pattern="[A-Z][0-9]{9}"
+                  data-uppercase
+                  value="${employee.idNumber || ""}"
+                  required
+                />
+                <span class="form-hint">1 英文 + 9 數字</span>
+              </label>
+              <label class="form-field">
+                <span class="form-label">性別</span>
+                <select class="form-input" id="genderSelect" required>
+                  <option value="M" ${gender === "M" ? "selected" : ""}>M</option>
+                  <option value="F" ${gender === "F" ? "selected" : ""}>F</option>
+                </select>
+                <span class="form-hint">M / F</span>
+              </label>
+              <label class="form-field">
+                <span class="form-label">國別</span>
+                <select class="form-input" id="nationalitySelect" required>
+                  <option value="1" ${nationalityCode === "1" ? "selected" : ""}>本國人</option>
+                  <option value="2" ${nationalityCode === "2" ? "selected" : ""}>外國人</option>
+                </select>
+                <span class="form-hint">本國人 / 外國人</span>
+              </label>
+              <label class="form-field">
+                <span class="form-label">身分別</span>
+                <select class="form-input" id="employmentTypeSelect" required>
+                  <option value="1" ${employmentTypeCode === "1" ? "selected" : ""}>月薪</option>
+                  <option value="2" ${employmentTypeCode === "2" ? "selected" : ""}>時薪</option>
+                </select>
+                <span class="form-hint">月薪 / 時薪</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section__title">生日與年齡</div>
+            <div class="form-grid">
+              <label class="form-field">
+                <span class="form-label">生日年</span>
+                <input class="form-input" id="birthYearInput" type="text" inputmode="numeric" maxlength="4" pattern="\\d{4}" value="${employee.birthYear || ""}" required />
+                <span class="form-hint">西元年 4 碼</span>
+              </label>
+              <label class="form-field">
+                <span class="form-label">生日月</span>
+                <input
+                  class="form-input"
+                  id="birthMonthInput"
+                  type="text"
+                  inputmode="numeric"
+                  maxlength="2"
+                  pattern="(0[1-9]|1[0-2])"
+                  data-pad-length="2"
+                  value="${employee.birthMonth || ""}"
+                  required
+                />
+                <span class="form-hint">2 碼</span>
+              </label>
+              <label class="form-field">
+                <span class="form-label">生日日</span>
+                <input
+                  class="form-input"
+                  id="birthDayInput"
+                  type="text"
+                  inputmode="numeric"
+                  maxlength="2"
+                  pattern="(0[1-9]|[12][0-9]|3[01])"
+                  data-pad-length="2"
+                  value="${employee.birthDay || ""}"
+                  required
+                />
+                <span class="form-hint">2 碼</span>
+              </label>
+              <label class="form-field">
+                <span class="form-label">年齡</span>
+                <input class="form-input" id="ageInput" type="text" value="${employee.age || ""}" readonly />
+                <span class="form-hint">系統計算</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section__title">聯絡資訊</div>
+            <div class="form-grid">
+              <label class="form-field">
+                <span class="form-label">手機號碼</span>
+                <input
+                  class="form-input"
+                  id="mobileInput"
+                  type="text"
+                  inputmode="numeric"
+                  maxlength="10"
+                  pattern="\\d{10}"
+                  value="${employee.mobile || ""}"
+                  required
+                />
+                <span class="form-hint">10 碼</span>
+              </label>
+              <label class="form-field">
+                <span class="form-label">電話</span>
+                <input
+                  class="form-input"
+                  id="phoneInput"
+                  type="text"
+                  inputmode="numeric"
+                  maxlength="10"
+                  pattern="\\d{10}"
+                  value="${employee.phone || ""}"
+                  required
+                />
+                <span class="form-hint">10 碼</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section__title">職務資訊</div>
+            <div class="form-grid">
+              <label class="form-field">
+                <span class="form-label">部門代碼</span>
+                <input
+                  class="form-input"
+                  id="departmentCodeInput"
+                  type="text"
+                  maxlength="4"
+                  value="${employee.departmentCode || ""}"
+                  list="departmentCodeList"
+                  required
+                />
+                <span class="form-hint">4 碼</span>
+              </label>
+              <label class="form-field">
+                <span class="form-label">部門名稱</span>
+                <input
+                  class="form-input"
+                  id="departmentNameInput"
+                  type="text"
+                  maxlength="40"
+                  value="${employee.departmentName || ""}"
+                  list="departmentNameList"
+                  required
+                />
+                <span class="form-hint">文字 40 字元</span>
+              </label>
+              <label class="form-field">
+                <span class="form-label">對外職稱</span>
+                <input
+                  class="form-input"
+                  id="jobTitleExternalInput"
+                  type="text"
+                  maxlength="20"
+                  value="${employee.jobTitleExternal || ""}"
+                  list="jobTitleExternalList"
+                  required
+                />
+                <span class="form-hint">文字 20 字元</span>
+              </label>
+              <label class="form-field">
+                <span class="form-label">對內職稱</span>
+                <input
+                  class="form-input"
+                  id="jobTitleInternalInput"
+                  type="text"
+                  maxlength="20"
+                  value="${employee.jobTitleInternal || ""}"
+                  list="jobTitleInternalList"
+                  required
+                />
+                <span class="form-hint">文字 20 字元</span>
+              </label>
+              <label class="form-field">
+                <span class="form-label">職等</span>
+                <select class="form-input" id="jobLevelSelect" required>
+                  ${jobLevelOptions}
+                </select>
+                <span class="form-hint">1 至 13</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section__title">學歷資料</div>
+            <div class="form-grid">
+              <label class="form-field">
+                <span class="form-label">學歷</span>
+                <input class="form-input" id="educationInput" type="text" maxlength="6" value="${employee.education || ""}" list="educationList" required />
+                <span class="form-hint">文字 6 字元</span>
+              </label>
+              <label class="form-field">
+                <span class="form-label">學校</span>
+                <input class="form-input" id="schoolInput" type="text" maxlength="12" value="${employee.school || ""}" list="schoolList" required />
+                <span class="form-hint">文字 12 字元</span>
+              </label>
+              <label class="form-field">
+                <span class="form-label">科系</span>
+                <input class="form-input" id="majorInput" type="text" maxlength="12" value="${employee.major || ""}" list="majorList" required />
+                <span class="form-hint">文字 12 字元</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section__title">到離職與試用期</div>
+            <div class="form-grid">
+              <label class="form-field">
+                <span class="form-label">到職年</span>
+                <input class="form-input" id="hireYearInput" type="text" inputmode="numeric" maxlength="4" pattern="\\d{4}" value="${employee.hireYear || ""}" required />
+                <span class="form-hint">西元年 4 碼</span>
+              </label>
+              <label class="form-field">
+                <span class="form-label">到職月</span>
+                <input
+                  class="form-input"
+                  id="hireMonthInput"
+                  type="text"
+                  inputmode="numeric"
+                  maxlength="2"
+                  pattern="(0[1-9]|1[0-2])"
+                  data-pad-length="2"
+                  value="${employee.hireMonth || ""}"
+                  required
+                />
+                <span class="form-hint">2 碼</span>
+              </label>
+              <label class="form-field">
+                <span class="form-label">到職日</span>
+                <input
+                  class="form-input"
+                  id="hireDayInput"
+                  type="text"
+                  inputmode="numeric"
+                  maxlength="2"
+                  pattern="(0[1-9]|[12][0-9]|3[01])"
+                  data-pad-length="2"
+                  value="${employee.hireDay || ""}"
+                  required
+                />
+                <span class="form-hint">2 碼</span>
+              </label>
+              <label class="form-field">
+                <span class="form-label">離職年</span>
+                <input class="form-input" id="leaveYearInput" type="text" inputmode="numeric" maxlength="4" pattern="\\d{4}" value="${employee.leaveYear || ""}" />
+                <span class="form-hint">西元年 4 碼</span>
+              </label>
+              <label class="form-field">
+                <span class="form-label">離職月</span>
+                <input
+                  class="form-input"
+                  id="leaveMonthInput"
+                  type="text"
+                  inputmode="numeric"
+                  maxlength="2"
+                  pattern="(0[1-9]|1[0-2])"
+                  data-pad-length="2"
+                  value="${employee.leaveMonth || ""}"
+                />
+                <span class="form-hint">2 碼</span>
+              </label>
+              <label class="form-field">
+                <span class="form-label">離職日</span>
+                <input
+                  class="form-input"
+                  id="leaveDayInput"
+                  type="text"
+                  inputmode="numeric"
+                  maxlength="2"
+                  pattern="(0[1-9]|[12][0-9]|3[01])"
+                  data-pad-length="2"
+                  value="${employee.leaveDay || ""}"
+                />
+                <span class="form-hint">2 碼</span>
+              </label>
+              <label class="form-field">
+                <span class="form-label">廣盛年資</span>
+                <input class="form-input" id="tenureInput" type="text" value="${employee.tenureYears || ""}" readonly />
+                <span class="form-hint">系統計算</span>
+              </label>
+              <label class="form-field">
+                <span class="form-label">試用起日</span>
+                <input class="form-input" id="probationStartInput" type="text" value="${probationStartCompact}" readonly />
+                <span class="form-hint">到職年月日</span>
+              </label>
+              <label class="form-field">
+                <span class="form-label">試用訖日</span>
+                <input class="form-input" id="probationEndInput" type="text" value="${probationEndCompact}" readonly />
+                <span class="form-hint">試用起日 + 3 個月 - 1 天</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section__title">識別與帳務</div>
+            <div class="form-grid">
+              <label class="form-field">
+                <span class="form-label">識別證卡號</span>
+                <input
+                  class="form-input"
+                  id="badgeCardInput"
+                  type="text"
+                  inputmode="numeric"
+                  maxlength="10"
+                  pattern="\\d{10}"
+                  data-pad-length="10"
+                  value="${employee.badgeCardNumber || ""}"
+                  required
+                />
+                <span class="form-hint">10 碼</span>
+              </label>
+              <label class="form-field">
+                <span class="form-label">Key</span>
+                <select class="form-input" id="keySelect" required>
+                  <option value="Y" ${employee.keyAccess === "Y" ? "selected" : ""}>Y</option>
+                  <option value="N" ${employee.keyAccess === "N" ? "selected" : ""}>N</option>
+                </select>
+                <span class="form-hint">Y / N</span>
+              </label>
+              <label class="form-field">
+                <span class="form-label">保全</span>
+                <select class="form-input" id="securitySelect" required>
+                  <option value="Y" ${employee.securityAccess === "Y" ? "selected" : ""}>Y</option>
+                  <option value="N" ${employee.securityAccess === "N" ? "selected" : ""}>N</option>
+                </select>
+                <span class="form-hint">Y / N</span>
+              </label>
+              <label class="form-field">
+                <span class="form-label">銀行別</span>
+                <input
+                  class="form-input"
+                  id="bankCodeInput"
+                  type="text"
+                  inputmode="numeric"
+                  maxlength="3"
+                  pattern="\\d{3}"
+                  data-pad-length="3"
+                  value="${employee.bankCode || ""}"
+                  required
+                />
+                <span class="form-hint">3 碼</span>
+              </label>
+              <label class="form-field">
+                <span class="form-label">分行別</span>
+                <input
+                  class="form-input"
+                  id="branchCodeInput"
+                  type="text"
+                  inputmode="numeric"
+                  maxlength="7"
+                  pattern="\\d{7}"
+                  data-pad-length="7"
+                  value="${employee.branchCode || ""}"
+                  required
+                />
+                <span class="form-hint">7 碼</span>
+              </label>
+              <label class="form-field">
+                <span class="form-label">帳號</span>
+                <input
+                  class="form-input form-input--align-right"
+                  id="accountInput"
+                  type="text"
+                  inputmode="numeric"
+                  maxlength="14"
+                  pattern="\\d{14}"
+                  data-pad-length="14"
+                  value="${employee.account || ""}"
+                  required
+                />
+                <span class="form-hint">14 碼，不足補 0</span>
+              </label>
+              <label class="form-field">
+                <span class="form-label">備註</span>
+                <textarea class="form-input" id="noteInput" maxlength="60">${employee.note || ""}</textarea>
+                <span class="form-hint">文字 60 字元</span>
+              </label>
+            </div>
+          </div>
+
+          <datalist id="departmentCodeList">${departmentCodeOptions}</datalist>
+          <datalist id="departmentNameList">${departmentNameOptions}</datalist>
+          <datalist id="jobTitleExternalList">${jobTitleExternalOptions}</datalist>
+          <datalist id="jobTitleInternalList">${jobTitleInternalOptions}</datalist>
+          <datalist id="educationList">${educationOptions}</datalist>
+          <datalist id="schoolList">${schoolOptions}</datalist>
+          <datalist id="majorList">${majorOptions}</datalist>
+        </form>
+      `;
+      bindEmployeeCreateFormHandlers();
+    };
+
+    /**
+     * Update employee form header and action button by mode.
+     * @param {string} mode
+     * @param {object|null} employee
+     * @returns {void}
+     */
+    const setEmployeeFormMeta = (mode, employee) => {
+      const title = document.getElementById("employeeFormTitle");
+      const desc = document.getElementById("employeeFormDesc");
+      const submitButton = document.getElementById("submitEmployeeCreate");
+      if (!title || !desc || !submitButton) {
+        return;
+      }
+      if (mode === "edit") {
+        title.textContent = "編輯員工";
+        desc.textContent = `編輯 ${employee?.chineseName || ""} 的員工資料，欄位規範依人事資料結構。`;
+        submitButton.textContent = "儲存變更";
+      } else {
+        title.textContent = "新增員工";
+        desc.textContent = "填寫員工基本資料、職務資訊與帳務資料，欄位規範依人事資料結構。";
+        submitButton.textContent = "送出新增";
+      }
+    };
+
+    const renderEmployeeDetail = (employee) => {
+      const detail = document.getElementById("employeeDetailBody");
+      const payrollCard = document.getElementById("employeeDetailPayroll");
+      if (!detail || !payrollCard) {
+        return;
+      }
+      if (!employee) {
+        detail.innerHTML = `
+          <div class="card__title">員工資料</div>
+          <div class="card__body">尚未選擇員工。</div>
+        `;
+        payrollCard.innerHTML = `
+          <div class="card__title">最新薪資摘要</div>
+          <div class="card__body">尚未載入薪資資訊。</div>
+        `;
+        return;
+      }
+      const allowancesTotal = employee.allowances.meal + employee.allowances.professional + employee.allowances.transport;
+      const insuredBasis = employee.baseSalary + allowancesTotal;
+      const insuredInfo = getInsuredSalary(insuredBasis);
+      const nationalityLabel = employee.nationalityCode === "1" ? "本國" : "外國";
+      detail.innerHTML = `
+        <div class="card__title">員工資料</div>
+        <div class="card__body">
+          <div>員工：${employee.chineseName} / ${employee.englishName} (${employee.employeeId})</div>
+          <div>身分證字號：${employee.idNumber} ・ 性別：${employee.gender} ・ 年齡：${employee.age}</div>
+          <div>生日：${employee.birthYear}-${employee.birthMonth}-${employee.birthDay}</div>
+          <div>手機號碼：${employee.mobile} ・ 電話：${employee.phone}</div>
+          <div>部門：${employee.departmentCode} ${employee.departmentName}</div>
+          <div>對外職稱：${employee.jobTitleExternal} ・ 對內職稱：${employee.jobTitleInternal}</div>
+          <div>職等：${employee.jobLevel} ・ 國別：${nationalityLabel} ・ 身分別：${employee.employmentTypeLabel}</div>
+          <div>學歷：${employee.education} ・ 學校：${employee.school} ・ 科系：${employee.major}</div>
+          <div>在職狀態：${employee.employmentStatus}</div>
+          <div>年資：${employee.tenureYears} 年</div>
+          <div>到職日：${employee.hireDate} ・ 試用起訖：${employee.probationStart} ～ ${employee.probationEnd}</div>
+          <div>離職日：${employee.leaveDate || "—"}</div>
+          <div>本薪：${currency.format(employee.baseSalary)} ・ 津貼合計：${currency.format(allowancesTotal)}</div>
+          <div>投保薪資：${currency.format(insuredInfo.insuredSalary)}（級距 ${insuredInfo.gradeCode}）</div>
+          <div>眷屬數：${Math.min(employee.dependentsCount, rules.maxDependents)} 人</div>
+          <div>識別證卡號：${employee.badgeCardNumber} ・ Key：${employee.keyAccess} ・ 保全：${employee.securityAccess}</div>
+          <div>銀行別：${employee.bankCode} ・ 分行別：${employee.branchCode} ・ 帳號：${employee.account}</div>
+          <div>備註：${employee.note}</div>
+        </div>
+      `;
+
+      const payroll = state.payrolls.find((item) => item.employeeId === employee.employeeId);
+      if (!payroll) {
+        payrollCard.innerHTML = `
+          <div class="card__title">最新薪資摘要</div>
+          <div class="card__body">尚未產生薪資資料。</div>
+        `;
+        return;
+      }
+      payrollCard.innerHTML = `
+        <div class="card__title">最新薪資摘要</div>
+        <div class="card__body">
+          <div>薪資編號：${payroll.payrollId}</div>
+          <div>應發：${currency.format(payroll.grossSalary)}</div>
+          <div>實領：${currency.format(payroll.netSalary)}</div>
+          <div>勞保扣款：${currency.format(payroll.laborEmployee)}</div>
+          <div>健保扣款：${currency.format(payroll.healthEmployee)}</div>
+          <div>狀態：${payroll.status}</div>
+        </div>
+      `;
+    };
+
+    const renderInsurance = () => {
+      document.getElementById("versionTable").innerHTML = state.insuranceVersions
+        .map((item) => `
+          <tr>
+            <td>${item.type}</td>
+            <td>${item.code}</td>
+            <td>${item.effectiveDate}</td>
+            <td><span class="badge badge--active">${item.status}</span></td>
+          </tr>
+        `)
+        .join("");
+
+      const laborGrades = getGradeData("labor");
+      const laborVersion = state.gradeVersion?.labor;
+      const activeLabor = laborVersion?.versions?.find((item) => item.code === laborVersion.activeCode && item.status === "啟用");
+      const displayGrades = activeLabor ? laborGrades.filter((item) => item.versionCode === activeLabor.code) : laborGrades;
+
+      document.getElementById("gradeTable").innerHTML = displayGrades.slice(0, 8)
+        .map((item) => `
+          <tr>
+            <td>${item.code}</td>
+            <td>${currency.format(item.min)} ～ ${currency.format(item.max)}</td>
+            <td>${currency.format(item.insured)}</td>
+          </tr>
+        `)
+        .join("");
+
+      document.getElementById("rateTable").innerHTML = state.insuranceRates
+        .map((item) => `
+          <tr>
+            <td>${item.type}</td>
+            <td>${item.rate}</td>
+            <td>${item.employee}</td>
+            <td>${item.employer}</td>
+            <td>${item.government}</td>
+          </tr>
+        `)
+        .join("");
+    };
+
+    /**
+     * Render grade version list and status for the specified insurance type.
+     * @param {string} type
+     * @returns {void}
+     */
+    const renderGradeVersion = (type) => {
+      const container = document.getElementById(`${type}GradeVersion`);
+      if (!container) {
+        return;
+      }
+      const versionData = state.gradeVersion?.[type] || { activeCode: null, versions: [] };
+      const typeLabel = type === "labor" ? "勞保" : "健保";
+      const activeVersion = versionData.versions.find((item) => item.code === versionData.activeCode);
+      const activeCode = activeVersion ? activeVersion.code : "未啟用";
+      const activeDate = activeVersion ? activeVersion.effectiveDate : "-";
+      const activeStatus = activeVersion ? activeVersion.status : "停用";
+      const activeStatusClass = activeStatus === "啟用" ? "badge--active" : "badge--pending";
+      const rows = versionData.versions.length
+        ? versionData.versions
+          .map((item) => {
+            const statusClass = item.status === "啟用" ? "badge--active" : "badge--pending";
+            const actionLabel = item.status === "啟用" ? "停用版本" : "啟用版本";
+            const actionType = item.status === "啟用" ? "deactivate" : "activate";
+            return `
+              <tr>
+                <td>${item.code}</td>
+                <td>${item.effectiveDate}</td>
+                <td><span class="badge ${statusClass}">${item.status}</span></td>
+                <td>
+                  <button class="btn btn--soft" data-grade-version-action="${actionType}" data-grade-type="${type}" data-grade-code="${item.code}">
+                    ${actionLabel}
+                  </button>
+                </td>
+              </tr>
+            `;
+          })
+          .join("")
+        : `
+          <tr>
+            <td colspan="4">尚未建立版本代碼。</td>
+          </tr>
+        `;
+      container.innerHTML = `
+        <div class="card__title">${typeLabel}級距版本代碼</div>
+        <div class="card__body">
+          <div>${typeLabel}目前版本：${activeCode}</div>
+          <div>生效日：${activeDate}</div>
+          <div>版本狀態：<span class="badge ${activeStatusClass}">${activeStatus}</span></div>
+          <div class="demo__actions grade-version__actions">
+            <button class="btn btn--soft" data-grade-version-action="create" data-grade-type="${type}">新增版本代碼</button>
+          </div>
+          <table class="table grade-version__table">
+            <thead>
+              <tr>
+                <th>版本代碼</th>
+                <th>生效日</th>
+                <th>狀態</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      `;
+    };
+
+    /**
+     * Render grade maintenance table for the specified insurance type.
+     * @param {string} type
+     * @returns {void}
+     */
+    const renderGradeTable = (type) => {
+      const table = document.getElementById(`${type}GradeTable`);
+      if (!table) {
+        return;
+      }
+      table.innerHTML = getGradeData(type)
+        .map((item) => `
+          <tr>
+            <td>${item.code}</td>
+            <td>${item.versionCode || "未指定"}</td>
+            <td>${currency.format(item.min)} ～ ${currency.format(item.max)}</td>
+            <td>${currency.format(item.insured)}</td>
+            <td>
+              <button class="btn btn--ghost" data-grade-action="view" data-grade-type="${type}" data-grade-code="${item.code}">檢視</button>
+              <button class="btn btn--ghost" data-grade-action="edit" data-grade-type="${type}" data-grade-code="${item.code}">修改</button>
+            </td>
+          </tr>
+        `)
+        .join("");
+    };
+
+    /**
+     * Update grade form state for a specific type.
+     * @param {string} type
+     * @param {string} mode
+     * @param {string|null} code
+     * @returns {void}
+     */
+    const setGradeFormState = (type, mode, code = null) => {
+      state.gradeFormState[type] = { mode, code };
+      renderGradeForm(type);
+    };
+
+    /**
+     * Render grade maintenance form in the modal for a specific insurance type.
+     * @param {string} type
+     * @returns {void}
+     */
+    const renderGradeForm = (type) => {
+      const modal = document.getElementById("gradeModal");
+      const container = document.getElementById("gradeModalBody");
+      const titleEl = document.getElementById("gradeModalTitle");
+      if (!modal || !container || !titleEl) {
+        return;
+      }
+      const formState = state.gradeFormState[type] || { mode: "empty", code: null };
+      if (formState.mode === "empty") {
+        modal.classList.remove("modal--open");
+        modal.setAttribute("aria-hidden", "true");
+        modal.removeAttribute("data-grade-type");
+        container.innerHTML = "";
+        return;
+      }
+      const grade = formState.code ? getGradeData(type).find((item) => item.code === formState.code) : null;
+      const isCreate = formState.mode === "create";
+      const isView = formState.mode === "view";
+      const prefix = type === "health" ? "H" : "L";
+      const versionData = state.gradeVersion?.[type] || { activeCode: null, versions: [] };
+      const versionOptions = versionData.versions
+        .map((item) => `<option value="${item.code}">${item.code}（${item.effectiveDate}）</option>`)
+        .join("");
+      const values = grade || {
+        code: getNextGradeCode(type),
+        min: "",
+        max: "",
+        insured: "",
+        versionCode: versionData.activeCode || (versionData.versions[0]?.code || "")
+      };
+      const readonlyAttr = isView ? "readonly" : "";
+      const disabledAttr = isView ? "disabled" : "";
+      const title = isCreate ? "新增級距" : isView ? "級距內容" : "修改級距";
+      const actionLabel = isCreate ? "建立級距" : "儲存變更";
+      const typeLabel = type === "labor" ? "勞保" : "健保";
+
+      titleEl.textContent = `${typeLabel}${title}`;
+      modal.dataset.gradeType = type;
+      modal.classList.add("modal--open");
+      modal.setAttribute("aria-hidden", "false");
+
+      container.innerHTML = `
+        <form class="employee-form">
+          <div>
+            <p class="form-section__title">${typeLabel}級距基本資料</p>
+            <div class="form-grid">
+              <label class="form-field">
+                <span class="form-label">級距代碼</span>
+                <input class="form-input" id="${type}GradeCode" value="${values.code}" ${readonlyAttr} />
+                <span class="form-hint">格式：${prefix}01 ~ ${prefix}99</span>
+              </label>
+              <label class="form-field">
+                <span class="form-label">版本代碼</span>
+                ${
+                  versionOptions
+                    ? `<select class="form-input" id="${type}GradeVersion" ${disabledAttr} required>
+                        ${versionOptions}
+                      </select>`
+                    : `<input class="form-input" id="${type}GradeVersion" value="${values.versionCode}" ${readonlyAttr} />`
+                }
+                <span class="form-hint">對應級距版本代碼</span>
+              </label>
+              <label class="form-field">
+                <span class="form-label">薪資區間下限</span>
+                <input class="form-input" id="${type}GradeMin" type="number" min="0" value="${values.min}" ${readonlyAttr} />
+                <span class="form-hint">不得低於基本工資 ${currency.format(rules.minWage)}</span>
+              </label>
+              <label class="form-field">
+                <span class="form-label">薪資區間上限</span>
+                <input class="form-input" id="${type}GradeMax" type="number" min="0" value="${values.max}" ${readonlyAttr} />
+                <span class="form-hint">上限需大於或等於下限</span>
+              </label>
+              <label class="form-field">
+                <span class="form-label">投保薪資</span>
+                <input class="form-input" id="${type}GradeInsured" type="number" min="0" value="${values.insured}" ${readonlyAttr} />
+                <span class="form-hint">依投保薪資級距規範填寫</span>
+              </label>
+            </div>
+          </div>
+          <div class="demo__actions">
+            ${
+              isView
+                ? `<button class="btn btn--primary" type="button" data-grade-action="edit" data-grade-type="${type}" data-grade-code="${values.code}">修改級距</button>`
+                : `<button class="btn btn--primary" type="button" data-grade-action="save" data-grade-type="${type}">${actionLabel}</button>`
+            }
+            <button class="btn btn--ghost" type="button" data-grade-action="cancel" data-grade-type="${type}">返回清單</button>
+          </div>
+        </form>
+      `;
+      const versionSelect = document.getElementById(`${type}GradeVersion`);
+      if (versionSelect && values.versionCode) {
+        versionSelect.value = values.versionCode;
+      }
+    };
+
+    /**
+     * Save grade form values into the state.
+     * @param {string} type
+     * @returns {void}
+     */
+    const saveGradeForm = (type) => {
+      const formState = state.gradeFormState[type];
+      const codeInput = document.getElementById(`${type}GradeCode`);
+      const versionInput = document.getElementById(`${type}GradeVersion`);
+      const minInput = document.getElementById(`${type}GradeMin`);
+      const maxInput = document.getElementById(`${type}GradeMax`);
+      const insuredInput = document.getElementById(`${type}GradeInsured`);
+      if (!formState || !codeInput || !versionInput || !minInput || !maxInput || !insuredInput) {
+        return;
+      }
+      const code = codeInput.value.trim().toUpperCase();
+      const versionCode = versionInput.value.trim().toUpperCase();
+      const min = Number(minInput.value);
+      const max = Number(maxInput.value);
+      const insured = Number(insuredInput.value);
+      const typeLabel = type === "labor" ? "勞保" : "健保";
+      const versionData = state.gradeVersion?.[type] || { versions: [] };
+
+      if (!code) {
+        showToast("請填寫級距代碼");
+        return;
+      }
+      if (!versionCode) {
+        showToast("請選擇版本代碼");
+        return;
+      }
+      if (!versionData.versions.some((item) => item.code === versionCode)) {
+        showToast("版本代碼不存在");
+        return;
+      }
+      if (Number.isNaN(min) || Number.isNaN(max) || Number.isNaN(insured)) {
+        showToast("請填寫完整的薪資級距數值");
+        return;
+      }
+      if (min < rules.minWage) {
+        showToast(`薪資下限不得低於基本工資 ${currency.format(rules.minWage)}`);
+        return;
+      }
+      if (min > max) {
+        showToast("薪資下限不可高於上限");
+        return;
+      }
+      if (insured < min || insured > max) {
+        showToast("投保薪資需落在薪資區間內");
+        return;
+      }
+
+      const nextGrade = { code, min, max, insured, versionCode };
+      if (formState.mode === "create") {
+        if (state.gradeData[type].some((item) => item.code === code)) {
+          showToast("級距代碼已存在");
+          return;
+        }
+        state.gradeData[type] = [...state.gradeData[type], nextGrade].sort((a, b) => a.min - b.min);
+        setGradeFormState(type, "view", code);
+        setAction(`已新增${typeLabel}級距 ${code}`);
+        logActivity(`新增${typeLabel}級距：${code}`);
+        showToast(`${typeLabel}級距已新增`);
+      } else if (formState.mode === "edit") {
+        if (code !== formState.code && state.gradeData[type].some((item) => item.code === code)) {
+          showToast("級距代碼已存在");
+          return;
+        }
+        state.gradeData[type] = state.gradeData[type]
+          .map((item) => (item.code === formState.code ? nextGrade : item))
+          .sort((a, b) => a.min - b.min);
+        setGradeFormState(type, "view", code);
+        setAction(`已更新${typeLabel}級距 ${code}`);
+        logActivity(`更新${typeLabel}級距：${code}`);
+        showToast(`${typeLabel}級距已更新`);
+      }
+
+      renderGradeTable(type);
+      renderInsurance();
+      updatePayrollAfterGradeChange(`${typeLabel}級距更新後重新計算投保薪資。`);
+    };
+
+    /**
+     * Build the next grade version code.
+     * @param {string} type
+     * @returns {string}
+     */
+    const getNextGradeVersionCode = (type) => {
+      const prefix = type === "labor" ? "LG" : "HG";
+      const versions = state.gradeVersion?.[type]?.versions || [];
+      const currentYear = dayjs().format("YYYY");
+      let maxSeq = 0;
+      versions.forEach((item) => {
+        const match = item.code.match(new RegExp(`^${prefix}(\\d{4})-(\\d{2})$`));
+        if (!match || match[1] !== currentYear) {
+          return;
+        }
+        const seq = Number(match[2]);
+        if (!Number.isNaN(seq)) {
+          maxSeq = Math.max(maxSeq, seq);
+        }
+      });
+      return `${prefix}${currentYear}-${padNumber(maxSeq + 1, 2)}`;
+    };
+
+    /**
+     * Render grade version form modal.
+     * @param {string} type
+     * @returns {void}
+     */
+    const renderGradeVersionForm = (type) => {
+      const modal = document.getElementById("gradeVersionModal");
+      const container = document.getElementById("gradeVersionModalBody");
+      const titleEl = document.getElementById("gradeVersionModalTitle");
+      if (!modal || !container || !titleEl) {
+        return;
+      }
+      const typeLabel = type === "labor" ? "勞保" : "健保";
+      const prefix = type === "labor" ? "LG" : "HG";
+      const defaultCode = getNextGradeVersionCode(type);
+      const defaultDate = dayjs().format("YYYY-MM-DD");
+      titleEl.textContent = `${typeLabel}級距版本代碼`;
+      modal.dataset.gradeType = type;
+      modal.classList.add("modal--open");
+      modal.setAttribute("aria-hidden", "false");
+      container.innerHTML = `
+        <form class="employee-form">
+          <div class="form-grid">
+            <label class="form-field">
+              <span class="form-label">版本代碼</span>
+              <input
+                class="form-input form-input--uppercase"
+                id="${type}GradeVersionCode"
+                type="text"
+                value="${defaultCode}"
+                pattern="${prefix}\\d{4}-\\d{2}"
+                data-uppercase
+                required
+              />
+              <span class="form-hint">格式：${prefix}YYYY-01</span>
+            </label>
+            <label class="form-field">
+              <span class="form-label">生效日</span>
+              <input
+                class="form-input"
+                id="${type}GradeVersionDate"
+                type="text"
+                value="${defaultDate}"
+                pattern="\\d{4}-\\d{2}-\\d{2}"
+                required
+              />
+              <span class="form-hint">格式：YYYY-MM-DD</span>
+            </label>
+          </div>
+          <div class="demo__actions">
+            <button class="btn btn--primary" type="button" data-grade-version-action="save" data-grade-type="${type}">建立版本</button>
+            <button class="btn btn--ghost" type="button" data-grade-version-action="cancel">返回清單</button>
+          </div>
+        </form>
+      `;
+    };
+
+    /**
+     * Close the grade version modal.
+     * @returns {void}
+     */
+    const closeGradeVersionModal = () => {
+      const modal = document.getElementById("gradeVersionModal");
+      const container = document.getElementById("gradeVersionModalBody");
+      if (!modal || !container) {
+        return;
+      }
+      modal.classList.remove("modal--open");
+      modal.setAttribute("aria-hidden", "true");
+      modal.removeAttribute("data-grade-type");
+      container.innerHTML = "";
+    };
+
+    /**
+     * Save grade version form values.
+     * @param {string} type
+     * @returns {void}
+     */
+    const saveGradeVersionForm = (type) => {
+      const codeInput = document.getElementById(`${type}GradeVersionCode`);
+      const dateInput = document.getElementById(`${type}GradeVersionDate`);
+      if (!codeInput || !dateInput) {
+        return;
+      }
+      const code = codeInput.value.trim().toUpperCase();
+      const effectiveDate = dateInput.value.trim();
+      const prefix = type === "labor" ? "LG" : "HG";
+      const pattern = new RegExp(`^${prefix}\\d{4}-\\d{2}$`);
+      const typeLabel = type === "labor" ? "勞保" : "健保";
+
+      if (!pattern.test(code)) {
+        showToast(`版本代碼需為 ${prefix}YYYY-01 格式`);
+        return;
+      }
+      if (!effectiveDate || !dayjs(effectiveDate).isValid()) {
+        showToast("請填寫正確的生效日");
+        return;
+      }
+
+      const versionData = state.gradeVersion?.[type] || { activeCode: null, versions: [] };
+      if (versionData.versions.some((item) => item.code === code)) {
+        showToast("版本代碼已存在");
+        return;
+      }
+
+      const nextVersions = [...versionData.versions, { code, effectiveDate, status: "停用" }]
+        .sort((a, b) => a.effectiveDate.localeCompare(b.effectiveDate));
+      state.gradeVersion[type] = {
+        ...versionData,
+        versions: nextVersions
+      };
+      renderGradeVersion(type);
+      closeGradeVersionModal();
+      setAction(`已新增${typeLabel}級距版本 ${code}`);
+      logActivity(`新增${typeLabel}級距版本：${code}`);
+      showToast(`${typeLabel}級距版本已建立`);
+    };
+
+    const renderInsuranceNotice = (note) => {
+      const notice = document.getElementById("insuranceNotice");
+      if (!notice) {
+        return;
+      }
+      const labor = state.insuranceVersions.find((item) => item.type === "勞保") || { code: "-", effectiveDate: "-" };
+      const health = state.insuranceVersions.find((item) => item.type === "健保") || { code: "-", effectiveDate: "-" };
+      notice.innerHTML = `
+        <div class="card__title">版本狀態</div>
+        <div class="card__body">
+          <div>勞保版本：${labor.code}（${labor.effectiveDate}）</div>
+          <div>健保版本：${health.code}（${health.effectiveDate}）</div>
+          <div class="list__meta">${note || "點選「切換啟用版本」可更新版本資料。"} </div>
+        </div>
+      `;
+    };
+
+    const renderInsuranceDetail = (note) => {
+      const detail = document.getElementById("insuranceDetailBody");
+      const rateDetail = document.getElementById("insuranceDetailRates");
+      if (!detail || !rateDetail) {
+        return;
+      }
+      const snapshot = state.insuranceSnapshots || {
+        before: state.insuranceVersions,
+        after: state.insuranceVersions
+      };
+      const beforeLabor = snapshot.before.find((item) => item.type === "勞保") || { code: "-", effectiveDate: "-" };
+      const beforeHealth = snapshot.before.find((item) => item.type === "健保") || { code: "-", effectiveDate: "-" };
+      const afterLabor = snapshot.after.find((item) => item.type === "勞保") || { code: "-", effectiveDate: "-" };
+      const afterHealth = snapshot.after.find((item) => item.type === "健保") || { code: "-", effectiveDate: "-" };
+
+      detail.innerHTML = `
+        <div class="card__title">版本摘要</div>
+        <div class="card__body">
+          <div>勞保版本：${beforeLabor.code} → ${afterLabor.code}</div>
+          <div>健保版本：${beforeHealth.code} → ${afterHealth.code}</div>
+          <div>生效日：${afterLabor.effectiveDate} / ${afterHealth.effectiveDate}</div>
+          <div class="list__meta">${note || "版本資料供流程參考。"} </div>
+        </div>
+      `;
+
+      rateDetail.innerHTML = `
+        <div class="card__title">費率資訊</div>
+        <div class="card__body">
+          ${state.insuranceRates
+            .map(
+              (rate) =>
+                `<div>${rate.type}：費率 ${rate.rate} / 員工 ${rate.employee} / 雇主 ${rate.employer} / 政府 ${rate.government}</div>`
+            )
+            .join("")}
+          <div class="list__meta">費率依台灣制度規則呈現。</div>
+        </div>
+      `;
+    };
+
+    const renderPayroll = () => {
+      const rows = state.payrolls
+        .map((item) => `
+          <tr>
+            <td>${item.payrollId}</td>
+            <td>${item.employeeName} (${item.employeeId})</td>
+            <td>${currency.format(item.grossSalary)}</td>
+            <td>${currency.format(item.insuredSalary)}<br /><span class="list__meta">級距 ${item.gradeCode}</span></td>
+            <td>${currency.format(item.laborEmployee)}</td>
+            <td>${currency.format(item.healthEmployee)}</td>
+            <td>${currency.format(item.netSalary)}</td>
+            <td><span class="badge ${item.status === "已結算" ? "badge--active" : "badge--pending"}">${item.status}</span></td>
+            <td>
+              <button class="btn btn--ghost" data-action="view-payroll" data-payroll-id="${item.payrollId}">查看</button>
+            </td>
+          </tr>
+        `)
+        .join("");
+      document.getElementById("payrollTable").innerHTML = rows;
+    };
+
+    const renderPayrollNotice = (note) => {
+      const notice = document.getElementById("payrollNotice");
+      if (!notice) {
+        return;
+      }
+      const month = document.getElementById("payrollMonth").value;
+      const totalGross = state.payrolls.reduce((sum, item) => sum + item.grossSalary, 0);
+      const totalNet = state.payrolls.reduce((sum, item) => sum + item.netSalary, 0);
+      const pendingCount = state.payrolls.filter((item) => item.status === "待結算").length;
+      notice.innerHTML = `
+        <div class="card__title">試算結果摘要</div>
+        <div class="card__body">
+          <div>試算月份：${month}</div>
+          <div>應發總額：${currency.format(totalGross)} / 實領總額：${currency.format(totalNet)}</div>
+          <div>待結算筆數：${pendingCount} 筆</div>
+          <div class="list__meta">${note || "點選「執行試算」可重新產生加班與保險扣款。"} </div>
+        </div>
+      `;
+    };
+
+    const renderPayrollDetail = (payroll, note) => {
+      const detail = document.getElementById("payrollDetailBody");
+      const insuranceDetail = document.getElementById("payrollDetailInsurance");
+      if (!detail || !insuranceDetail) {
+        return;
+      }
+      if (!payroll) {
+        detail.innerHTML = `
+          <div class="card__title">薪資明細</div>
+          <div class="card__body">尚未選擇薪資資料。</div>
+        `;
+        insuranceDetail.innerHTML = `
+          <div class="card__title">保險扣款與雇主成本</div>
+          <div class="card__body">尚未載入保險資訊。</div>
+        `;
+        return;
+      }
+      const employee = state.employees.find((item) => item.employeeId === payroll.employeeId);
+      const allowancesTotal = employee ? employee.allowances.meal + employee.allowances.professional + employee.allowances.transport : 0;
+      const overtimePay = Math.max(0, payroll.grossSalary - (employee ? employee.baseSalary : 0) - allowancesTotal);
+      const dependents = employee ? Math.min(employee.dependentsCount, rules.maxDependents) : 0;
+      detail.innerHTML = `
+        <div class="card__title">薪資明細</div>
+        <div class="card__body">
+          <div>薪資編號：${payroll.payrollId}</div>
+          <div>員工：${payroll.employeeName} (${payroll.employeeId})</div>
+          <div>本薪：${employee ? currency.format(employee.baseSalary) : "-"}</div>
+          <div>津貼合計：${currency.format(allowancesTotal)}</div>
+          <div>加班時數：${payroll.overtimeHours} 小時 / 加班費：${currency.format(overtimePay)}</div>
+          <div>應發：${currency.format(payroll.grossSalary)}</div>
+          <div>實領：${currency.format(payroll.netSalary)}</div>
+          <div>狀態：${payroll.status}</div>
+          <div class="list__meta">${note || "試算結果供流程參考。"} </div>
+        </div>
+      `;
+
+      const laborTotal = Math.round(payroll.insuredSalary * rules.laborRate);
+      const laborEmployer = Math.round(laborTotal * rules.laborShare.employer);
+      const healthTotal = Math.round(payroll.insuredSalary * rules.healthRate * (1 + dependents));
+      const healthEmployer = Math.round(healthTotal * rules.healthShare.employer);
+      const pensionEmployer = Math.round(payroll.grossSalary * rules.pensionEmployerRate);
+      insuranceDetail.innerHTML = `
+        <div class="card__title">保險扣款與雇主成本</div>
+        <div class="card__body">
+          <div>投保薪資：${currency.format(payroll.insuredSalary)}（級距 ${payroll.gradeCode}）</div>
+          <div>勞保：員工 ${currency.format(payroll.laborEmployee)} / 雇主 ${currency.format(laborEmployer)}</div>
+          <div>健保：員工 ${currency.format(payroll.healthEmployee)} / 雇主 ${currency.format(healthEmployer)}</div>
+          <div>勞退雇主提繳：${currency.format(pensionEmployer)}</div>
+          <div class="list__meta">眷屬數 ${dependents} 人，健保計算倍數 ${1 + dependents}。</div>
+        </div>
+      `;
+    };
+
+    const renderReports = () => {
+      document.getElementById("reportTable").innerHTML = state.reports
+        .map((report) => `
+          <tr>
+            <td>${report.reportId}</td>
+            <td>${report.type}</td>
+            <td>${report.format}</td>
+            <td>${report.createdAt}</td>
+            <td><span class="badge badge--active">${report.status}</span></td>
+            <td>
+              <button class="btn btn--ghost" data-action="view-report" data-report-id="${report.reportId}">查看</button>
+            </td>
+          </tr>
+        `)
+        .join("");
+    };
+
+    const renderReportNotice = (report, note) => {
+      const notice = document.getElementById("reportNotice");
+      if (!notice) {
+        return;
+      }
+      if (!report) {
+        notice.innerHTML = `
+        <div class="card__title">匯出檔案</div>
+        <div class="card__body">尚未產生報表。</div>
+      `;
+        return;
+      }
+      const ext = report.format.toLowerCase();
+      const fileMonth = dayjs(report.createdAt).format("YYYY-MM");
+      notice.innerHTML = `
+        <div class="card__title">匯出檔案</div>
+        <div class="card__body">
+          <div>最新報表：${report.type}</div>
+          <div>檔案格式：${report.format} / 產生時間：${report.createdAt}</div>
+          <div>檔案路徑：/exports/${fileMonth}/${report.reportId}.${ext}</div>
+          <div class="list__meta">${note || "實際檔案以系統輸出為準。"} </div>
+        </div>
+      `;
+    };
+
+    const renderReportDetail = (report, note) => {
+      const detail = document.getElementById("reportDetailBody");
+      const preview = document.getElementById("reportDetailPreview");
+      if (!detail || !preview) {
+        return;
+      }
+      if (!report) {
+        detail.innerHTML = `
+          <div class="card__title">報表資訊</div>
+          <div class="card__body">尚未選擇報表。</div>
+        `;
+        preview.innerHTML = `
+          <div class="card__title">資料預覽</div>
+          <div class="card__body">尚未載入資料。</div>
+        `;
+        return;
+      }
+      detail.innerHTML = `
+        <div class="card__title">報表資訊</div>
+        <div class="card__body">
+          <div>報表編號：${report.reportId}</div>
+          <div>類型：${report.type}</div>
+          <div>格式：${report.format}</div>
+          <div>產生時間：${report.createdAt}</div>
+          <div>狀態：${report.status}</div>
+          <div class="list__meta">${note || "報表資料供流程參考。"} </div>
+        </div>
+      `;
+
+      if (report.type.includes("薪資總表")) {
+        const rows = state.payrolls.slice(0, 5)
+          .map((item) => `
+            <tr>
+              <td>${item.employeeId}</td>
+              <td>${item.employeeName}</td>
+              <td>${currency.format(item.grossSalary)}</td>
+              <td>${currency.format(item.netSalary)}</td>
+            </tr>
+          `)
+          .join("");
+        preview.innerHTML = `
+          <div class="card__title">資料預覽（前 5 筆）</div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>員工編號</th>
+                <th>姓名</th>
+                <th>應發</th>
+                <th>實領</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        `;
+      } else {
+        const payroll = state.payrolls.find((item) => report.reportId.includes(item.employeeId)) || state.payrolls[0];
+        preview.innerHTML = `
+          <div class="card__title">資料預覽</div>
+          <div class="card__body">
+            <div>員工：${payroll.employeeName} (${payroll.employeeId})</div>
+            <div>應發：${currency.format(payroll.grossSalary)}</div>
+            <div>實領：${currency.format(payroll.netSalary)}</div>
+            <div>勞保扣款：${currency.format(payroll.laborEmployee)}</div>
+            <div>健保扣款：${currency.format(payroll.healthEmployee)}</div>
+          </div>
+        `;
+      }
+    };
+
+    /**
+     * Recalculate payrolls after grade updates.
+     * @param {string} note
+     * @returns {void}
+     */
+    const updatePayrollAfterGradeChange = (note) => {
+      const monthLabel = document.getElementById("payrollMonth").value || dayjs().format("YYYY-MM");
+      state.payrolls = state.employees.map((employee) => calculatePayroll(employee, monthLabel));
+      updateMonthlyHistory();
+      renderPayroll();
+      renderSummary();
+      renderPayrollDetail(state.payrolls[0], note);
+      renderChart();
+    };
+
+    const renderActivities = () => {
+      document.getElementById("activityList").innerHTML = state.activities
+        .map((item) => `
+          <li class="list__item">
+            <div>${item.text}</div>
+            <span class="list__meta">${item.time}</span>
+          </li>
+        `)
+        .join("");
+    };
+
+    const buildChart = (labels, data) => {
+      const canvas = document.getElementById("payrollChart");
+      if (!canvas || !window.Chart) {
+        return;
+      }
+      const styles = getComputedStyle(document.documentElement);
+      const colorGross = styles.getPropertyValue("--chart-gross").trim() || "#2f7f7b";
+      const colorDeduction = styles.getPropertyValue("--chart-deduction").trim() || "#c65c2c";
+      const colorNet = styles.getPropertyValue("--chart-net").trim() || "#2a4a3f";
+      const existingChart = window.payrollChartInstance || Chart.getChart(canvas);
+      if (existingChart && typeof existingChart.destroy === "function") {
+        existingChart.destroy();
+      }
+      window.payrollChartInstance = new Chart(canvas, {
+        type: "line",
+        data: {
+          labels,
+          datasets: [
+            {
+              label: "實領總額（按月）",
+              data: data.net,
+              borderColor: colorNet,
+              backgroundColor: "rgba(42, 74, 63, 0.14)",
+              fill: false,
+              tension: 0.35,
+              pointRadius: 3
+            },
+            {
+              label: "應發總額（按月）",
+              data: data.gross,
+              borderColor: colorGross,
+              backgroundColor: "rgba(47, 127, 123, 0.15)",
+              fill: false,
+              tension: 0.35,
+              pointRadius: 3
+            },
+            {
+              label: "扣款總額（按月）",
+              data: data.deduction,
+              borderColor: colorDeduction,
+              backgroundColor: "rgba(198, 92, 44, 0.12)",
+              fill: false,
+              tension: 0.35,
+              pointRadius: 3
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: (context) => `${context.dataset.label}: ${currency.format(context.parsed.y)}`
+              }
+            }
+          },
+          scales: {
+            y: {
+              ticks: {
+                callback: (value) => `${formatter.format(value / 1000)}k`
+              }
+            }
+          }
+        }
+      });
+    };
+
+    let isRenderingChart = false;
+    const renderChart = () => {
+      if (isRenderingChart || !window.Chart) {
+        return;
+      }
+      if (!state.monthlyHistory.length) {
+        updateMonthlyHistory();
+      }
+      const chartLabels = state.monthlyHistory.map((item) => item.month);
+      const chartData = {
+        gross: state.monthlyHistory.map((item) => item.grossTotal),
+        deduction: state.monthlyHistory.map((item) => item.deductionTotal),
+        net: state.monthlyHistory.map((item) => item.netTotal)
+      };
+      isRenderingChart = true;
+      try {
+        buildChart(chartLabels, chartData);
+      } finally {
+        isRenderingChart = false;
+      }
+    };
+
+    const showToast = (message) => {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("toast--show");
+      setTimeout(() => toast.classList.remove("toast--show"), 2400);
+    };
+
+    const setAction = (message) => {
+      const actionText = document.getElementById("actionText");
+      if (actionText) {
+        actionText.textContent = message;
+      }
+    };
+
+    const logActivity = (text) => {
+      const now = dayjs();
+      state.activities.unshift({
+        text,
+        time: now.format("MM/DD HH:mm")
+      });
+      state.activities = state.activities.slice(0, 5);
+      renderActivities();
+    };
+
+    const updateRangeButtons = () => {
+      document.querySelectorAll(".chart-range").forEach((button) => {
+        button.classList.toggle("chart-range--active", button.dataset.range === String(state.historyRange));
+      });
+    };
+
+    const populateMonthOptions = () => {
+      const select = document.getElementById("payrollMonth");
+      const options = [];
+      for (let i = 0; i < 6; i += 1) {
+        const month = dayjs().subtract(i, "month").format("YYYY-MM");
+        options.push(`<option value="${month}">${month}</option>`);
+      }
+      select.innerHTML = options.join("");
+    };
+
+    const initData = () => {
+      state.employees = Array.from({ length: 8 }, (_, index) => createEmployee(index));
+      state.insuranceVersions = generateInsuranceVersions();
+      state.insuranceRates = generateInsuranceRates();
+      state.gradeFormState = {
+        labor: { mode: "empty", code: null },
+        health: { mode: "empty", code: null }
+      };
+      state.gradeVersion = {
+        labor: {
+          activeCode: "LG2025-01",
+          versions: [
+            { code: "LG2025-01", effectiveDate: "2025-01-01", status: "啟用" },
+            { code: "LG2024-01", effectiveDate: "2024-01-01", status: "停用" },
+            { code: "LG2023-01", effectiveDate: "2023-01-01", status: "停用" }
+          ]
+        },
+        health: {
+          activeCode: "HG2025-01",
+          versions: [
+            { code: "HG2025-01", effectiveDate: "2025-01-01", status: "啟用" },
+            { code: "HG2024-01", effectiveDate: "2024-01-01", status: "停用" }
+          ]
+        }
+      };
+      state.gradeData = {
+        labor: buildGradeData("labor", state.gradeVersion.labor.activeCode),
+        health: buildGradeData("health", state.gradeVersion.health.activeCode)
+      };
+      const monthLabel = document.getElementById("payrollMonth").value || dayjs().format("YYYY-MM");
+      state.payrolls = state.employees.map((employee) => calculatePayroll(employee, monthLabel));
+      state.reports = generateReports(state.employees);
+      state.activities = generateActivities();
+      updateMonthlyHistory();
+
+      renderSummary();
+      renderEmployees();
+      renderInsurance();
+      renderGradeVersion("labor");
+      renderGradeTable("labor");
+      renderGradeVersion("health");
+      renderGradeTable("health");
+      renderPayroll();
+      renderReports();
+      renderActivities();
+      state.pendingEmployee = createEmployee(state.employees.length);
+      renderEmployeePreview(state.employees[0], "預設顯示首位員工資料。");
+      renderEmployeeCreate(state.pendingEmployee);
+      setEmployeeFormMeta("create");
+      renderEmployeeDetail(state.employees[0]);
+      renderInsuranceNotice();
+      renderInsuranceDetail();
+      renderPayrollNotice();
+      renderPayrollDetail(state.payrolls[0]);
+      renderReportNotice(state.reports[0]);
+      renderReportDetail(state.reports[0]);
+      setAction("已載入資料，請選擇功能頁面。");
+
+      renderChart();
+      updateRangeButtons();
+    };
+
+    const openPage = (pageId, label, updateHash = true, announce = true) => {
+      const panel = document.getElementById(pageId);
+      if (!panel) {
+        return;
+      }
+      document.querySelectorAll(".panel").forEach((item) => {
+        item.classList.toggle("panel--active", item.id === pageId);
+      });
+      const tabToActivate = document.querySelector(`.tab[data-tab="${pageId}"]`);
+      document.querySelectorAll(".tab").forEach((tab) => {
+        tab.classList.toggle("tab--active", tab === tabToActivate);
+      });
+      const resolvedLabel = label || panel.dataset.title || panel.querySelector(".panel__title")?.textContent?.trim();
+      if (resolvedLabel) {
+        setAction(`已開啟「${resolvedLabel}」`);
+        if (announce) {
+          showToast(`已開啟 ${resolvedLabel}`);
+        }
+      }
+      if (updateHash) {
+        history.replaceState(null, "", `#${pageId}`);
+      }
+    };
+
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace("#", "");
+      if (hash && document.getElementById(hash)) {
+        openPage(hash, null, false, false);
+      } else {
+        openPage("overview", null, false, false);
+      }
+    };
+
+    const navigateTo = (pageId, label) => {
+      if (!pageId) {
+        return;
+      }
+      openPage(pageId, label, true, true);
+    };
+
+    document.addEventListener("DOMContentLoaded", () => {
+      populateMonthOptions();
+      initData();
+      handleHashChange();
+      window.addEventListener("hashchange", handleHashChange);
+
+      document.addEventListener("click", (event) => {
+        const navTarget = event.target.closest("[data-nav]");
+        if (navTarget) {
+          const label = navTarget.dataset.label || navTarget.textContent?.trim();
+          navigateTo(navTarget.dataset.nav, label);
+        }
+      });
+
+      document.addEventListener("click", (event) => {
+        const rangeButton = event.target.closest(".chart-range");
+        if (!rangeButton) {
+          return;
+        }
+        state.historyRange = Number(rangeButton.dataset.range) || 6;
+        updateMonthlyHistory();
+        renderChart();
+        updateRangeButtons();
+        setAction(`已切換圖表範圍：最近 ${state.historyRange} 個月`);
+      });
+
+      document.addEventListener("click", (event) => {
+        const actionTarget = event.target.closest("[data-grade-action]");
+        if (!actionTarget) {
+          return;
+        }
+        const action = actionTarget.dataset.gradeAction;
+        const type = actionTarget.dataset.gradeType;
+        const code = actionTarget.dataset.gradeCode;
+        if (!type) {
+          return;
+        }
+        const typeLabel = type === "labor" ? "勞保" : "健保";
+
+        if (action === "create") {
+          setGradeFormState(type, "create");
+          setAction(`已開啟${typeLabel}級距新增`);
+          showToast(`已開啟${typeLabel}級距新增`);
+          return;
+        }
+
+        if (action === "view" && code) {
+          setGradeFormState(type, "view", code);
+          setAction(`已檢視${typeLabel}級距 ${code}`);
+          showToast(`已檢視${typeLabel}級距`);
+          return;
+        }
+
+        if (action === "edit" && code) {
+          setGradeFormState(type, "edit", code);
+          setAction(`已開啟${typeLabel}級距修改：${code}`);
+          showToast(`已開啟${typeLabel}級距修改`);
+          return;
+        }
+
+        if (action === "save") {
+          saveGradeForm(type);
+          return;
+        }
+
+        if (action === "cancel") {
+          setGradeFormState(type, "empty", null);
+          setAction(`已返回${typeLabel}級距清單`);
+          return;
+        }
+
+      });
+
+      document.addEventListener("click", (event) => {
+        const versionTarget = event.target.closest("[data-grade-version-action]");
+        if (!versionTarget) {
+          return;
+        }
+        const action = versionTarget.dataset.gradeVersionAction;
+        const type = versionTarget.dataset.gradeType || document.getElementById("gradeVersionModal")?.dataset.gradeType;
+        const code = versionTarget.dataset.gradeCode;
+        if (!type) {
+          return;
+        }
+        const typeLabel = type === "labor" ? "勞保" : "健保";
+
+        if (action === "create") {
+          renderGradeVersionForm(type);
+          setAction(`已開啟${typeLabel}級距版本新增`);
+          showToast(`已開啟${typeLabel}級距版本新增`);
+          return;
+        }
+
+        if (action === "save") {
+          saveGradeVersionForm(type);
+          return;
+        }
+
+        if (action === "cancel") {
+          closeGradeVersionModal();
+          return;
+        }
+
+        if ((action === "activate" || action === "deactivate") && code) {
+          const versionData = state.gradeVersion?.[type] || { activeCode: null, versions: [] };
+          let activeCode = versionData.activeCode;
+          const enabledVersions = versionData.versions.filter((item) => item.status === "啟用");
+          if (action === "deactivate" && enabledVersions.length <= 1) {
+            showToast("至少需保留一個啟用版本");
+            return;
+          }
+          const nextVersions = versionData.versions.map((item) => {
+            if (item.code !== code) {
+              return action === "activate" ? { ...item, status: "停用" } : item;
+            }
+            const nextStatus = action === "activate" ? "啟用" : "停用";
+            return { ...item, status: nextStatus };
+          });
+          if (action === "activate") {
+            activeCode = code;
+          } else if (activeCode === code) {
+            activeCode = null;
+          }
+          state.gradeVersion[type] = {
+            ...versionData,
+            activeCode,
+            versions: nextVersions
+          };
+          renderGradeVersion(type);
+          renderGradeTable(type);
+          renderInsurance();
+          updatePayrollAfterGradeChange(`${typeLabel}級距版本狀態已更新。`);
+          setAction(`已更新${typeLabel}級距版本狀態`);
+          logActivity(`更新${typeLabel}級距版本狀態：${code}`);
+          showToast(`${typeLabel}級距版本狀態已更新`);
+        }
+      });
+
+      document.getElementById("addEmployee").addEventListener("click", () => {
+        const newEmployee = createEmployee(state.employees.length);
+        state.pendingEmployee = newEmployee;
+        state.employeeFormMode = "create";
+        state.editingEmployeeId = null;
+        renderEmployeeCreate(newEmployee);
+        openPage("employee-create", "新增員工", true, false);
+        setEmployeeFormMeta("create");
+        setAction(`已開啟新增員工頁面（${newEmployee.chineseName}）`);
+        logActivity(`開啟新增員工頁面：${newEmployee.chineseName}`);
+        showToast("已開啟新增員工頁面");
+      });
+
+      document.getElementById("submitEmployeeCreate").addEventListener("click", () => {
+        const baseEmployee = state.employeeFormMode === "edit"
+          ? state.employees.find((item) => item.employeeId === state.editingEmployeeId)
+          : state.pendingEmployee;
+        const newEmployee = collectEmployeeFormData(baseEmployee);
+        if (!newEmployee) {
+          return;
+        }
+        const duplicate = state.employees.find((employee) => employee.employeeId === newEmployee.employeeId);
+        if (state.employeeFormMode === "create" && duplicate) {
+          showToast("員工編號已存在");
+          return;
+        }
+        if (state.employeeFormMode === "edit" && duplicate && duplicate.employeeId !== state.editingEmployeeId) {
+          showToast("員工編號已存在");
+          return;
+        }
+        if (state.employeeFormMode === "edit" && state.editingEmployeeId) {
+          state.employees = state.employees.map((employee) =>
+            employee.employeeId === state.editingEmployeeId ? newEmployee : employee
+          );
+        } else {
+          state.employees.unshift(newEmployee);
+        }
+        state.payrolls = state.employees.map((employee) => calculatePayroll(employee, document.getElementById("payrollMonth").value));
+        updateMonthlyHistory();
+        renderEmployees();
+        renderPayroll();
+        renderSummary();
+        renderPayrollNotice(state.employeeFormMode === "edit" ? "已更新員工資料並重新試算薪資。" : "已新增員工後重新試算薪資。");
+        renderEmployeePreview(newEmployee, state.employeeFormMode === "edit" ? "已更新員工資料。" : "已新增並納入員工清單。");
+        renderEmployeeDetail(newEmployee);
+        renderPayrollDetail(state.payrolls.find((item) => item.employeeId === newEmployee.employeeId));
+        renderChart();
+        state.pendingEmployee = createEmployee(state.employees.length);
+        renderEmployeeCreate(state.pendingEmployee);
+        openPage("employees", "員工管理", true, false);
+        if (state.employeeFormMode === "edit") {
+          setAction(`已更新員工 ${newEmployee.chineseName} (${newEmployee.employeeId})`);
+          logActivity(`更新員工資料：${newEmployee.chineseName} (${newEmployee.employeeId})`);
+          showToast("員工資料已更新");
+        } else {
+          setAction(`已新增員工 ${newEmployee.chineseName} (${newEmployee.employeeId})`);
+          logActivity(`新增員工：${newEmployee.chineseName} (${newEmployee.employeeId})`);
+          showToast("員工資料已新增");
+        }
+        state.employeeFormMode = "create";
+        state.editingEmployeeId = null;
+        setEmployeeFormMeta("create");
+      });
+
+      document.getElementById("recalcPayroll").addEventListener("click", () => {
+        const monthLabel = document.getElementById("payrollMonth").value;
+        state.payrolls = state.employees.map((employee) => calculatePayroll(employee, monthLabel));
+        updateMonthlyHistory();
+        renderPayroll();
+        renderSummary();
+        renderPayrollNotice("已重新產生加班與保險扣款結果。");
+        renderPayrollDetail(state.payrolls[0], "由本次試算產生。");
+        renderChart();
+        setAction(`已完成 ${monthLabel} 薪資試算`);
+        logActivity(`執行薪資試算：${monthLabel}`);
+        showToast("薪資試算完成");
+        openPage("payroll-detail", "薪資明細", true, false);
+      });
+
+      document.getElementById("payrollMonth").addEventListener("change", () => {
+        const monthLabel = document.getElementById("payrollMonth").value;
+        state.payrolls = state.employees.map((employee) => calculatePayroll(employee, monthLabel));
+        updateMonthlyHistory();
+        renderPayroll();
+        renderSummary();
+        renderPayrollNotice("已切換月份並更新試算結果。");
+        renderPayrollDetail(state.payrolls[0], "已依新月份更新資料。");
+        renderChart();
+        setAction(`已切換試算月份：${monthLabel}`);
+      });
+
+      const gradeModal = document.getElementById("gradeModal");
+      const gradeModalClose = document.getElementById("gradeModalClose");
+      if (gradeModal && gradeModalClose) {
+        gradeModalClose.addEventListener("click", () => {
+          const type = gradeModal.dataset.gradeType;
+          if (type) {
+            setGradeFormState(type, "empty", null);
+          } else {
+            gradeModal.classList.remove("modal--open");
+            gradeModal.setAttribute("aria-hidden", "true");
+            gradeModal.removeAttribute("data-grade-type");
+          }
+        });
+        gradeModal.addEventListener("click", (event) => {
+          if (event.target === gradeModal) {
+            const type = gradeModal.dataset.gradeType;
+            if (type) {
+              setGradeFormState(type, "empty", null);
+            } else {
+              gradeModal.classList.remove("modal--open");
+              gradeModal.setAttribute("aria-hidden", "true");
+              gradeModal.removeAttribute("data-grade-type");
+            }
+          }
+        });
+      }
+
+      const gradeVersionModal = document.getElementById("gradeVersionModal");
+      const gradeVersionModalClose = document.getElementById("gradeVersionModalClose");
+      if (gradeVersionModal && gradeVersionModalClose) {
+        gradeVersionModalClose.addEventListener("click", () => {
+          closeGradeVersionModal();
+        });
+        gradeVersionModal.addEventListener("click", (event) => {
+          if (event.target === gradeVersionModal) {
+            closeGradeVersionModal();
+          }
+        });
+      }
+
+      document.getElementById("exportSummary").addEventListener("click", () => {
+        const now = dayjs();
+        state.reports.unshift({
+          reportId: `RPT-${now.format("YYYYMM")}-SUM-${randomInt(10, 99)}`,
+          type: "薪資總表",
+          format: "XLSX",
+          createdAt: now.format("YYYY-MM-DD HH:mm"),
+          status: "已完成"
+        });
+        renderReports();
+        renderReportNotice(state.reports[0], "由「產生薪資總表」產出。");
+        renderReportDetail(state.reports[0], "由薪資總表匯出。");
+        setAction("已產生薪資總表");
+        logActivity("產生薪資總表");
+        showToast("薪資總表已產生");
+        openPage("report-detail", "報表明細", true, false);
+      });
+
+      document.getElementById("exportPayslip").addEventListener("click", () => {
+        const now = dayjs();
+        const employee = randomChoice(state.employees);
+        state.reports.unshift({
+          reportId: `RPT-${now.format("YYYYMM")}-PS-${employee.employeeId}`,
+          type: `個人薪資單：${employee.chineseName}`,
+          format: "PDF",
+          createdAt: now.format("YYYY-MM-DD HH:mm"),
+          status: "已完成"
+        });
+        renderReports();
+        renderReportNotice(state.reports[0], "由「產生個人薪資單」產出。");
+        renderReportDetail(state.reports[0], `個人薪資單：${employee.chineseName}`);
+        setAction(`已產生 ${employee.chineseName} 的薪資單`);
+        logActivity(`產生個人薪資單：${employee.chineseName} (${employee.employeeId})`);
+        showToast("個人薪資單已產生");
+        openPage("report-detail", "報表明細", true, false);
+      });
+
+      document.getElementById("toggleVersion").addEventListener("click", () => {
+        const before = state.insuranceVersions.map((item) => ({ ...item }));
+        state.insuranceVersions = state.insuranceVersions.map((item) => ({
+          ...item,
+          code: item.type === "勞保" ? "L2024-02" : "H2024-02",
+          effectiveDate: "2024-07-01",
+          status: "啟用"
+        }));
+        const after = state.insuranceVersions.map((item) => ({ ...item }));
+        state.insuranceSnapshots = { before, after };
+        renderInsurance();
+        renderInsuranceNotice("已切換至新版版本，生效日更新為 2024-07-01。");
+        renderInsuranceDetail("版本已更新為最新資料。");
+        setAction("已切換保險版本");
+        logActivity("切換保險版本：L2024-02 / H2024-02");
+        showToast("已切換至新版保險版本");
+        openPage("insurance-detail", "保險版本明細", true, false);
+      });
+
+      document.getElementById("employeeTable").addEventListener("click", (event) => {
+        const target = event.target.closest("button[data-action=\"view-employee\"]");
+        if (target) {
+          const employeeName = target.dataset.employeeName;
+          const employeeId = target.dataset.employeeId;
+          const employee = state.employees.find((item) => item.employeeId === employeeId);
+          renderEmployeePreview(employee, "由員工清單點選「查看」載入。");
+          renderEmployeeDetail(employee);
+          setAction(`已查看員工 ${employeeName} (${employeeId})`);
+          logActivity(`查看員工資料：${employeeName} (${employeeId})`);
+          showToast(`已開啟 ${employeeName} 的詳細資料`);
+          openPage("employee-detail", "員工明細", true, false);
+          return;
+        }
+
+        const editTarget = event.target.closest("button[data-action=\"edit-employee\"]");
+        if (!editTarget) {
+          return;
+        }
+        const employeeName = editTarget.dataset.employeeName;
+        const employeeId = editTarget.dataset.employeeId;
+        const employee = state.employees.find((item) => item.employeeId === employeeId);
+        if (!employee) {
+          return;
+        }
+        state.employeeFormMode = "edit";
+        state.editingEmployeeId = employeeId;
+        renderEmployeeCreate(employee);
+        setEmployeeFormMeta("edit", employee);
+        openPage("employee-create", "編輯員工", true, false);
+        setAction(`已開啟編輯員工 ${employeeName}`);
+        logActivity(`編輯員工資料：${employeeName} (${employeeId})`);
+        showToast("已開啟員工編輯頁面");
+      });
+
+      document.getElementById("payrollTable").addEventListener("click", (event) => {
+        const target = event.target.closest("button[data-action=\"view-payroll\"]");
+        if (!target) {
+          return;
+        }
+        const payrollId = target.dataset.payrollId;
+        const payroll = state.payrolls.find((item) => item.payrollId === payrollId);
+        renderPayrollDetail(payroll, "由薪資清單查看。");
+        logActivity(`查看薪資明細：${payrollId}`);
+        showToast("已開啟薪資明細");
+        openPage("payroll-detail", "薪資明細", true, false);
+      });
+
+      document.getElementById("reportTable").addEventListener("click", (event) => {
+        const target = event.target.closest("button[data-action=\"view-report\"]");
+        if (!target) {
+          return;
+        }
+        const reportId = target.dataset.reportId;
+        const report = state.reports.find((item) => item.reportId === reportId);
+        renderReportDetail(report, "由報表清單查看。");
+        logActivity(`查看報表：${reportId}`);
+        showToast("已開啟報表明細");
+        openPage("report-detail", "報表明細", true, false);
+      });
+    });
   </script>
 </body>
 </html>
