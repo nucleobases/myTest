@@ -75,6 +75,8 @@
       cursor: pointer;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
       font-size: 14px;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .btn:focus-visible {
@@ -110,7 +112,7 @@
     }
 
     .demo__status {
-      margin-top: 18px;
+      margin-top: 0;
     }
 
     .status-card {
@@ -123,6 +125,24 @@
       gap: 8px 16px;
       align-items: center;
       box-shadow: 0 16px 28px -24px var(--shadow);
+    }
+
+    .status-card--role {
+      justify-content: space-between;
+    }
+
+    .role-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .role-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 200px;
     }
 
     .status-card__label {
@@ -166,9 +186,9 @@
       margin-top: 26px;
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 8px;
       background: rgba(255, 255, 255, 0.7);
-      padding: 10px;
+      padding: 8px;
       border-radius: 999px;
       border: 1px solid var(--border);
       backdrop-filter: blur(12px);
@@ -177,9 +197,10 @@
     .tab {
       border: none;
       background: transparent;
-      padding: 10px 16px;
+      padding: 8px 14px;
       border-radius: 999px;
       font-weight: 600;
+      font-size: 18px;
       color: var(--muted);
       cursor: pointer;
     }
@@ -187,6 +208,25 @@
     .tab--active {
       background: var(--ink);
       color: #fff;
+    }
+
+    .tab:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .is-disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .rbac-note {
+      display: inline-flex;
+      align-items: center;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+      white-space: nowrap;
     }
 
     .demo__main {
@@ -269,6 +309,8 @@
       border-radius: 999px;
       font-size: 12px;
       font-weight: 600;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .table {
@@ -304,6 +346,8 @@
       font-size: 12px;
       font-weight: 600;
       background: rgba(35, 31, 26, 0.08);
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .badge--active {
@@ -555,6 +599,87 @@
       font-size: 12px;
     }
 
+    .stepper {
+      display: grid;
+      gap: 20px;
+    }
+
+    .step-card {
+      background: rgba(255, 255, 255, 0.86);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 20px;
+      box-shadow: 0 18px 34px -28px var(--shadow);
+    }
+
+    .step-card__header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .step-card__meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .step-card__index {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: var(--ink);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .step-card__title {
+      font-weight: 700;
+    }
+
+    .step-card__desc {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 2px;
+    }
+
+    .step-card__status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .step-card__note {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .step-card--disabled {
+      opacity: 0.72;
+    }
+
+    .btn--tiny {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    .btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+      box-shadow: none;
+      transform: none;
+    }
+
     .toast {
       position: fixed;
       bottom: 24px;
@@ -616,6 +741,25 @@
     @media (max-width: 720px) {
       .demo__nav {
         border-radius: 18px;
+        gap: 6px;
+        padding: 6px;
+      }
+
+      .tab {
+        font-size: 16px;
+        padding: 6px 10px;
+      }
+
+      .status-card--role {
+        align-items: flex-start;
+      }
+
+      .role-controls {
+        width: 100%;
+      }
+
+      .role-field {
+        min-width: 160px;
       }
 
       .panel {
@@ -637,30 +781,166 @@
 <body>
   <div class="demo">
     <header class="demo__header">
+      <section class="demo__status">
+        <div class="status-card status-card--role">
+          <div>
+            <div class="status-card__label">登入狀態</div>
+            <div class="status-card__value" id="roleAccountName">登入帳號：qsan.payroll@qsan.com</div>
+            <div class="list__meta" id="roleName">角色：薪資結算</div>
+          </div>
+          <div class="role-controls">
+            <label class="role-field">
+              <span class="list__meta">角色示意</span>
+              <select class="form-input" id="roleSelect"></select>
+              <span class="form-hint">僅 demo 顯示，正式環境由登入決定角色。</span>
+            </label>
+          </div>
+        </div>
+      </section>
       <section class="demo__stats" id="summaryCards"></section>
     </header>
 
     <nav class="demo__nav" aria-label="功能分頁">
-      <button class="tab tab--active" data-tab="overview" data-nav="overview">總覽</button>
-      <button class="tab" data-tab="employees" data-nav="employees">員工管理</button>
-      <button class="tab" data-tab="insurance" data-nav="insurance">保險版本</button>
-      <button class="tab" data-tab="payroll" data-nav="payroll">薪資計算</button>
-      <button class="tab" data-tab="reports" data-nav="reports">報表中心</button>
+      <button class="tab tab--active" data-tab="overview" data-nav="overview" data-permission="overview.view">總覽</button>
+      <button class="tab" data-tab="employees" data-nav="employees" data-permission="employees.view">人事資料</button>
+      <button class="tab" data-tab="salary-structure" data-nav="salary-structure" data-permission="payroll.view">薪資結構</button>
+      <button class="tab" data-tab="insurance" data-nav="insurance" data-permission="insurance.view">保險管理</button>
+      <button class="tab" data-tab="settlement" data-nav="settlement" data-permission="settlement.view">結薪作業</button>
+      <button class="tab" data-tab="reports" data-nav="reports" data-permission="reports.view">報表中心</button>
     </nav>
 
-    <section class="demo__status">
-      <div class="status-card">
-        <div class="status-card__label">最新動作</div>
-        <div class="status-card__value" id="actionText">已載入資料，請點選功能按鈕查看頁面內容。</div>
-      </div>
-    </section>
-
     <main class="demo__main">
+      <section class="panel" id="settlement" data-title="結薪作業">
+        <div class="panel__header">
+          <div>
+            <h2 class="panel__title">結薪作業</h2>
+          </div>
+          <div class="chip-group" id="settlementChips"></div>
+        </div>
+        <div class="stepper">
+          <div class="step-card" id="settlementStep1">
+            <div class="step-card__header">
+              <div class="step-card__meta">
+                <div class="step-card__index">1</div>
+                <div>
+                  <div class="step-card__title">資料確認</div>
+                  <div class="step-card__desc">檢核出勤、計薪月份，並確認薪資異動彙整。</div>
+                </div>
+              </div>
+              <div class="step-card__status">
+                <span class="badge" id="settlementStep1Badge"></span>
+                <span class="list__meta" id="settlementStep1Meta"></span>
+              </div>
+              <button class="btn btn--primary" id="settlementConfirm" data-permission="settlement.edit">完成確認</button>
+            </div>
+            <div class="panel__grid">
+              <div class="card" id="settlementDataSummary">
+                <div class="card__title">薪資資料摘要</div>
+                <div class="card__body">尚未載入資料。</div>
+              </div>
+              <div class="card">
+                <div class="card__title">薪資檢核清單</div>
+                <ul class="list" id="settlementCheckList"></ul>
+              </div>
+              <div class="card" id="settlementIssueCard">
+                <div class="card__title">薪資阻擋與警示</div>
+                <div class="card__body">
+                  <div class="panel__block">
+                    <div class="list__meta">阻擋項目</div>
+                    <ul class="list" id="settlementBlockList"></ul>
+                  </div>
+                  <div class="panel__block">
+                    <div class="list__meta">警示項目</div>
+                    <ul class="list" id="settlementWarnList"></ul>
+                  </div>
+                </div>
+              </div>
+              <div class="card" id="settlementSourceStatus">
+                <div class="card__title">來源就緒狀態</div>
+                <ul class="list" id="settlementSourceList"></ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-card" id="settlementStep2">
+            <div class="step-card__header">
+              <div class="step-card__meta">
+                <div class="step-card__index">2</div>
+                <div>
+                  <div class="step-card__title">資料計算</div>
+                  <div class="step-card__desc">依薪資規則試算並產出計算快照。</div>
+                </div>
+              </div>
+              <div class="step-card__status">
+                <span class="badge" id="settlementStep2Badge"></span>
+                <span class="list__meta" id="settlementStep2Meta"></span>
+              </div>
+              <button class="btn btn--primary" id="settlementCalculate" data-permission="settlement.edit">執行計算</button>
+            </div>
+            <div class="panel__grid">
+              <div class="card" id="settlementCalcSummary">
+                <div class="card__title">資料計算摘要</div>
+                <div class="card__body">尚未產生試算資料。</div>
+              </div>
+              <div class="card">
+                <div class="card__title">異常提示</div>
+                <ul class="list" id="settlementCalcIssueList"></ul>
+              </div>
+              <div class="card" id="settlementCalcSnapshot">
+                <div class="card__title">計算快照</div>
+                <div class="card__body">尚未產生計算快照。</div>
+              </div>
+            </div>
+            <div class="step-card__note" id="settlementStep2Note"></div>
+          </div>
+
+          <div class="step-card" id="settlementStep3">
+            <div class="step-card__header">
+              <div class="step-card__meta">
+                <div class="step-card__index">3</div>
+                <div>
+                  <div class="step-card__title">計算完成</div>
+                  <div class="step-card__desc">產生報表與薪資單，完成後鎖定結薪流程。</div>
+                </div>
+              </div>
+              <div class="step-card__status">
+                <span class="badge" id="settlementStep3Badge"></span>
+                <span class="list__meta" id="settlementStep3Meta"></span>
+              </div>
+              <div class="demo__actions">
+                <button class="btn btn--primary" id="settlementComplete" data-permission="settlement.edit">結薪完成</button>
+                <button class="btn btn--ghost" id="settlementReopen" data-permission="settlement.edit">重新開帳</button>
+              </div>
+            </div>
+            <div class="panel__grid">
+              <div class="card" id="settlementCompleteSummary">
+                <div class="card__title">結薪完成狀態</div>
+                <div class="card__body">尚未完成結薪。</div>
+              </div>
+              <div class="card">
+                <div class="card__title">匯出作業</div>
+                <div class="demo__actions">
+                  <button class="btn btn--primary" id="settlementExportSummary" data-permission="reports.export">產生薪資總表</button>
+                  <button class="btn btn--ghost" id="settlementExportPayslip" data-permission="reports.export">產生個人薪資單</button>
+                </div>
+                <div class="panel__note">
+                  <div class="list__meta" id="settlementExportNote">尚未產生匯出檔案。</div>
+                </div>
+              </div>
+              <div class="card" id="settlementReportList">
+                <div class="card__title">最近報表</div>
+                <div class="card__body">尚未載入報表清單。</div>
+              </div>
+            </div>
+            <div class="step-card__note" id="settlementStep3Note"></div>
+          </div>
+        </div>
+      </section>
+
       <section class="panel panel--active" id="overview" data-title="總覽">
         <div class="panel__header">
           <div>
             <h2 class="panel__title">總覽儀表板</h2>
-            <p class="panel__desc">彙整本月薪資狀態、保險費用與操作摘要，供主管快速掌握。</p>
           </div>
           <div class="chip-group" id="overviewChips"></div>
         </div>
@@ -691,17 +971,21 @@
         </div>
       </section>
 
-      <section class="panel" id="employees" data-title="員工管理">
+      <section class="panel" id="employees" data-title="人事資料">
         <div class="panel__header">
           <div>
-            <h2 class="panel__title">員工管理</h2>
-            <p class="panel__desc">提供員工新增、查詢與薪資結構管理，包含姓名、證號、部門、職稱、學歷與銀行資訊。</p>
+            <h2 class="panel__title">人事資料</h2>
           </div>
-          <button class="btn btn--primary" id="addEmployee">新增員工</button>
+          <button class="btn btn--primary" id="addEmployee" data-permission="employees.edit">新增員工</button>
+        </div>
+        <div class="panel__grid">
+          <div class="card" id="employeeSettlementCheck">
+            <div class="card__title">結薪檢核</div>
+            <div class="card__body">尚未載入結薪檢核資訊。</div>
+          </div>
         </div>
         <div class="panel__toolbar">
           <span class="chip">國別：本國／外國</span>
-          <span class="chip">身分別：月薪／時薪</span>
           <span class="chip">最低工資：27,470 元</span>
           <span class="chip">眷屬數上限：3</span>
         </div>
@@ -716,7 +1000,6 @@
                 <th>對內職稱</th>
                 <th>職等</th>
                 <th>國別</th>
-                <th>身分別</th>
                 <th>在職狀態</th>
                 <th>到職日</th>
                 <th>操作</th>
@@ -727,22 +1010,111 @@
         </div>
         <div class="panel__grid">
           <div class="card" id="employeePreview">
-            <div class="card__title">員工資料摘要</div>
+            <div class="card__title">人事資料摘要</div>
             <div class="card__body">點選「查看」或「新增員工」以顯示資料摘要。</div>
           </div>
         </div>
       </section>
 
-      <section class="panel" id="insurance" data-title="保險版本">
+      <section class="panel" id="salary-structure" data-title="薪資結構">
         <div class="panel__header">
           <div>
-            <h2 class="panel__title">保險版本與級距</h2>
-            <p class="panel__desc">呈現勞保/健保版本、投保薪資級距與費率設定（節錄）。</p>
+            <h2 class="panel__title">薪資結構</h2>
           </div>
           <div class="demo__actions">
-            <button class="btn btn--ghost" id="toggleVersion">切換啟用版本</button>
-            <button class="btn btn--soft" data-nav="labor-grade" data-label="勞保級距維護">勞保級距維護</button>
-            <button class="btn btn--soft" data-nav="health-grade" data-label="健保級距維護">健保級距維護</button>
+            <button class="btn btn--primary" id="addSalaryStructure" data-permission="payroll.edit">建立薪資結構</button>
+          </div>
+        </div>
+        <div class="panel__grid">
+          <div class="card" id="salaryStructureSummary">
+            <div class="card__title">薪資結構摘要</div>
+            <div class="card__body">尚未載入薪資結構摘要。</div>
+          </div>
+          <div class="card">
+            <div class="card__title">異動待覆核</div>
+            <ul class="list" id="salaryStructureChangeList"></ul>
+          </div>
+        </div>
+        <div class="panel__toolbar">
+          <span class="chip">薪資構成：本薪／伙食費／主管津貼／專業津貼／交通津貼／全勤</span>
+          <span class="chip">身分別：月薪／時薪</span>
+          <span class="chip">調整需薪資角色覆核</span>
+          <span class="chip">結構更新後需重新結薪確認</span>
+        </div>
+        <div class="card">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>員工編號</th>
+                <th>姓名</th>
+                <th>部門</th>
+                <th>身分別</th>
+                <th>本薪</th>
+                <th>伙食費</th>
+                <th>主管津貼</th>
+                <th>專業津貼</th>
+                <th>交通津貼</th>
+                <th>全勤</th>
+                <th>津貼合計</th>
+                <th>生效日</th>
+                <th>狀態</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="salaryStructureTable"></tbody>
+          </table>
+        </div>
+        <div class="card panel__note" id="salaryStructureNote">
+          <div class="card__title">結構更新提示</div>
+          <div class="card__body" id="salaryStructureNoteBody">尚未更新薪資結構。</div>
+        </div>
+      </section>
+
+      <section class="panel" id="salary-structure-detail" data-title="薪資結構明細">
+        <div class="panel__header">
+          <div>
+            <h2 class="panel__title" id="salaryStructureTitle">薪資結構明細</h2>
+          </div>
+          <div class="demo__actions">
+            <button class="btn btn--primary" id="submitSalaryStructure" data-permission="payroll.edit">儲存調整</button>
+            <button class="btn btn--ghost" data-nav="salary-structure" data-permission="payroll.view">返回薪資結構</button>
+          </div>
+        </div>
+        <div class="panel__grid">
+          <div class="card" id="salaryStructureTarget">
+            <div class="card__title">適用對象</div>
+            <div class="card__body">尚未選擇薪資結構對象。</div>
+          </div>
+          <div class="card" id="salaryStructurePreview">
+            <div class="card__title">試算摘要</div>
+            <div class="card__body">尚未載入薪資結構試算。</div>
+          </div>
+        </div>
+        <div class="card" id="salaryStructureForm">
+          <div class="card__title">薪資結構設定</div>
+          <div class="card__body">尚未載入薪資結構設定。</div>
+        </div>
+        <div class="card panel__note" id="salaryStructureDetailNote">
+          <div class="card__title">調整提醒</div>
+          <div class="card__body" id="salaryStructureDetailNoteBody">尚未產生薪資結構異動。</div>
+        </div>
+      </section>
+
+      <section class="panel" id="insurance" data-title="保險管理">
+        <div class="panel__header">
+          <div>
+            <h2 class="panel__title">保險管理與級距</h2>
+          </div>
+          <div class="demo__actions">
+            <button class="btn btn--ghost" id="toggleVersion" data-permission="insurance.edit">切換啟用版本</button>
+            <button class="btn btn--soft" data-nav="labor-grade" data-label="勞保級距維護" data-permission="insurance.edit">勞保級距維護</button>
+            <button class="btn btn--soft" data-nav="health-grade" data-label="健保級距維護" data-permission="insurance.edit">健保級距維護</button>
+          </div>
+        </div>
+        <div class="panel__grid">
+          <div class="card" id="insuranceSettlementCheck">
+            <div class="card__title">結薪檢核</div>
+            <div class="card__body">尚未載入結薪檢核資訊。</div>
           </div>
         </div>
         <div class="panel__grid">
@@ -799,14 +1171,13 @@
         <div class="panel__header">
           <div>
             <h2 class="panel__title">薪資計算與試算</h2>
-            <p class="panel__desc">根據本薪、津貼與加班費試算薪資，並套用勞保/健保/勞退規範。</p>
           </div>
-          <button class="btn btn--primary" id="recalcPayroll">執行試算</button>
+          <button class="btn btn--primary" id="recalcPayroll" data-permission="payroll.edit">執行試算</button>
         </div>
         <div class="panel__toolbar">
           <div class="toolbar__field">
             <span class="list__meta">計算月份</span>
-            <select class="form-input" id="payrollMonth"></select>
+            <select class="form-input" id="payrollMonth" data-permission="payroll.edit" data-rbac-label="計算月份"></select>
           </div>
           <span class="chip">加班費：前 2 小時 1.34 倍、其後 1.67 倍</span>
           <span class="chip">勞退雇主提繳 6%</span>
@@ -839,12 +1210,18 @@
         <div class="panel__header">
           <div>
             <h2 class="panel__title">報表中心</h2>
-            <p class="panel__desc">產生薪資總表與個人薪資單，追蹤匯出狀態與下載紀錄。</p>
           </div>
           <div class="demo__actions">
-            <button class="btn btn--primary" id="exportSummary">產生薪資總表</button>
-            <button class="btn btn--ghost" id="exportPayslip">產生個人薪資單</button>
+            <button class="btn btn--primary" id="exportSummary" data-permission="reports.export">產生薪資總表</button>
+            <button class="btn btn--ghost" id="exportPayslip" data-permission="reports.export">產生個人薪資單</button>
           </div>
+        </div>
+        <div class="panel__toolbar">
+          <div class="toolbar__field">
+            <span class="list__meta">結算月份</span>
+            <select class="form-input" id="reportMonthFilter"></select>
+          </div>
+          <span class="list__meta" id="reportFilterSummary"></span>
         </div>
         <div class="card">
           <table class="table">
@@ -871,11 +1248,10 @@
         <div class="panel__header">
           <div>
             <h2 class="panel__title" id="employeeFormTitle">新增員工</h2>
-            <p class="panel__desc" id="employeeFormDesc">填寫員工基本資料、職務資訊與帳務資料，欄位規範依人事資料結構。</p>
           </div>
           <div class="demo__actions">
-            <button class="btn btn--primary" id="submitEmployeeCreate">送出新增</button>
-            <button class="btn btn--ghost" data-nav="employees">返回員工管理</button>
+            <button class="btn btn--primary" id="submitEmployeeCreate" data-permission="employees.edit">送出新增</button>
+            <button class="btn btn--ghost" data-nav="employees" data-permission="employees.view">返回人事資料</button>
           </div>
         </div>
         <div class="card" id="employeeCreateForm">
@@ -888,16 +1264,15 @@
         <div class="panel__header">
           <div>
             <h2 class="panel__title">員工明細</h2>
-            <p class="panel__desc">檢視員工資料與最新薪資摘要。</p>
           </div>
-          <button class="btn btn--ghost" data-nav="employees">返回員工管理</button>
+          <button class="btn btn--ghost" data-nav="employees" data-permission="employees.view">返回人事資料</button>
         </div>
         <div class="panel__grid">
           <div class="card" id="employeeDetailBody">
             <div class="card__title">員工資料</div>
             <div class="card__body">尚未選擇員工。</div>
           </div>
-          <div class="card" id="employeeDetailPayroll">
+          <div class="card" id="employeeDetailPayroll" data-permission="payroll.view" data-rbac-label="薪資摘要">
             <div class="card__title">最新薪資摘要</div>
             <div class="card__body">尚未載入薪資資訊。</div>
           </div>
@@ -908,9 +1283,8 @@
         <div class="panel__header">
           <div>
             <h2 class="panel__title">保險版本明細</h2>
-            <p class="panel__desc">查看啟用版本與生效資訊。</p>
           </div>
-          <button class="btn btn--ghost" data-nav="insurance">返回保險版本</button>
+          <button class="btn btn--ghost" data-nav="insurance" data-permission="insurance.view">返回保險管理</button>
         </div>
         <div class="panel__grid">
           <div class="card" id="insuranceDetailBody">
@@ -928,11 +1302,10 @@
         <div class="panel__header">
           <div>
             <h2 class="panel__title">勞保投保薪資級距維護</h2>
-            <p class="panel__desc">管理勞保投保薪資級距，包含級距範圍與版本狀態。</p>
           </div>
           <div class="demo__actions">
-            <button class="btn btn--primary" data-grade-action="create" data-grade-type="labor">新增級距</button>
-            <button class="btn btn--ghost" data-nav="insurance">返回保險版本</button>
+            <button class="btn btn--primary" data-grade-action="create" data-grade-type="labor" data-permission="insurance.edit">新增級距</button>
+            <button class="btn btn--ghost" data-nav="insurance" data-permission="insurance.view">返回保險管理</button>
           </div>
         </div>
         <div class="card panel__block" id="laborGradeVersion">
@@ -962,11 +1335,10 @@
         <div class="panel__header">
           <div>
             <h2 class="panel__title">健保投保薪資級距維護</h2>
-            <p class="panel__desc">管理健保投保薪資級距，支援調整投保薪資、區間與版本狀態。</p>
           </div>
           <div class="demo__actions">
-            <button class="btn btn--primary" data-grade-action="create" data-grade-type="health">新增級距</button>
-            <button class="btn btn--ghost" data-nav="insurance">返回保險版本</button>
+            <button class="btn btn--primary" data-grade-action="create" data-grade-type="health" data-permission="insurance.edit">新增級距</button>
+            <button class="btn btn--ghost" data-nav="insurance" data-permission="insurance.view">返回保險管理</button>
           </div>
         </div>
         <div class="card panel__block" id="healthGradeVersion">
@@ -996,9 +1368,8 @@
         <div class="panel__header">
           <div>
             <h2 class="panel__title">薪資明細</h2>
-            <p class="panel__desc">檢視單筆薪資計算細節與保險扣款。</p>
           </div>
-          <button class="btn btn--ghost" data-nav="payroll">返回薪資計算</button>
+          <button class="btn btn--ghost" data-nav="settlement" data-permission="settlement.view">返回結薪作業</button>
         </div>
         <div class="panel__grid">
           <div class="card" id="payrollDetailBody">
@@ -1016,9 +1387,8 @@
         <div class="panel__header">
           <div>
             <h2 class="panel__title">報表明細</h2>
-            <p class="panel__desc">檢視報表資訊與資料預覽。</p>
           </div>
-          <button class="btn btn--ghost" data-nav="reports">返回報表中心</button>
+          <button class="btn btn--ghost" data-nav="settlement" data-permission="settlement.view">返回結薪作業</button>
         </div>
         <div class="panel__grid">
           <div class="card" id="reportDetailBody">
@@ -1098,14 +1468,121 @@
       gradeFormState: {},
       gradeVersion: {},
       payrolls: [],
+      reportHistory: [],
       reports: [],
+      reportFilterMonth: "all",
       activities: [],
       pendingEmployee: null,
       employeeFormMode: "create",
       editingEmployeeId: null,
+      salaryStructureMode: "edit",
+      salaryStructureEditingId: null,
       insuranceSnapshots: null,
+      currentRole: "payroll",
+      settlement: {
+        confirmedAt: "",
+        calculatedAt: "",
+        completedAt: "",
+        needsConfirm: true,
+        needsRecalc: true,
+        lock: false
+      },
+      settlementData: {
+        seed: 0,
+        attendance: { month: "", imported: 0, missing: 0, lastSync: "" },
+        employeeIssueCount: 0,
+        personnelChangeCount: 0,
+        salaryChangeCount: 0,
+        sourceUpdatedAt: {
+          employees: "",
+          insurance: "",
+          salaryStructure: ""
+        }
+      },
       monthlyHistory: [],
       historyRange: 6
+    };
+
+    const roleDefinitions = [
+      {
+        id: "admin",
+        label: "系統管理員",
+        account: "qsan.admin@qsan.com",
+        permissions: [
+          "overview.view",
+          "employees.view",
+          "employees.edit",
+          "insurance.view",
+          "insurance.edit",
+          "payroll.view",
+          "payroll.edit",
+          "settlement.view",
+          "settlement.edit",
+          "reports.view",
+          "reports.export"
+        ]
+      },
+      {
+        id: "hr",
+        label: "人資管理",
+        account: "qsan.hr@qsan.com",
+        permissions: ["overview.view", "employees.view", "employees.edit"]
+      },
+      {
+        id: "insurance",
+        label: "保險管理",
+        account: "qsan.insurance@qsan.com",
+        permissions: ["overview.view", "insurance.view", "insurance.edit"]
+      },
+      {
+        id: "payroll",
+        label: "薪資結算",
+        account: "qsan.payroll@qsan.com",
+        permissions: [
+          "overview.view",
+          "employees.view",
+          "insurance.view",
+          "payroll.view",
+          "payroll.edit",
+          "settlement.view",
+          "settlement.edit",
+          "reports.view",
+          "reports.export"
+        ]
+      },
+      {
+        id: "auditor",
+        label: "稽核主管",
+        account: "qsan.audit@qsan.com",
+        permissions: ["overview.view", "employees.view", "insurance.view", "payroll.view", "settlement.view", "reports.view"]
+      }
+    ];
+
+    const moduleAccessMap = [
+      { id: "overview", label: "總覽", permission: "overview.view" },
+      { id: "employees", label: "人事資料", permission: "employees.view" },
+      { id: "salary-structure", label: "薪資結構", permission: "payroll.view" },
+      { id: "insurance", label: "保險管理", permission: "insurance.view" },
+      { id: "settlement", label: "結薪作業", permission: "settlement.view" },
+      { id: "reports", label: "報表中心", permission: "reports.view" }
+    ];
+
+    const pagePermissions = {
+      overview: "overview.view",
+      employees: "employees.view",
+      "employee-detail": "employees.view",
+      "employee-create": "employees.edit",
+      "salary-structure": "payroll.view",
+      "salary-structure-detail": "payroll.view",
+      insurance: "insurance.view",
+      "insurance-detail": "insurance.view",
+      "labor-grade": "insurance.edit",
+      "health-grade": "insurance.edit",
+      payroll: "payroll.view",
+      "payroll-detail": "payroll.view",
+      settlement: "settlement.view",
+      reports: "reports.view",
+      "report-detail": "reports.view"
     };
 
     const nameSeeds = ["雅婷", "冠宇", "佩珊", "明哲", "昱廷", "家瑜", "彥成", "佳穎", "柏翰", "姿妤", "承翰", "佩臻", "子瑜", "宇豪", "宜蓉", "柏宏", "婉婷", "修平"];
@@ -1131,6 +1608,395 @@
     const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
     const padNumber = (value, length) => String(value).padStart(length, "0");
 
+    /**
+     * Normalize allowance values into a complete breakdown.
+     * @param {object} allowances
+     * @returns {{meal: number, supervisor: number, professional: number, transport: number, attendance: number}}
+     */
+    const getAllowanceBreakdown = (allowances = {}) => ({
+      meal: Number(allowances.meal) || 0,
+      supervisor: Number(allowances.supervisor) || 0,
+      professional: Number(allowances.professional) || 0,
+      transport: Number(allowances.transport) || 0,
+      attendance: Number(allowances.attendance) || 0
+    });
+
+    /**
+     * Sum allowance breakdown for payroll calculation.
+     * @param {object} allowances
+     * @returns {number}
+     */
+    const getAllowanceTotal = (allowances = {}) => {
+      const breakdown = getAllowanceBreakdown(allowances);
+      return breakdown.meal + breakdown.supervisor + breakdown.professional + breakdown.transport + breakdown.attendance;
+    };
+
+    /**
+     * Format a datetime value for display.
+     * @param {string|object} value
+     * @returns {string}
+     */
+    const formatDateTime = (value) => {
+      if (!value) {
+        return "";
+      }
+      return dayjs(value).format("YYYY-MM-DD HH:mm");
+    };
+
+    /**
+     * Refresh settlement summary data based on current state.
+     * @returns {void}
+     */
+    const refreshSettlementData = () => {
+      const totalEmployees = state.employees.length;
+      const onDutyEmployees = state.employees.filter((item) => item.employmentStatus === "在職");
+      const onDutyMaleCount = onDutyEmployees.filter((item) => item.gender === "M").length;
+      const onDutyFemaleCount = onDutyEmployees.filter((item) => item.gender === "F").length;
+      const seed = state.settlementData.seed || 0;
+      const month = document.getElementById("payrollMonth")?.value || dayjs().format("YYYY-MM");
+      const missing = Math.min(2, Math.max(0, Math.floor(totalEmployees / 4) + seed - 1));
+      const imported = Math.max(0, totalEmployees - missing);
+      const lastSync = state.settlementData.attendance?.lastSync || dayjs().subtract(2, "hour").format("YYYY-MM-DD HH:mm");
+      const salaryChangeCount = Math.min(4, Math.max(0, Math.floor(totalEmployees / 6) + seed - 1));
+      const personnelChangeCount = Math.min(3, Math.max(0, Math.floor(totalEmployees / 7) + seed));
+      const sourceUpdatedAt = state.settlementData.sourceUpdatedAt || {};
+      state.settlementData = {
+        ...state.settlementData,
+        attendance: {
+          month,
+          imported,
+          missing,
+          lastSync
+        },
+        employeeIssueCount: Math.min(3, Math.max(0, Math.floor(totalEmployees / 5) + seed)),
+        personnelChangeCount,
+        salaryChangeCount,
+        sourceUpdatedAt
+      };
+    };
+
+    /**
+     * Initialize settlement demo data.
+     * @returns {void}
+     */
+    const initSettlementData = () => {
+      const now = dayjs();
+      state.settlementData = {
+        seed: randomInt(0, 2),
+        attendance: { month: "", imported: 0, missing: 0, lastSync: dayjs().subtract(2, "hour").format("YYYY-MM-DD HH:mm") },
+        employeeIssueCount: 0,
+        personnelChangeCount: 0,
+        salaryChangeCount: 0,
+        sourceUpdatedAt: {
+          employees: now.subtract(1, "day").format("YYYY-MM-DD HH:mm"),
+          insurance: now.subtract(2, "day").format("YYYY-MM-DD HH:mm"),
+          salaryStructure: now.subtract(8, "hour").format("YYYY-MM-DD HH:mm")
+        }
+      };
+      refreshSettlementData();
+    };
+
+    /**
+     * Update settlement source timestamp after data changes.
+     * @param {string} sourceKey
+     * @returns {void}
+     */
+    const touchSettlementSource = (sourceKey) => {
+      if (!sourceKey) {
+        return;
+      }
+      if (!state.settlementData.sourceUpdatedAt) {
+        state.settlementData.sourceUpdatedAt = {};
+      }
+      state.settlementData.sourceUpdatedAt[sourceKey] = dayjs().format("YYYY-MM-DD HH:mm");
+    };
+
+    /**
+     * Map a check status to badge metadata.
+     * @param {string} status
+     * @returns {{label: string, className: string}}
+     */
+    const getStatusBadge = (status) => {
+      if (status === "ok") {
+        return { label: "正常", className: "badge--active" };
+      }
+      if (status === "block") {
+        return { label: "阻擋", className: "badge--warning" };
+      }
+      return { label: "警示", className: "badge--pending" };
+    };
+
+    const getCurrentRole = () => roleDefinitions.find((role) => role.id === state.currentRole) || roleDefinitions[0];
+
+    /**
+     * Check whether current role includes a permission.
+     * @param {string} permission
+     * @returns {boolean}
+     */
+    const hasPermission = (permission) => {
+      if (!permission) {
+        return true;
+      }
+      const role = getCurrentRole();
+      return role.permissions.includes(permission);
+    };
+
+    /**
+     * Render current account and role name.
+     * @returns {void}
+     */
+    const renderRoleStatus = () => {
+      const role = getCurrentRole();
+      const accountEl = document.getElementById("roleAccountName");
+      const roleEl = document.getElementById("roleName");
+      if (accountEl) {
+        accountEl.textContent = `登入帳號：${role.account || "demo.user@qsan.com"}`;
+      }
+      if (roleEl) {
+        roleEl.textContent = `角色：${role.label}`;
+      }
+    };
+
+    /**
+     * Get required permission for a page id.
+     * @param {string} pageId
+     * @returns {string}
+     */
+    const getPagePermission = (pageId) => pagePermissions[pageId] || "";
+
+    /**
+     * Check whether current role can access the page.
+     * @param {string} pageId
+     * @returns {boolean}
+     */
+    const canAccessPage = (pageId) => hasPermission(getPagePermission(pageId));
+
+    /**
+     * Resolve the first accessible page for fallback navigation.
+     * @returns {string}
+     */
+    const getFallbackPage = () => moduleAccessMap.find((item) => hasPermission(item.permission))?.id || "overview";
+
+    /**
+     * Apply RBAC permissions to UI elements.
+     * @returns {void}
+     */
+    const applyRbacToElements = () => {
+      document.querySelectorAll("[data-permission]").forEach((element) => {
+        const permission = element.dataset.permission || "";
+        const allowed = hasPermission(permission);
+        const baseLabel = element.dataset.rbacLabel || element.textContent?.trim();
+        const defaultNote = permission.endsWith(".view")
+          ? "無檢視權限"
+          : permission.includes("export")
+            ? "無匯出權限"
+            : "無操作權限";
+        const noteText = element.dataset.rbacNote
+          || (baseLabel ? `${baseLabel}：${defaultNote}` : defaultNote);
+        const placeholderId = element.dataset.rbacPlaceholderId;
+        const placeholder = placeholderId ? document.getElementById(placeholderId) : null;
+        const allowPlaceholder = element.dataset.rbacSilent !== "true" && !element.closest(".demo__nav");
+
+        if (!allowed) {
+          if (!element.dataset.rbacHidden) {
+            element.dataset.rbacPrevHidden = element.hidden ? "true" : "false";
+          }
+          element.hidden = true;
+          element.dataset.rbacHidden = "true";
+          element.setAttribute("aria-hidden", "true");
+          if (allowPlaceholder) {
+            if (!placeholder) {
+              const note = document.createElement("span");
+              const noteId = `rbac-note-${Math.random().toString(36).slice(2, 8)}`;
+              note.id = noteId;
+              note.className = "rbac-note";
+              note.textContent = noteText;
+              element.dataset.rbacPlaceholderId = noteId;
+              element.insertAdjacentElement("afterend", note);
+            } else {
+              placeholder.textContent = noteText;
+              placeholder.hidden = false;
+            }
+          } else if (placeholder) {
+            placeholder.remove();
+            delete element.dataset.rbacPlaceholderId;
+          }
+          return;
+        }
+
+        if (element.dataset.rbacHidden === "true") {
+          const wasHidden = element.dataset.rbacPrevHidden === "true";
+          element.hidden = wasHidden;
+          delete element.dataset.rbacHidden;
+          delete element.dataset.rbacPrevHidden;
+        } else {
+          element.hidden = false;
+        }
+        element.setAttribute("aria-hidden", element.hidden ? "true" : "false");
+        if (placeholder) {
+          placeholder.remove();
+          delete element.dataset.rbacPlaceholderId;
+        }
+      });
+    };
+
+    /**
+     * Build settlement data validation checks.
+     * @returns {{id: string, label: string, detail: string, status: string, actionNav?: string, actionLabel?: string}[]}
+     */
+    const buildSettlementChecks = () => {
+      refreshSettlementData();
+      const attendance = state.settlementData.attendance;
+      const totalEmployees = state.employees.length;
+      const salaryChangeCount = state.settlementData.salaryChangeCount;
+      const month = attendance.month || dayjs().format("YYYY-MM");
+      const checks = [
+        {
+          id: "attendance",
+          label: "出勤資料匯入",
+          detail: `已匯入 ${attendance.imported}/${totalEmployees} 筆，缺漏 ${attendance.missing} 筆`,
+          status: attendance.missing >= 3 ? "block" : attendance.missing > 0 ? "warn" : "ok",
+          actionNav: "overview",
+          actionLabel: "總覽"
+        },
+        {
+          id: "payroll-month",
+          label: "計薪月份",
+          detail: month,
+          status: month ? "ok" : "block",
+          actionNav: "settlement",
+          actionLabel: "結薪作業"
+        },
+        {
+          id: "salary-change",
+          label: "薪資異動彙整",
+          detail: salaryChangeCount ? `本月 ${salaryChangeCount} 筆異動需覆核` : "未偵測到異動",
+          status: salaryChangeCount ? "warn" : "ok",
+          actionNav: "salary-structure",
+          actionLabel: "薪資結構"
+        }
+      ];
+      return checks;
+    };
+
+    /**
+     * Build settlement source readiness list.
+     * @returns {{id: string, label: string, detail: string, status: string, actionNav?: string, actionLabel?: string, meta?: string}[]}
+     */
+    const buildSettlementSources = () => {
+      const labor = state.insuranceVersions.find((item) => item.type === "勞保");
+      const health = state.insuranceVersions.find((item) => item.type === "健保");
+      const hasInsurance = labor && health;
+      const hasActiveGrade = Boolean(state.gradeVersion?.labor?.activeCode && state.gradeVersion?.health?.activeCode);
+      const issueCount = state.settlementData.employeeIssueCount;
+      const salaryChangeCount = state.settlementData.salaryChangeCount;
+      const employeeStatus = issueCount >= 3 ? "block" : issueCount > 0 ? "warn" : "ok";
+      const employeeUpdatedAt = state.settlementData.sourceUpdatedAt?.employees;
+      const insuranceUpdatedAt = state.settlementData.sourceUpdatedAt?.insurance;
+      const salaryUpdatedAt = state.settlementData.sourceUpdatedAt?.salaryStructure;
+      return [
+        {
+          id: "source-employee",
+          label: "人事資料",
+          detail: issueCount ? `待補 ${issueCount} 筆（帳務/到離職）` : "資料完整",
+          status: employeeStatus,
+          actionNav: "employees",
+          actionLabel: "人事資料",
+          meta: employeeUpdatedAt ? `最後更新 ${formatDateTime(employeeUpdatedAt)}` : "尚未更新"
+        },
+        {
+          id: "source-salary-structure",
+          label: "薪資結構",
+          detail: salaryChangeCount ? `本月 ${salaryChangeCount} 筆異動需覆核` : "未偵測到異動",
+          status: salaryChangeCount ? "warn" : "ok",
+          actionNav: "salary-structure",
+          actionLabel: "薪資結構",
+          meta: salaryUpdatedAt ? `最後更新 ${formatDateTime(salaryUpdatedAt)}` : "尚未更新"
+        },
+        {
+          id: "source-insurance",
+          label: "保險版本",
+          detail: hasInsurance ? `${labor.code} / ${health.code}` : "尚未啟用保險版本",
+          status: hasInsurance ? "ok" : "block",
+          actionNav: "insurance",
+          actionLabel: "保險管理",
+          meta: insuranceUpdatedAt ? `最後更新 ${formatDateTime(insuranceUpdatedAt)}` : "尚未更新"
+        },
+        {
+          id: "source-grade",
+          label: "投保級距版本",
+          detail: hasActiveGrade
+            ? `勞保 ${state.gradeVersion.labor.activeCode} / 健保 ${state.gradeVersion.health.activeCode}`
+            : "尚未設定啟用級距版本",
+          status: hasActiveGrade ? "ok" : "block",
+          actionNav: "insurance",
+          actionLabel: "保險管理",
+          meta: insuranceUpdatedAt ? `最後更新 ${formatDateTime(insuranceUpdatedAt)}` : "尚未更新"
+        }
+      ];
+    };
+
+    /**
+     * Build calculation issues list for settlement step 2.
+     * @returns {{label: string, detail: string, status: string}[]}
+     */
+    const buildSettlementCalculationIssues = () => {
+      const pending = state.payrolls.filter((item) => item.status === "待結算");
+      const lowNet = state.payrolls.filter((item) => item.netSalary < rules.minWage);
+      const heavyOvertime = state.payrolls.filter((item) => item.overtimeHours >= 12);
+      const issues = [];
+      if (pending.length) {
+        issues.push({
+          label: "待結算薪資",
+          detail: `共 ${pending.length} 筆待確認`,
+          status: "warn"
+        });
+      }
+      if (lowNet.length) {
+        issues.push({
+          label: "實領低於基本工資",
+          detail: `共 ${lowNet.length} 筆需人工覆核`,
+          status: "warn"
+        });
+      }
+      if (heavyOvertime.length) {
+        issues.push({
+          label: "加班時數偏高",
+          detail: `${heavyOvertime[0].employeeName} 等 ${heavyOvertime.length} 人`,
+          status: "warn"
+        });
+      }
+      if (!issues.length) {
+        issues.push({
+          label: "未偵測到異常",
+          detail: "可進入下一步",
+          status: "ok"
+        });
+      }
+      return issues;
+    };
+
+    /**
+     * Build settlement gating flags for the flow.
+     * @param {{status: string}[]} checks
+     * @param {{status: string}[]} sources
+     * @returns {{hasBlock: boolean, isConfirmed: boolean, isCalculated: boolean, canConfirm: boolean, canCalculate: boolean, canComplete: boolean}}
+     */
+    const buildSettlementGateState = (checks, sources = []) => {
+      const hasBlock = [...checks, ...sources].some((item) => item.status === "block");
+      const isConfirmed = Boolean(state.settlement.confirmedAt) && !state.settlement.needsConfirm;
+      const isCalculated = Boolean(state.settlement.calculatedAt) && !state.settlement.needsRecalc;
+      const isLocked = state.settlement.lock;
+      return {
+        hasBlock,
+        isConfirmed,
+        isCalculated,
+        canConfirm: !hasBlock && !isLocked,
+        canCalculate: isConfirmed && !isLocked,
+        canComplete: isCalculated && !isLocked
+      };
+    };
+
     const generateIdNumber = (gender) => {
       const letter = randomChoice(idLetters);
       const firstDigit = gender === "M" ? "1" : "2";
@@ -1140,10 +2006,14 @@
 
     const createEmployee = (index) => {
       const baseSalary = randomInt(28000, 62000);
+      const supervisorAllowance = Math.random() > 0.75 ? randomInt(2000, 6000) : 0;
+      const attendanceBonus = Math.random() > 0.2 ? randomInt(800, 2000) : 0;
       const allowances = {
         meal: randomInt(1500, 3000),
+        supervisor: supervisorAllowance,
         professional: randomInt(1000, 4000),
-        transport: randomInt(500, 2000)
+        transport: randomInt(500, 2000),
+        attendance: attendanceBonus
       };
       const dependents = randomInt(0, 3);
       const gender = Math.random() > 0.5 ? "M" : "F";
@@ -1286,7 +2156,7 @@
     };
 
     const calculatePayroll = (employee, monthLabel) => {
-      const allowancesTotal = employee.allowances.meal + employee.allowances.professional + employee.allowances.transport;
+      const allowancesTotal = getAllowanceTotal(employee.allowances);
       const overtimeHours = randomInt(0, 16);
       const hourlyRate = employee.baseSalary / 30 / 8;
       const overtimePay = Math.round((Math.min(overtimeHours, 2) * 1.34 + Math.max(0, overtimeHours - 2) * 1.67) * hourlyRate);
@@ -1327,12 +2197,118 @@
       { type: "健保", rate: "5.17%", employee: "30%", employer: "60%", government: "10%" }
     ];
 
-    const generateReports = (employees) => {
-      const now = dayjs();
-      return [
-        { reportId: `RPT-${now.format("YYYYMM")}-SUM`, type: "薪資總表", format: "CSV", createdAt: now.subtract(1, "day").format("YYYY-MM-DD HH:mm"), status: "已完成" },
-        { reportId: `RPT-${now.format("YYYYMM")}-PS-${employees[0].employeeId}`, type: "個人薪資單", format: "PDF", createdAt: now.subtract(2, "hour").format("YYYY-MM-DD HH:mm"), status: "已完成" }
+    /**
+     * Get report month for filtering.
+     * @param {{createdAt: string}} report
+     * @returns {string}
+     */
+    const getReportMonth = (report) => dayjs(report.createdAt).format("YYYY-MM");
+
+    /**
+     * Sort reports by created time descending.
+     * @param {object[]} list
+     * @returns {object[]}
+     */
+    const sortReportsDesc = (list) => [...list].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+
+    /**
+     * Generate report history across multiple months.
+     * @param {object[]} employees
+     * @returns {object[]}
+     */
+    const generateReportHistory = (employees) => {
+      const history = [];
+      const months = 10;
+      for (let i = 0; i < months; i += 1) {
+        const month = dayjs().subtract(i, "month");
+        const monthLabel = month.format("YYYYMM");
+        const baseTime = month.endOf("month").hour(18).minute(30);
+        history.push({
+          reportId: `RPT-${monthLabel}-SUM`,
+          type: "薪資總表",
+          format: "XLSX",
+          createdAt: baseTime.format("YYYY-MM-DD HH:mm"),
+          status: "已完成"
+        });
+        const employee = employees[i % employees.length];
+        history.push({
+          reportId: `RPT-${monthLabel}-PS-${employee.employeeId}`,
+          type: `個人薪資單：${employee.chineseName}`,
+          format: "PDF",
+          createdAt: baseTime.subtract(2, "hour").format("YYYY-MM-DD HH:mm"),
+          status: "已完成"
+        });
+      }
+      return sortReportsDesc(history);
+    };
+
+    /**
+     * Populate report month filter options.
+     * @returns {void}
+     */
+    const populateReportMonthOptions = () => {
+      const select = document.getElementById("reportMonthFilter");
+      if (!select) {
+        return;
+      }
+      const months = Array.from(new Set(state.reportHistory.map((report) => getReportMonth(report))))
+        .sort((a, b) => b.localeCompare(a));
+      const options = [
+        `<option value="all">全部月份</option>`,
+        ...months.map((month) => `<option value="${month}">${month}</option>`)
       ];
+      select.innerHTML = options.join("");
+      select.value = state.reportFilterMonth || "all";
+    };
+
+    /**
+     * Render report filter summary.
+     * @returns {void}
+     */
+    const renderReportFilterSummary = () => {
+      const summary = document.getElementById("reportFilterSummary");
+      if (!summary) {
+        return;
+      }
+      const label = state.reportFilterMonth === "all" ? "全部月份" : state.reportFilterMonth;
+      summary.textContent = `顯示 ${label}，共 ${state.reports.length} 筆`;
+    };
+
+    /**
+     * Ensure report filter includes the given report.
+     * @param {{createdAt: string}} report
+     * @returns {void}
+     */
+    const ensureReportFilterForReport = (report) => {
+      if (!report) {
+        return;
+      }
+      const reportMonth = getReportMonth(report);
+      if (state.reportFilterMonth !== "all" && state.reportFilterMonth !== reportMonth) {
+        state.reportFilterMonth = reportMonth;
+      }
+      const select = document.getElementById("reportMonthFilter");
+      if (select) {
+        select.value = state.reportFilterMonth || "all";
+      }
+    };
+
+    /**
+     * Apply report month filter to report list.
+     * @returns {void}
+     */
+    const applyReportFilter = () => {
+      const source = sortReportsDesc(state.reportHistory);
+      if (state.reportFilterMonth && state.reportFilterMonth !== "all") {
+        state.reports = source.filter((report) => getReportMonth(report) === state.reportFilterMonth);
+      } else {
+        state.reports = source;
+      }
+      renderReports();
+      renderReportNotice(state.reports[0]);
+      renderReportDetail(state.reports[0]);
+      renderReportFilterSummary();
+      renderSettlementDashboard();
     };
 
     const generateMonthlyHistory = (months, baseGross, baseDeduction) => {
@@ -1366,7 +2342,9 @@
     };
 
     const renderSummary = () => {
-      const totalEmployees = state.employees.length;
+      const onDutyEmployees = state.employees.filter((item) => item.employmentStatus === "在職");
+      const onDutyMaleCount = onDutyEmployees.filter((item) => item.gender === "M").length;
+      const onDutyFemaleCount = onDutyEmployees.filter((item) => item.gender === "F").length;
       const totalGross = state.payrolls.reduce((sum, item) => sum + item.grossSalary, 0);
       const totalNet = state.payrolls.reduce((sum, item) => sum + item.netSalary, 0);
       const laborTotal = state.payrolls.reduce((sum, item) => sum + item.laborEmployee, 0);
@@ -1375,20 +2353,20 @@
       summaryCards.innerHTML = `
         <div class="stat-card">
           <div class="stat-card__label">本月在職人數</div>
-          <div class="stat-card__value">${formatter.format(totalEmployees)} 人</div>
-          <div class="stat-card__note">符合最低工資範圍</div>
+          <div class="stat-card__value">${formatter.format(onDutyEmployees.length)} 人</div>
+          <div class="stat-card__note">男 ${formatter.format(onDutyMaleCount)} 人 / 女 ${formatter.format(onDutyFemaleCount)} 人</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card" data-permission="payroll.view" data-rbac-silent="true">
           <div class="stat-card__label">本月應發總額</div>
           <div class="stat-card__value">${currency.format(totalGross)}</div>
           <div class="stat-card__note">含本薪 + 津貼 + 加班</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card" data-permission="payroll.view" data-rbac-silent="true">
           <div class="stat-card__label">本月實領總額</div>
           <div class="stat-card__value">${currency.format(totalNet)}</div>
           <div class="stat-card__note">扣除勞保/健保</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card" data-permission="payroll.view" data-rbac-silent="true">
           <div class="stat-card__label">保險扣款合計</div>
           <div class="stat-card__value">${currency.format(laborTotal + healthTotal)}</div>
           <div class="stat-card__note">僅計員工負擔額</div>
@@ -1436,7 +2414,6 @@
               <td>${employee.jobTitleInternal}</td>
               <td>${employee.jobLevel}</td>
               <td>${nationalityLabel}</td>
-              <td>${employee.employmentTypeLabel}</td>
               <td><span class="badge ${employee.employmentStatus === "在職" ? "badge--active" : "badge--warning"}">${employee.employmentStatus}</span></td>
               <td>${employee.hireDate}</td>
               <td>
@@ -1445,12 +2422,14 @@
                   data-action="view-employee"
                   data-employee-id="${employee.employeeId}"
                   data-employee-name="${employee.chineseName}"
+                  data-permission="employees.view"
                 >查看</button>
                 <button
                   class="btn btn--ghost"
                   data-action="edit-employee"
                   data-employee-id="${employee.employeeId}"
                   data-employee-name="${employee.chineseName}"
+                  data-permission="employees.edit"
                 >編輯</button>
               </td>
             </tr>
@@ -1458,6 +2437,427 @@
         })
         .join("");
       document.getElementById("employeeTable").innerHTML = rows;
+      renderEmployeeSettlementCheck();
+      renderSalaryStructure();
+      applyRbacToElements();
+    };
+
+    /**
+     * Render salary structure overview and table data.
+     * @returns {void}
+     */
+    const renderSalaryStructure = () => {
+      const summary = document.getElementById("salaryStructureSummary");
+      const changeList = document.getElementById("salaryStructureChangeList");
+      const table = document.getElementById("salaryStructureTable");
+      const note = document.getElementById("salaryStructureNoteBody");
+      if (!summary || !changeList || !table) {
+        return;
+      }
+
+      refreshSettlementData();
+      const totalEmployees = state.employees.length;
+      const baseTotal = state.employees.reduce((sum, employee) => sum + employee.baseSalary, 0);
+      const allowanceTotals = state.employees.reduce((sum, employee) => {
+        const allowances = getAllowanceBreakdown(employee.allowances);
+        sum.meal += allowances.meal;
+        sum.supervisor += allowances.supervisor;
+        sum.professional += allowances.professional;
+        sum.transport += allowances.transport;
+        sum.attendance += allowances.attendance;
+        return sum;
+      }, { meal: 0, supervisor: 0, professional: 0, transport: 0, attendance: 0 });
+      const allowanceTotal = allowanceTotals.meal
+        + allowanceTotals.supervisor
+        + allowanceTotals.professional
+        + allowanceTotals.transport
+        + allowanceTotals.attendance;
+      const avgBase = totalEmployees ? Math.round(baseTotal / totalEmployees) : 0;
+      const avgAllowance = totalEmployees ? Math.round(allowanceTotal / totalEmployees) : 0;
+      const avgMeal = totalEmployees ? Math.round(allowanceTotals.meal / totalEmployees) : 0;
+      const avgSupervisor = totalEmployees ? Math.round(allowanceTotals.supervisor / totalEmployees) : 0;
+      const avgProfessional = totalEmployees ? Math.round(allowanceTotals.professional / totalEmployees) : 0;
+      const avgTransport = totalEmployees ? Math.round(allowanceTotals.transport / totalEmployees) : 0;
+      const avgAttendance = totalEmployees ? Math.round(allowanceTotals.attendance / totalEmployees) : 0;
+      const baseRange = state.employees.reduce(
+        (range, employee) => ({
+          min: Math.min(range.min, employee.baseSalary),
+          max: Math.max(range.max, employee.baseSalary)
+        }),
+        { min: Number.POSITIVE_INFINITY, max: 0 }
+      );
+      const salaryChangeCount = Math.min(state.settlementData.salaryChangeCount || 0, totalEmployees);
+
+      summary.innerHTML = `
+        <div class="card__title">薪資結構摘要</div>
+        <div class="card__body">
+          <div>適用員工：${formatter.format(totalEmployees)} 人</div>
+          <div>平均本薪：${currency.format(avgBase)} / 津貼合計：${currency.format(avgAllowance)}</div>
+          <div class="list__meta">伙食費 ${currency.format(avgMeal)} / 主管津貼 ${currency.format(avgSupervisor)} / 專業津貼 ${currency.format(avgProfessional)}</div>
+          <div class="list__meta">交通津貼 ${currency.format(avgTransport)} / 全勤 ${currency.format(avgAttendance)}</div>
+          <div>本薪範圍：${currency.format(baseRange.min === Number.POSITIVE_INFINITY ? 0 : baseRange.min)} ～ ${currency.format(baseRange.max)}</div>
+          <div class="list__meta">${salaryChangeCount ? `薪資異動 ${salaryChangeCount} 筆待覆核` : "目前無待覆核異動"}</div>
+        </div>
+      `;
+
+      if (!salaryChangeCount) {
+        changeList.innerHTML = `
+          <li class="list__item">
+            <div>
+              <div>未偵測到異動</div>
+              <div class="list__meta">可直接進入結薪資料確認</div>
+            </div>
+            <span class="badge badge--active">正常</span>
+          </li>
+        `;
+      } else {
+        const changeEmployees = state.employees.slice(0, salaryChangeCount);
+        changeList.innerHTML = changeEmployees
+          .map((employee) => {
+            const allowances = getAllowanceBreakdown(employee.allowances);
+            const allowancesTotal = allowances.meal
+              + allowances.supervisor
+              + allowances.professional
+              + allowances.transport
+              + allowances.attendance;
+            return `
+              <li class="list__item">
+                <div>
+                  <div>${employee.chineseName} (${employee.employeeId})</div>
+                  <div class="list__meta">本薪 ${currency.format(employee.baseSalary)} / 伙食費 ${currency.format(allowances.meal)} / 主管津貼 ${currency.format(allowances.supervisor)}</div>
+                  <div class="list__meta">專業津貼 ${currency.format(allowances.professional)} / 交通津貼 ${currency.format(allowances.transport)} / 全勤 ${currency.format(allowances.attendance)} / 合計 ${currency.format(allowancesTotal)}</div>
+                </div>
+                <span class="badge badge--pending">待覆核</span>
+              </li>
+            `;
+          })
+          .join("");
+      }
+
+      const changeSet = new Set(state.employees.slice(0, salaryChangeCount).map((employee) => employee.employeeId));
+      table.innerHTML = state.employees
+        .map((employee, index) => {
+          const allowances = getAllowanceBreakdown(employee.allowances);
+          const allowancesTotal = allowances.meal
+            + allowances.supervisor
+            + allowances.professional
+            + allowances.transport
+            + allowances.attendance;
+          const employmentTypeLabel = employee.employmentTypeCode === "2" ? "時薪" : "月薪";
+          const isPending = changeSet.has(employee.employeeId);
+          const statusLabel = isPending ? "覆核中" : "啟用";
+          const statusClass = isPending ? "badge--pending" : "badge--active";
+          const effectiveDate = dayjs().subtract(index + 1, "day").format("YYYY-MM-DD");
+          return `
+            <tr>
+              <td>${employee.employeeId}</td>
+              <td>${employee.chineseName}</td>
+              <td>${employee.departmentCode} ${employee.departmentName}</td>
+              <td>${employmentTypeLabel}</td>
+              <td>${currency.format(employee.baseSalary)}</td>
+              <td>${currency.format(allowances.meal)}</td>
+              <td>${currency.format(allowances.supervisor)}</td>
+              <td>${currency.format(allowances.professional)}</td>
+              <td>${currency.format(allowances.transport)}</td>
+              <td>${currency.format(allowances.attendance)}</td>
+              <td>${currency.format(allowancesTotal)}</td>
+              <td>${effectiveDate}</td>
+              <td><span class="badge ${statusClass}">${statusLabel}</span></td>
+              <td>
+                <button
+                  class="btn btn--ghost"
+                  data-action="adjust-salary"
+                  data-employee-id="${employee.employeeId}"
+                  data-employee-name="${employee.chineseName}"
+                  data-permission="payroll.edit"
+                >調整</button>
+              </td>
+            </tr>
+          `;
+        })
+        .join("");
+
+      if (note) {
+        const updatedAt = state.settlementData.sourceUpdatedAt?.salaryStructure;
+        note.textContent = updatedAt ? `最後更新 ${formatDateTime(updatedAt)}，異動後需重新確認結薪作業。` : "尚未更新薪資結構。";
+      }
+      applyRbacToElements();
+    };
+
+    /**
+     * Update salary structure detail header based on mode.
+     * @param {string} mode
+     * @param {object|null} employee
+     * @returns {void}
+     */
+    const setSalaryStructureMeta = (mode, employee) => {
+      const title = document.getElementById("salaryStructureTitle");
+      const desc = document.getElementById("salaryStructureDesc");
+      const submitButton = document.getElementById("submitSalaryStructure");
+      if (!title || !submitButton) {
+        return;
+      }
+      const name = employee?.chineseName || "";
+      if (mode === "create") {
+        title.textContent = "建立薪資結構";
+        if (desc) {
+          desc.textContent = `為 ${name || "指定員工"} 建立薪資結構，設定身分別、本薪與津貼項目。`;
+        }
+        submitButton.textContent = "建立薪資結構";
+      } else {
+        title.textContent = "薪資結構明細";
+        if (desc) {
+          desc.textContent = `調整 ${name || "指定員工"} 的薪資結構，更新後需重新結薪確認。`;
+        }
+        submitButton.textContent = "儲存調整";
+      }
+    };
+
+    /**
+     * Toggle salary structure form fields by permission.
+     * @param {boolean} canEdit
+     * @returns {void}
+     */
+    const setSalaryStructureFormEditable = (canEdit) => {
+      document.querySelectorAll("#salaryStructureFormFields .salary-structure-input").forEach((input) => {
+        input.disabled = !canEdit;
+      });
+    };
+
+    /**
+     * Get current salary structure form values.
+     * @returns {{employeeId: string, employmentTypeCode: string, baseSalary: number, allowances: object, effectiveDate: string, reason: string}}
+     */
+    const getSalaryStructureFormValues = () => {
+      const parseAmount = (value) => {
+        const parsed = Number(value);
+        return Number.isFinite(parsed) ? parsed : 0;
+      };
+      const employeeId = document.getElementById("salaryEmployeeSelect")?.value || "";
+      const employmentTypeCode = document.getElementById("salaryEmploymentTypeSelect")?.value || "1";
+      const baseSalary = parseAmount(document.getElementById("salaryBaseInput")?.value);
+      const allowances = {
+        meal: parseAmount(document.getElementById("salaryMealInput")?.value),
+        supervisor: parseAmount(document.getElementById("salarySupervisorInput")?.value),
+        professional: parseAmount(document.getElementById("salaryProfessionalInput")?.value),
+        transport: parseAmount(document.getElementById("salaryTransportInput")?.value),
+        attendance: parseAmount(document.getElementById("salaryAttendanceInput")?.value)
+      };
+      const effectiveDate = document.getElementById("salaryEffectiveDateInput")?.value || "";
+      const reason = document.getElementById("salaryReasonInput")?.value.trim() || "";
+      return { employeeId, employmentTypeCode, baseSalary, allowances, effectiveDate, reason };
+    };
+
+    /**
+     * Update salary structure preview based on form inputs.
+     * @param {string} note
+     * @returns {void}
+     */
+    const updateSalaryStructurePreview = (note) => {
+      const preview = document.getElementById("salaryStructurePreview");
+      if (!preview) {
+        return;
+      }
+      const values = getSalaryStructureFormValues();
+      const employmentTypeLabel = values.employmentTypeCode === "2" ? "時薪" : "月薪";
+      const allowancesTotal = getAllowanceTotal(values.allowances);
+      const insuredInfo = getInsuredSalary(values.baseSalary + allowancesTotal);
+      preview.innerHTML = `
+        <div class="card__title">試算摘要</div>
+        <div class="card__body">
+          <div>身分別：${employmentTypeLabel}</div>
+          <div>本薪：${currency.format(values.baseSalary)}</div>
+          <div>津貼合計：${currency.format(allowancesTotal)}</div>
+          <div>投保薪資級距：${insuredInfo.gradeCode}（${currency.format(insuredInfo.insuredSalary)}）</div>
+          <div class="list__meta">${note || "調整內容將同步更新結薪計算。"} </div>
+        </div>
+      `;
+    };
+
+    /**
+     * Render salary structure detail panel.
+     * @param {object|null} employee
+     * @param {string} note
+     * @returns {void}
+     */
+    const renderSalaryStructureDetail = (employee, note) => {
+      const target = document.getElementById("salaryStructureTarget");
+      const preview = document.getElementById("salaryStructurePreview");
+      const form = document.getElementById("salaryStructureForm");
+      const detailNote = document.getElementById("salaryStructureDetailNoteBody");
+      if (!target || !preview || !form) {
+        return;
+      }
+      const targetEmployee = employee
+        || state.employees.find((item) => item.employeeId === state.salaryStructureEditingId)
+        || state.employees[0];
+      if (!targetEmployee) {
+        target.innerHTML = `
+          <div class="card__title">適用對象</div>
+          <div class="card__body">尚未選擇薪資結構對象。</div>
+        `;
+        preview.innerHTML = `
+          <div class="card__title">試算摘要</div>
+          <div class="card__body">尚未載入薪資結構試算。</div>
+        `;
+        form.innerHTML = `
+          <div class="card__title">薪資結構設定</div>
+          <div class="card__body">尚未載入薪資結構設定。</div>
+        `;
+        if (detailNote) {
+          detailNote.textContent = "請先選擇薪資結構對象。";
+        }
+        return;
+      }
+
+      state.salaryStructureEditingId = targetEmployee.employeeId;
+      const allowances = getAllowanceBreakdown(targetEmployee.allowances);
+      const allowancesTotal = getAllowanceTotal(targetEmployee.allowances);
+      const insuredInfo = getInsuredSalary(targetEmployee.baseSalary + allowancesTotal);
+      const employmentTypeCode = targetEmployee.employmentTypeCode || "1";
+      const employmentTypeLabel = employmentTypeCode === "2" ? "時薪" : "月薪";
+      const changeCount = Math.min(state.settlementData.salaryChangeCount || 0, state.employees.length);
+      const changeSet = new Set(state.employees.slice(0, changeCount).map((item) => item.employeeId));
+      const statusLabel = changeSet.has(targetEmployee.employeeId) ? "覆核中" : "啟用";
+      const statusClass = changeSet.has(targetEmployee.employeeId) ? "badge--pending" : "badge--active";
+      const employeeOptions = state.employees
+        .map((item) => {
+          const selected = item.employeeId === targetEmployee.employeeId ? "selected" : "";
+          return `<option value="${item.employeeId}" ${selected}>${item.employeeId} ${item.chineseName}</option>`;
+        })
+        .join("");
+
+      target.innerHTML = `
+        <div class="card__title">適用對象</div>
+        <div class="card__body">
+          <div>員工：${targetEmployee.chineseName} (${targetEmployee.employeeId})</div>
+          <div>部門：${targetEmployee.departmentCode} ${targetEmployee.departmentName}</div>
+          <div>身分別：${employmentTypeLabel}</div>
+          <div>在職狀態：${targetEmployee.employmentStatus}</div>
+          <div class="list__meta">狀態：<span class="badge ${statusClass}">${statusLabel}</span></div>
+        </div>
+      `;
+
+      preview.innerHTML = `
+        <div class="card__title">試算摘要</div>
+        <div class="card__body">
+          <div>身分別：${employmentTypeLabel}</div>
+          <div>本薪：${currency.format(targetEmployee.baseSalary)}</div>
+          <div>津貼合計：${currency.format(allowancesTotal)}</div>
+          <div>投保薪資級距：${insuredInfo.gradeCode}（${currency.format(insuredInfo.insuredSalary)}）</div>
+          <div class="list__meta">${note || "調整內容將同步更新結薪計算。"} </div>
+        </div>
+      `;
+
+      form.innerHTML = `
+        <div class="card__title">薪資結構設定</div>
+        <form class="employee-form" id="salaryStructureFormFields">
+          <div class="form-grid">
+            <label class="form-field">
+              <span class="form-label">員工</span>
+              <select class="form-input" id="salaryEmployeeSelect">${employeeOptions}</select>
+              <span class="form-hint">選擇要建立/調整的員工</span>
+            </label>
+            <label class="form-field">
+              <span class="form-label">身分別</span>
+              <select class="form-input salary-structure-input" id="salaryEmploymentTypeSelect" required>
+                <option value="1" ${employmentTypeCode === "1" ? "selected" : ""}>月薪</option>
+                <option value="2" ${employmentTypeCode === "2" ? "selected" : ""}>時薪</option>
+              </select>
+              <span class="form-hint">月薪 / 時薪</span>
+            </label>
+            <label class="form-field">
+              <span class="form-label">本薪</span>
+              <input class="form-input salary-structure-input form-input--align-right" id="salaryBaseInput" type="number" min="${rules.minWage}" step="100" value="${targetEmployee.baseSalary}" required />
+              <span class="form-hint">不得低於基本工資 ${currency.format(rules.minWage)}</span>
+            </label>
+            <label class="form-field">
+              <span class="form-label">伙食費</span>
+              <input class="form-input salary-structure-input form-input--align-right" id="salaryMealInput" type="number" min="0" step="100" value="${allowances.meal}" />
+              <span class="form-hint">津貼項目</span>
+            </label>
+            <label class="form-field">
+              <span class="form-label">主管津貼</span>
+              <input class="form-input salary-structure-input form-input--align-right" id="salarySupervisorInput" type="number" min="0" step="100" value="${allowances.supervisor}" />
+              <span class="form-hint">津貼項目</span>
+            </label>
+            <label class="form-field">
+              <span class="form-label">專業津貼</span>
+              <input class="form-input salary-structure-input form-input--align-right" id="salaryProfessionalInput" type="number" min="0" step="100" value="${allowances.professional}" />
+              <span class="form-hint">津貼項目</span>
+            </label>
+            <label class="form-field">
+              <span class="form-label">交通津貼</span>
+              <input class="form-input salary-structure-input form-input--align-right" id="salaryTransportInput" type="number" min="0" step="100" value="${allowances.transport}" />
+              <span class="form-hint">津貼項目</span>
+            </label>
+            <label class="form-field">
+              <span class="form-label">全勤</span>
+              <input class="form-input salary-structure-input form-input--align-right" id="salaryAttendanceInput" type="number" min="0" step="100" value="${allowances.attendance}" />
+              <span class="form-hint">津貼項目</span>
+            </label>
+            <label class="form-field">
+              <span class="form-label">生效日</span>
+              <input class="form-input salary-structure-input" id="salaryEffectiveDateInput" type="date" value="${dayjs().format("YYYY-MM-DD")}" />
+              <span class="form-hint">預設當日生效</span>
+            </label>
+            <label class="form-field">
+              <span class="form-label">調整原因</span>
+              <textarea class="form-input salary-structure-input" id="salaryReasonInput" maxlength="60"></textarea>
+              <span class="form-hint">文字 60 字元</span>
+            </label>
+          </div>
+        </form>
+      `;
+
+      if (detailNote) {
+        const updatedAt = state.settlementData.sourceUpdatedAt?.salaryStructure;
+        detailNote.textContent = updatedAt ? `最後更新 ${formatDateTime(updatedAt)}，調整後需重新結薪確認。` : "尚未產生薪資結構異動。";
+      }
+      setSalaryStructureFormEditable(hasPermission("payroll.edit"));
+      applyRbacToElements();
+    };
+
+    /**
+     * Collect and validate salary structure form values.
+     * @returns {object|null}
+     */
+    const collectSalaryStructureFormData = () => {
+      const values = getSalaryStructureFormValues();
+      if (!values.employeeId) {
+        showToast("請選擇員工");
+        return null;
+      }
+      if (!values.baseSalary || values.baseSalary < rules.minWage) {
+        showToast(`本薪不得低於基本工資 ${currency.format(rules.minWage)}`);
+        return null;
+      }
+      const hasNegative = Object.values(values.allowances).some((value) => value < 0);
+      if (hasNegative) {
+        showToast("津貼金額不可為負數");
+        return null;
+      }
+      return values;
+    };
+
+    /**
+     * Open salary structure detail page.
+     * @param {object|null} employee
+     * @param {string} mode
+     * @param {string} note
+     * @returns {void}
+     */
+    const openSalaryStructureDetail = (employee, mode, note) => {
+      const targetEmployee = employee || state.employees[0];
+      if (!targetEmployee) {
+        showToast("尚無員工資料");
+        return;
+      }
+      state.salaryStructureMode = mode || "edit";
+      state.salaryStructureEditingId = targetEmployee.employeeId;
+      renderSalaryStructureDetail(targetEmployee, note);
+      setSalaryStructureMeta(state.salaryStructureMode, targetEmployee);
+      openPage("salary-structure-detail", "薪資結構明細", true, false);
     };
 
     const renderEmployeePreview = (employee, note) => {
@@ -1467,29 +2867,70 @@
       }
       if (!employee) {
         preview.innerHTML = `
-          <div class="card__title">員工資料摘要</div>
+          <div class="card__title">人事資料摘要</div>
           <div class="card__body">點選「查看」或「新增員工」以顯示資料摘要。</div>
         `;
         return;
       }
-      const allowancesTotal = employee.allowances.meal + employee.allowances.professional + employee.allowances.transport;
-      const insuredBasis = employee.baseSalary + allowancesTotal;
-      const insuredInfo = getInsuredSalary(insuredBasis);
       const nationalityLabel = employee.nationalityCode === "1" ? "本國" : "外國";
       preview.innerHTML = `
-        <div class="card__title">員工資料摘要</div>
+        <div class="card__title">人事資料摘要</div>
         <div class="card__body">
           <div>員工：${employee.chineseName} / ${employee.englishName} (${employee.employeeId})</div>
           <div>身分證字號：${employee.idNumber} ・ 性別：${employee.gender} ・ 年齡：${employee.age}</div>
           <div>生日：${employee.birthYear}-${employee.birthMonth}-${employee.birthDay}</div>
           <div>部門：${employee.departmentCode} ${employee.departmentName} ・ 職等：${employee.jobLevel}</div>
           <div>對內職稱：${employee.jobTitleInternal} ・ 對外職稱：${employee.jobTitleExternal}</div>
-          <div>國別：${nationalityLabel} ・ 身分別：${employee.employmentTypeLabel}</div>
+          <div>國別：${nationalityLabel}</div>
           <div>到職日：${employee.hireDate} ・ 試用期：${employee.probationStart} ～ ${employee.probationEnd}</div>
-          <div>薪資結構：本薪 ${currency.format(employee.baseSalary)} / 津貼 ${currency.format(allowancesTotal)}</div>
-          <div>投保薪資級距：${insuredInfo.gradeCode}（${currency.format(insuredInfo.insuredSalary)}）</div>
-          <div>眷屬數：${Math.min(employee.dependentsCount, rules.maxDependents)} 人</div>
           <div class="list__meta">${note || "資料供流程參考，實際依申報資料為準。"}</div>
+        </div>
+      `;
+      applyRbacToElements();
+    };
+
+    /**
+     * Render settlement readiness card on employee page.
+     * @returns {void}
+     */
+    const renderEmployeeSettlementCheck = () => {
+      const container = document.getElementById("employeeSettlementCheck");
+      if (!container) {
+        return;
+      }
+      refreshSettlementData();
+      const issueCount = state.settlementData.employeeIssueCount;
+      const personnelChangeCount = state.settlementData.personnelChangeCount;
+      const issueStatus = issueCount >= 3 ? "block" : issueCount > 0 ? "warn" : "ok";
+      const changeStatus = personnelChangeCount ? "warn" : "ok";
+      const issueBadge = getStatusBadge(issueStatus);
+      const changeBadge = getStatusBadge(changeStatus);
+      const updatedAt = state.settlementData.sourceUpdatedAt?.employees;
+      const updatedText = updatedAt ? `最後更新 ${formatDateTime(updatedAt)}` : "尚未更新";
+      container.innerHTML = `
+        <div class="card__title">結薪檢核</div>
+        <ul class="list">
+          <li class="list__item">
+            <div>
+              <div>資料完整度</div>
+              <div class="list__meta">${issueCount ? `待補 ${issueCount} 筆（帳務/到離職）` : "資料完整"}</div>
+            </div>
+            <span class="badge ${issueBadge.className}">${issueBadge.label}</span>
+          </li>
+          <li class="list__item">
+            <div>
+              <div>人事異動彙整</div>
+              <div class="list__meta">${personnelChangeCount ? `本月 ${personnelChangeCount} 筆到離職需覆核` : "未偵測到異動"}</div>
+            </div>
+            <span class="badge ${changeBadge.className}">${changeBadge.label}</span>
+          </li>
+        </ul>
+        <div class="panel__note">
+          <div class="list__meta">${updatedText}</div>
+          <div class="list__meta">資料異動後需回到結薪作業重新確認。</div>
+        </div>
+        <div class="demo__actions">
+          <button class="btn btn--ghost btn--tiny" data-nav="settlement" data-label="結薪作業" data-permission="settlement.view">前往結薪作業</button>
         </div>
       `;
     };
@@ -1670,8 +3111,6 @@
       const idNumber = getValue("idNumberInput");
       const gender = getValue("genderSelect");
       const nationalityCode = getValue("nationalitySelect");
-      const employmentTypeCode = getValue("employmentTypeSelect");
-      const employmentTypeLabel = employmentTypeCode === "1" ? "月薪" : "時薪";
       const mobile = getValue("mobileInput");
       const phone = getValue("phoneInput");
       const departmentCode = getValue("departmentCodeInput");
@@ -1697,6 +3136,8 @@
       const employmentStatus = leaveDate ? "離職" : "在職";
 
       const safeBase = baseEmployee || state.pendingEmployee || createEmployee(state.employees.length);
+      const employmentTypeCode = baseEmployee?.employmentTypeCode || safeBase.employmentTypeCode || "1";
+      const employmentTypeLabel = employmentTypeCode === "1" ? "月薪" : "時薪";
       return {
         employeeId,
         chineseName,
@@ -1767,7 +3208,6 @@
         return;
       }
       const nationalityCode = employee.nationalityCode || "1";
-      const employmentTypeCode = employee.employmentTypeCode || "1";
       const gender = employee.gender || "M";
       const jobLevel = employee.jobLevel || "1";
       const probationStartCompact = employee.probationStart ? employee.probationStart.replaceAll("-", "") : "";
@@ -1846,14 +3286,6 @@
                   <option value="2" ${nationalityCode === "2" ? "selected" : ""}>外國人</option>
                 </select>
                 <span class="form-hint">本國人 / 外國人</span>
-              </label>
-              <label class="form-field">
-                <span class="form-label">身分別</span>
-                <select class="form-input" id="employmentTypeSelect" required>
-                  <option value="1" ${employmentTypeCode === "1" ? "selected" : ""}>月薪</option>
-                  <option value="2" ${employmentTypeCode === "2" ? "selected" : ""}>時薪</option>
-                </select>
-                <span class="form-hint">月薪 / 時薪</span>
               </label>
             </div>
           </div>
@@ -2222,16 +3654,20 @@
       const title = document.getElementById("employeeFormTitle");
       const desc = document.getElementById("employeeFormDesc");
       const submitButton = document.getElementById("submitEmployeeCreate");
-      if (!title || !desc || !submitButton) {
+      if (!title || !submitButton) {
         return;
       }
       if (mode === "edit") {
         title.textContent = "編輯員工";
-        desc.textContent = `編輯 ${employee?.chineseName || ""} 的員工資料，欄位規範依人事資料結構。`;
+        if (desc) {
+          desc.textContent = `編輯 ${employee?.chineseName || ""} 的員工資料，欄位規範依人事資料結構。`;
+        }
         submitButton.textContent = "儲存變更";
       } else {
         title.textContent = "新增員工";
-        desc.textContent = "填寫員工基本資料、職務資訊與帳務資料，欄位規範依人事資料結構。";
+        if (desc) {
+          desc.textContent = "填寫員工基本資料、職務資訊與帳務資料，欄位規範依人事資料結構。";
+        }
         submitButton.textContent = "送出新增";
       }
     };
@@ -2251,9 +3687,15 @@
           <div class="card__title">最新薪資摘要</div>
           <div class="card__body">尚未載入薪資資訊。</div>
         `;
+        applyRbacToElements();
         return;
       }
-      const allowancesTotal = employee.allowances.meal + employee.allowances.professional + employee.allowances.transport;
+      const allowances = getAllowanceBreakdown(employee.allowances);
+      const allowancesTotal = allowances.meal
+        + allowances.supervisor
+        + allowances.professional
+        + allowances.transport
+        + allowances.attendance;
       const insuredBasis = employee.baseSalary + allowancesTotal;
       const insuredInfo = getInsuredSalary(insuredBasis);
       const nationalityLabel = employee.nationalityCode === "1" ? "本國" : "外國";
@@ -2266,15 +3708,19 @@
           <div>手機號碼：${employee.mobile} ・ 電話：${employee.phone}</div>
           <div>部門：${employee.departmentCode} ${employee.departmentName}</div>
           <div>對外職稱：${employee.jobTitleExternal} ・ 對內職稱：${employee.jobTitleInternal}</div>
-          <div>職等：${employee.jobLevel} ・ 國別：${nationalityLabel} ・ 身分別：${employee.employmentTypeLabel}</div>
+          <div>職等：${employee.jobLevel} ・ 國別：${nationalityLabel}</div>
           <div>學歷：${employee.education} ・ 學校：${employee.school} ・ 科系：${employee.major}</div>
           <div>在職狀態：${employee.employmentStatus}</div>
           <div>年資：${employee.tenureYears} 年</div>
           <div>到職日：${employee.hireDate} ・ 試用起訖：${employee.probationStart} ～ ${employee.probationEnd}</div>
           <div>離職日：${employee.leaveDate || "—"}</div>
-          <div>本薪：${currency.format(employee.baseSalary)} ・ 津貼合計：${currency.format(allowancesTotal)}</div>
-          <div>投保薪資：${currency.format(insuredInfo.insuredSalary)}（級距 ${insuredInfo.gradeCode}）</div>
-          <div>眷屬數：${Math.min(employee.dependentsCount, rules.maxDependents)} 人</div>
+          <div data-permission="payroll.view" data-rbac-label="薪資結構">
+            <div>本薪：${currency.format(employee.baseSalary)}</div>
+            <div>伙食費 ${currency.format(allowances.meal)} / 主管津貼 ${currency.format(allowances.supervisor)} / 專業津貼 ${currency.format(allowances.professional)}</div>
+            <div>交通津貼 ${currency.format(allowances.transport)} / 全勤 ${currency.format(allowances.attendance)} / 津貼合計 ${currency.format(allowancesTotal)}</div>
+            <div>投保薪資：${currency.format(insuredInfo.insuredSalary)}（級距 ${insuredInfo.gradeCode}）</div>
+            <div>眷屬數：${Math.min(employee.dependentsCount, rules.maxDependents)} 人</div>
+          </div>
           <div>識別證卡號：${employee.badgeCardNumber} ・ Key：${employee.keyAccess} ・ 保全：${employee.securityAccess}</div>
           <div>銀行別：${employee.bankCode} ・ 分行別：${employee.branchCode} ・ 帳號：${employee.account}</div>
           <div>備註：${employee.note}</div>
@@ -2287,6 +3733,7 @@
           <div class="card__title">最新薪資摘要</div>
           <div class="card__body">尚未產生薪資資料。</div>
         `;
+        applyRbacToElements();
         return;
       }
       payrollCard.innerHTML = `
@@ -2300,6 +3747,7 @@
           <div>狀態：${payroll.status}</div>
         </div>
       `;
+      applyRbacToElements();
     };
 
     const renderInsurance = () => {
@@ -2340,6 +3788,58 @@
           </tr>
         `)
         .join("");
+
+      renderInsuranceSettlementCheck();
+      applyRbacToElements();
+    };
+
+    /**
+     * Render settlement readiness card on insurance page.
+     * @returns {void}
+     */
+    const renderInsuranceSettlementCheck = () => {
+      const container = document.getElementById("insuranceSettlementCheck");
+      if (!container) {
+        return;
+      }
+      const labor = state.insuranceVersions.find((item) => item.type === "勞保");
+      const health = state.insuranceVersions.find((item) => item.type === "健保");
+      const hasInsurance = Boolean(labor && health);
+      const hasActiveGrade = Boolean(state.gradeVersion?.labor?.activeCode && state.gradeVersion?.health?.activeCode);
+      const versionBadge = getStatusBadge(hasInsurance ? "ok" : "block");
+      const gradeBadge = getStatusBadge(hasActiveGrade ? "ok" : "block");
+      const updatedAt = state.settlementData.sourceUpdatedAt?.insurance;
+      const updatedText = updatedAt ? `最後更新 ${formatDateTime(updatedAt)}` : "尚未更新";
+      container.innerHTML = `
+        <div class="card__title">結薪檢核</div>
+        <ul class="list">
+          <li class="list__item">
+            <div>
+              <div>保險版本</div>
+              <div class="list__meta">${hasInsurance ? `${labor.code} / ${health.code}` : "尚未啟用保險版本"}</div>
+            </div>
+            <span class="badge ${versionBadge.className}">${versionBadge.label}</span>
+          </li>
+          <li class="list__item">
+            <div>
+              <div>投保級距版本</div>
+              <div class="list__meta">${
+                hasActiveGrade
+                  ? `勞保 ${state.gradeVersion.labor.activeCode} / 健保 ${state.gradeVersion.health.activeCode}`
+                  : "尚未設定啟用級距版本"
+              }</div>
+            </div>
+            <span class="badge ${gradeBadge.className}">${gradeBadge.label}</span>
+          </li>
+        </ul>
+        <div class="panel__note">
+          <div class="list__meta">${updatedText}</div>
+          <div class="list__meta">版本調整後需回到結薪作業重新確認。</div>
+        </div>
+        <div class="demo__actions">
+          <button class="btn btn--ghost btn--tiny" data-nav="settlement" data-label="結薪作業" data-permission="settlement.view">前往結薪作業</button>
+        </div>
+      `;
     };
 
     /**
@@ -2371,7 +3871,7 @@
                 <td>${item.effectiveDate}</td>
                 <td><span class="badge ${statusClass}">${item.status}</span></td>
                 <td>
-                  <button class="btn btn--soft" data-grade-version-action="${actionType}" data-grade-type="${type}" data-grade-code="${item.code}">
+                  <button class="btn btn--soft" data-grade-version-action="${actionType}" data-grade-type="${type}" data-grade-code="${item.code}" data-permission="insurance.edit">
                     ${actionLabel}
                   </button>
                 </td>
@@ -2391,7 +3891,7 @@
           <div>生效日：${activeDate}</div>
           <div>版本狀態：<span class="badge ${activeStatusClass}">${activeStatus}</span></div>
           <div class="demo__actions grade-version__actions">
-            <button class="btn btn--soft" data-grade-version-action="create" data-grade-type="${type}">新增版本代碼</button>
+            <button class="btn btn--soft" data-grade-version-action="create" data-grade-type="${type}" data-permission="insurance.edit">新增版本代碼</button>
           </div>
           <table class="table grade-version__table">
             <thead>
@@ -2406,6 +3906,7 @@
           </table>
         </div>
       `;
+      applyRbacToElements();
     };
 
     /**
@@ -2426,12 +3927,13 @@
             <td>${currency.format(item.min)} ～ ${currency.format(item.max)}</td>
             <td>${currency.format(item.insured)}</td>
             <td>
-              <button class="btn btn--ghost" data-grade-action="view" data-grade-type="${type}" data-grade-code="${item.code}">檢視</button>
-              <button class="btn btn--ghost" data-grade-action="edit" data-grade-type="${type}" data-grade-code="${item.code}">修改</button>
+              <button class="btn btn--ghost" data-grade-action="view" data-grade-type="${type}" data-grade-code="${item.code}" data-permission="insurance.edit">檢視</button>
+              <button class="btn btn--ghost" data-grade-action="edit" data-grade-type="${type}" data-grade-code="${item.code}" data-permission="insurance.edit">修改</button>
             </td>
           </tr>
         `)
         .join("");
+      applyRbacToElements();
     };
 
     /**
@@ -2533,8 +4035,8 @@
           <div class="demo__actions">
             ${
               isView
-                ? `<button class="btn btn--primary" type="button" data-grade-action="edit" data-grade-type="${type}" data-grade-code="${values.code}">修改級距</button>`
-                : `<button class="btn btn--primary" type="button" data-grade-action="save" data-grade-type="${type}">${actionLabel}</button>`
+                ? `<button class="btn btn--primary" type="button" data-grade-action="edit" data-grade-type="${type}" data-grade-code="${values.code}" data-permission="insurance.edit">修改級距</button>`
+                : `<button class="btn btn--primary" type="button" data-grade-action="save" data-grade-type="${type}" data-permission="insurance.edit">${actionLabel}</button>`
             }
             <button class="btn btn--ghost" type="button" data-grade-action="cancel" data-grade-type="${type}">返回清單</button>
           </div>
@@ -2544,6 +4046,7 @@
       if (versionSelect && values.versionCode) {
         versionSelect.value = values.versionCode;
       }
+      applyRbacToElements();
     };
 
     /**
@@ -2623,6 +4126,7 @@
         showToast(`${typeLabel}級距已更新`);
       }
 
+      touchSettlementSource("insurance");
       renderGradeTable(type);
       renderInsurance();
       updatePayrollAfterGradeChange(`${typeLabel}級距更新後重新計算投保薪資。`);
@@ -2701,11 +4205,12 @@
             </label>
           </div>
           <div class="demo__actions">
-            <button class="btn btn--primary" type="button" data-grade-version-action="save" data-grade-type="${type}">建立版本</button>
+            <button class="btn btn--primary" type="button" data-grade-version-action="save" data-grade-type="${type}" data-permission="insurance.edit">建立版本</button>
             <button class="btn btn--ghost" type="button" data-grade-version-action="cancel">返回清單</button>
           </div>
         </form>
       `;
+      applyRbacToElements();
     };
 
     /**
@@ -2764,6 +4269,9 @@
       };
       renderGradeVersion(type);
       closeGradeVersionModal();
+      touchSettlementSource("insurance");
+      renderInsuranceSettlementCheck();
+      markSettlementDirty("新增級距版本後需重新確認結薪資料。");
       setAction(`已新增${typeLabel}級距版本 ${code}`);
       logActivity(`新增${typeLabel}級距版本：${code}`);
       showToast(`${typeLabel}級距版本已建立`);
@@ -2838,12 +4346,13 @@
             <td>${currency.format(item.netSalary)}</td>
             <td><span class="badge ${item.status === "已結算" ? "badge--active" : "badge--pending"}">${item.status}</span></td>
             <td>
-              <button class="btn btn--ghost" data-action="view-payroll" data-payroll-id="${item.payrollId}">查看</button>
+              <button class="btn btn--ghost" data-action="view-payroll" data-payroll-id="${item.payrollId}" data-permission="payroll.view">查看</button>
             </td>
           </tr>
         `)
         .join("");
       document.getElementById("payrollTable").innerHTML = rows;
+      applyRbacToElements();
     };
 
     const renderPayrollNotice = (note) => {
@@ -2884,7 +4393,12 @@
         return;
       }
       const employee = state.employees.find((item) => item.employeeId === payroll.employeeId);
-      const allowancesTotal = employee ? employee.allowances.meal + employee.allowances.professional + employee.allowances.transport : 0;
+      const allowances = getAllowanceBreakdown(employee?.allowances);
+      const allowancesTotal = allowances.meal
+        + allowances.supervisor
+        + allowances.professional
+        + allowances.transport
+        + allowances.attendance;
       const overtimePay = Math.max(0, payroll.grossSalary - (employee ? employee.baseSalary : 0) - allowancesTotal);
       const dependents = employee ? Math.min(employee.dependentsCount, rules.maxDependents) : 0;
       detail.innerHTML = `
@@ -2893,7 +4407,8 @@
           <div>薪資編號：${payroll.payrollId}</div>
           <div>員工：${payroll.employeeName} (${payroll.employeeId})</div>
           <div>本薪：${employee ? currency.format(employee.baseSalary) : "-"}</div>
-          <div>津貼合計：${currency.format(allowancesTotal)}</div>
+          <div>伙食費 ${currency.format(allowances.meal)} / 主管津貼 ${currency.format(allowances.supervisor)} / 專業津貼 ${currency.format(allowances.professional)}</div>
+          <div>交通津貼 ${currency.format(allowances.transport)} / 全勤 ${currency.format(allowances.attendance)} / 津貼合計 ${currency.format(allowancesTotal)}</div>
           <div>加班時數：${payroll.overtimeHours} 小時 / 加班費：${currency.format(overtimePay)}</div>
           <div>應發：${currency.format(payroll.grossSalary)}</div>
           <div>實領：${currency.format(payroll.netSalary)}</div>
@@ -2920,20 +4435,32 @@
     };
 
     const renderReports = () => {
-      document.getElementById("reportTable").innerHTML = state.reports
-        .map((report) => `
+      const table = document.getElementById("reportTable");
+      if (!table) {
+        return;
+      }
+      const rows = state.reports.length
+        ? state.reports
+          .map((report) => `
+            <tr>
+              <td>${report.reportId}</td>
+              <td>${report.type}</td>
+              <td>${report.format}</td>
+              <td>${report.createdAt}</td>
+              <td><span class="badge badge--active">${report.status}</span></td>
+              <td>
+                <button class="btn btn--ghost" data-action="view-report" data-report-id="${report.reportId}" data-permission="reports.view">查看</button>
+              </td>
+            </tr>
+          `)
+          .join("")
+        : `
           <tr>
-            <td>${report.reportId}</td>
-            <td>${report.type}</td>
-            <td>${report.format}</td>
-            <td>${report.createdAt}</td>
-            <td><span class="badge badge--active">${report.status}</span></td>
-            <td>
-              <button class="btn btn--ghost" data-action="view-report" data-report-id="${report.reportId}">查看</button>
-            </td>
+            <td colspan="6">尚無符合條件的報表。</td>
           </tr>
-        `)
-        .join("");
+        `;
+      table.innerHTML = rows;
+      applyRbacToElements();
     };
 
     const renderReportNotice = (report, note) => {
@@ -3031,18 +4558,776 @@
     };
 
     /**
+     * Render settlement dashboard and flow status.
+     * @returns {void}
+     */
+    const renderSettlementDashboard = () => {
+      const chipGroup = document.getElementById("settlementChips");
+      if (!chipGroup) {
+        return;
+      }
+      const checks = buildSettlementChecks();
+      const sources = buildSettlementSources();
+      const gate = buildSettlementGateState(checks, sources);
+      const totalEmployees = state.employees.length;
+      const onDutyCount = state.employees.filter((item) => item.employmentStatus === "在職").length;
+      const month = state.settlementData.attendance.month || dayjs().format("YYYY-MM");
+      const labor = state.insuranceVersions.find((item) => item.type === "勞保") || { code: "-", effectiveDate: "-" };
+      const health = state.insuranceVersions.find((item) => item.type === "健保") || { code: "-", effectiveDate: "-" };
+      const overallStatus = state.settlement.lock
+        ? "已完成"
+        : gate.isCalculated
+          ? "待完成"
+          : gate.isConfirmed
+            ? "待計算"
+            : "待確認";
+
+      chipGroup.innerHTML = `
+        <span class="chip">計薪月份 ${month}</span>
+        <span class="chip">在職 ${onDutyCount}/${totalEmployees} 人</span>
+        <span class="chip">結薪狀態 ${overallStatus}</span>
+      `;
+
+      const step1Label = gate.isConfirmed
+        ? "已確認"
+        : state.settlement.needsConfirm && state.settlement.confirmedAt
+          ? "需重新確認"
+          : gate.hasBlock
+            ? "待修正"
+            : "待確認";
+      const step1Badge = gate.isConfirmed
+        ? "badge--active"
+        : gate.hasBlock
+          ? "badge--warning"
+          : "badge--pending";
+      const step1Meta = state.settlement.confirmedAt
+        ? `上次確認 ${formatDateTime(state.settlement.confirmedAt)}`
+        : "尚未完成確認";
+
+      const step2Label = gate.isCalculated
+        ? "已計算"
+        : state.settlement.needsRecalc && state.settlement.calculatedAt
+          ? "需重算"
+          : gate.isConfirmed
+            ? "待計算"
+            : "未確認";
+      const step2Badge = gate.isCalculated
+        ? "badge--active"
+        : state.settlement.needsRecalc && state.settlement.calculatedAt
+          ? "badge--warning"
+          : gate.isConfirmed
+            ? "badge--pending"
+            : "badge--warning";
+      const step2Meta = state.settlement.calculatedAt
+        ? `最後試算 ${formatDateTime(state.settlement.calculatedAt)}`
+        : "尚未執行試算";
+
+      const step3Label = state.settlement.lock
+        ? "已完成"
+        : gate.isCalculated
+          ? "待完成"
+          : state.settlement.needsRecalc
+            ? "待重算"
+            : "未計算";
+      const step3Badge = state.settlement.lock
+        ? "badge--active"
+        : gate.isCalculated
+          ? "badge--pending"
+          : "badge--warning";
+      const step3Meta = state.settlement.completedAt
+        ? `完成時間 ${formatDateTime(state.settlement.completedAt)}`
+        : "尚未完成結薪";
+
+      const step1BadgeEl = document.getElementById("settlementStep1Badge");
+      const step1MetaEl = document.getElementById("settlementStep1Meta");
+      const step2BadgeEl = document.getElementById("settlementStep2Badge");
+      const step2MetaEl = document.getElementById("settlementStep2Meta");
+      const step3BadgeEl = document.getElementById("settlementStep3Badge");
+      const step3MetaEl = document.getElementById("settlementStep3Meta");
+      if (step1BadgeEl && step1MetaEl && step2BadgeEl && step2MetaEl && step3BadgeEl && step3MetaEl) {
+        step1BadgeEl.textContent = step1Label;
+        step1BadgeEl.className = `badge ${step1Badge}`;
+        step1MetaEl.textContent = step1Meta;
+        step2BadgeEl.textContent = step2Label;
+        step2BadgeEl.className = `badge ${step2Badge}`;
+        step2MetaEl.textContent = step2Meta;
+        step3BadgeEl.textContent = step3Label;
+        step3BadgeEl.className = `badge ${step3Badge}`;
+        step3MetaEl.textContent = step3Meta;
+      }
+
+      const confirmButton = document.getElementById("settlementConfirm");
+      const calculateButton = document.getElementById("settlementCalculate");
+      const completeButton = document.getElementById("settlementComplete");
+      const reopenButton = document.getElementById("settlementReopen");
+      const exportSummaryButton = document.getElementById("settlementExportSummary");
+      const exportPayslipButton = document.getElementById("settlementExportPayslip");
+      const canEditSettlement = hasPermission("settlement.edit");
+      const canExportReports = hasPermission("reports.export");
+      if (confirmButton) {
+        confirmButton.disabled = !canEditSettlement || !gate.canConfirm;
+        confirmButton.textContent = state.settlement.needsConfirm && state.settlement.confirmedAt ? "重新確認" : "完成確認";
+      }
+      if (calculateButton) {
+        calculateButton.disabled = !canEditSettlement || !gate.canCalculate;
+        calculateButton.textContent = state.settlement.needsRecalc && state.settlement.calculatedAt ? "重新計算" : "執行計算";
+      }
+      if (completeButton) {
+        completeButton.disabled = !canEditSettlement || !gate.canComplete;
+      }
+      if (reopenButton) {
+        reopenButton.disabled = !canEditSettlement || (!state.settlement.lock && !state.settlement.completedAt);
+      }
+      const canExport = gate.isCalculated && !state.settlement.needsRecalc && canExportReports;
+      if (exportSummaryButton) {
+        exportSummaryButton.disabled = !canExport;
+      }
+      if (exportPayslipButton) {
+        exportPayslipButton.disabled = !canExport;
+      }
+
+      const dataSummary = document.getElementById("settlementDataSummary");
+      const attendance = state.settlementData.attendance;
+      const salaryChangeCount = state.settlementData.salaryChangeCount;
+      if (dataSummary) {
+        dataSummary.innerHTML = `
+          <div class="card__title">薪資資料摘要</div>
+          <div class="card__body">
+            <div>計薪月份：${month}</div>
+            <div>試算人數：${totalEmployees} 人（在職 ${onDutyCount}）</div>
+            <div>出勤資料：${attendance.imported}/${totalEmployees} 筆，缺漏 ${attendance.missing} 筆</div>
+            <div>薪資異動：${salaryChangeCount ? `${salaryChangeCount} 筆需覆核` : "未偵測到異動"}</div>
+            <div class="list__meta">資料同步：${attendance.lastSync}</div>
+          </div>
+        `;
+      }
+
+      const checkList = document.getElementById("settlementCheckList");
+      if (checkList) {
+        checkList.innerHTML = checks
+          .map((check) => {
+            const badge = getStatusBadge(check.status);
+            const actionPermission = check.actionNav ? getPagePermission(check.actionNav) : "";
+            const permissionAttr = actionPermission ? `data-permission="${actionPermission}"` : "";
+            const actionLabel = check.actionLabel || "前往處理";
+            const actionButton = check.actionNav
+              ? `<button class="btn btn--ghost btn--tiny" data-nav="${check.actionNav}" data-label="${actionLabel}" data-rbac-label="${actionLabel}" ${permissionAttr}>前往處理</button>`
+              : "";
+            return `
+              <li class="list__item">
+                <div>
+                  <div>${check.label}</div>
+                  <div class="list__meta">${check.detail}</div>
+                </div>
+                <div class="demo__actions">
+                  <span class="badge ${badge.className}">${badge.label}</span>
+                  ${actionButton}
+                </div>
+              </li>
+            `;
+          })
+          .join("");
+      }
+
+      const blockList = document.getElementById("settlementBlockList");
+      const warnList = document.getElementById("settlementWarnList");
+      const blockedItems = checks.filter((item) => item.status === "block");
+      const warnItems = checks.filter((item) => item.status === "warn");
+      if (blockList) {
+        blockList.innerHTML = blockedItems.length
+          ? blockedItems
+            .map((item) => {
+              const badge = getStatusBadge(item.status);
+              return `
+                <li class="list__item">
+                  <div>
+                    <div>${item.label}</div>
+                    <div class="list__meta">${item.detail}</div>
+                  </div>
+                  <span class="badge ${badge.className}">${badge.label}</span>
+                </li>
+              `;
+            })
+            .join("")
+          : `
+            <li class="list__item">
+              <div>無阻擋項目</div>
+              <span class="badge badge--active">OK</span>
+            </li>
+          `;
+      }
+      if (warnList) {
+        warnList.innerHTML = warnItems.length
+          ? warnItems
+            .map((item) => {
+              const badge = getStatusBadge(item.status);
+              return `
+                <li class="list__item">
+                  <div>
+                    <div>${item.label}</div>
+                    <div class="list__meta">${item.detail}</div>
+                  </div>
+                  <span class="badge ${badge.className}">${badge.label}</span>
+                </li>
+              `;
+            })
+            .join("")
+          : `
+            <li class="list__item">
+              <div>無警示項目</div>
+              <span class="badge badge--active">OK</span>
+            </li>
+          `;
+      }
+
+      const sourceList = document.getElementById("settlementSourceList");
+      if (sourceList) {
+        sourceList.innerHTML = sources
+          .map((source) => {
+            const badge = getStatusBadge(source.status);
+            const actionPermission = source.actionNav ? getPagePermission(source.actionNav) : "";
+            const permissionAttr = actionPermission ? `data-permission="${actionPermission}"` : "";
+            const actionLabel = source.actionLabel || "前往處理";
+            const actionButton = source.actionNav
+              ? `<button class="btn btn--ghost btn--tiny" data-nav="${source.actionNav}" data-label="${actionLabel}" data-rbac-label="${actionLabel}" ${permissionAttr}>前往處理</button>`
+              : "";
+            return `
+              <li class="list__item">
+                <div>
+                  <div>${source.label}</div>
+                  <div class="list__meta">${source.detail}</div>
+                  ${source.meta ? `<div class="list__meta">${source.meta}</div>` : ""}
+                </div>
+                <div class="demo__actions">
+                  <span class="badge ${badge.className}">${badge.label}</span>
+                  ${actionButton}
+                </div>
+              </li>
+            `;
+          })
+          .join("");
+      }
+
+      const calcSummary = document.getElementById("settlementCalcSummary");
+      const totalGross = state.payrolls.reduce((sum, item) => sum + item.grossSalary, 0);
+      const totalNet = state.payrolls.reduce((sum, item) => sum + item.netSalary, 0);
+      const totalDeduction = state.payrolls.reduce((sum, item) => sum + item.laborEmployee + item.healthEmployee, 0);
+      const pendingCount = state.payrolls.filter((item) => item.status === "待結算").length;
+      if (calcSummary) {
+        calcSummary.innerHTML = `
+          <div class="card__title">資料計算摘要</div>
+          <div class="card__body">
+            <div>計薪月份：${month}</div>
+            <div>試算人數：${state.payrolls.length} 人</div>
+            <div>應發總額：${currency.format(totalGross)}</div>
+            <div>扣款總額：${currency.format(totalDeduction)}</div>
+            <div>實領總額：${currency.format(totalNet)}</div>
+            <div>待結算：${pendingCount} 筆</div>
+            <div class="list__meta">加班規則：前 2 小時 1.34 倍，其後 1.67 倍</div>
+          </div>
+        `;
+      }
+
+      const calcIssues = document.getElementById("settlementCalcIssueList");
+      if (calcIssues) {
+        const issueList = buildSettlementCalculationIssues();
+        calcIssues.innerHTML = issueList
+          .map((issue) => {
+            const badge = getStatusBadge(issue.status);
+            return `
+              <li class="list__item">
+                <div>
+                  <div>${issue.label}</div>
+                  <div class="list__meta">${issue.detail}</div>
+                </div>
+                <span class="badge ${badge.className}">${badge.label}</span>
+              </li>
+            `;
+          })
+          .join("");
+      }
+
+      const calcSnapshot = document.getElementById("settlementCalcSnapshot");
+      if (calcSnapshot) {
+        calcSnapshot.innerHTML = `
+          <div class="card__title">計算快照</div>
+          <div class="card__body">
+            <div>最後試算：${state.settlement.calculatedAt ? formatDateTime(state.settlement.calculatedAt) : "尚未試算"}</div>
+            <div>投保版本：勞保 ${labor.code} / 健保 ${health.code}</div>
+            <div>級距版本：勞保 ${state.gradeVersion?.labor?.activeCode || "-"} / 健保 ${state.gradeVersion?.health?.activeCode || "-"}</div>
+            <div class="list__meta">${state.settlement.needsRecalc ? "資料已異動，建議重新計算。" : "試算快照已更新。"}</div>
+          </div>
+        `;
+      }
+
+      const completeSummary = document.getElementById("settlementCompleteSummary");
+      if (completeSummary) {
+        completeSummary.innerHTML = `
+          <div class="card__title">結薪完成狀態</div>
+          <div class="card__body">
+            <div>結薪狀態：${state.settlement.lock ? "已完成" : "未完成"}</div>
+            <div>完成時間：${state.settlement.completedAt ? formatDateTime(state.settlement.completedAt) : "—"}</div>
+            <div>鎖定狀態：${state.settlement.lock ? "已鎖定" : "未鎖定"}</div>
+            <div>最後試算：${state.settlement.calculatedAt ? formatDateTime(state.settlement.calculatedAt) : "—"}</div>
+            <div class="list__meta">結薪完成後若有資料異動需重新開帳。</div>
+          </div>
+        `;
+      }
+
+      const exportNote = document.getElementById("settlementExportNote");
+      if (exportNote) {
+        if (!canExportReports) {
+          exportNote.textContent = "此角色無匯出權限。";
+        } else {
+          exportNote.textContent = canExport ? "可產生薪資總表與個人薪資單。" : "請完成資料計算後再進行匯出。";
+        }
+      }
+
+      const reportList = document.getElementById("settlementReportList");
+      if (reportList) {
+        const recentReports = sortReportsDesc(state.reportHistory).slice(0, 3);
+        const reportBody = recentReports.length
+          ? `
+            <ul class="list">
+              ${recentReports
+                .map(
+                  (report) => `
+                    <li class="list__item">
+                      <div>
+                        <div>${report.type}</div>
+                        <div class="list__meta">${report.reportId} ・ ${report.createdAt}</div>
+                      </div>
+                      <span class="badge badge--active">${report.status}</span>
+                    </li>
+                  `
+                )
+                .join("")}
+            </ul>
+          `
+          : `<div class="card__body">尚未產生報表。</div>`;
+        reportList.innerHTML = `
+          <div class="card__title">最近報表</div>
+          ${reportBody}
+        `;
+      }
+
+      const step2Note = document.getElementById("settlementStep2Note");
+      if (step2Note) {
+        if (!canEditSettlement) {
+          step2Note.textContent = "此角色僅可檢視結薪流程，無法執行計算。";
+        } else if (state.settlement.lock) {
+          step2Note.textContent = "結薪已完成，請重新開帳後再試算。";
+        } else if (!gate.isConfirmed) {
+          step2Note.textContent = "請先完成資料確認。";
+        } else if (state.settlement.needsRecalc) {
+          step2Note.textContent = "資料已異動，請重新計算後再進入下一步。";
+        } else {
+          step2Note.textContent = "資料計算完成，可進入下一步。";
+        }
+      }
+
+      const step3Note = document.getElementById("settlementStep3Note");
+      if (step3Note) {
+        if (!canEditSettlement) {
+          step3Note.textContent = "此角色僅可檢視結薪流程，無法完成結薪。";
+        } else if (state.settlement.lock) {
+          step3Note.textContent = "結薪流程已鎖定，需重新開帳才能調整資料。";
+        } else if (!gate.isCalculated) {
+          step3Note.textContent = "請完成資料計算後再結薪。";
+        } else {
+          step3Note.textContent = "請確認報表資訊後完成結薪。";
+        }
+      }
+
+      const step2Card = document.getElementById("settlementStep2");
+      const step3Card = document.getElementById("settlementStep3");
+      if (step2Card) {
+        step2Card.classList.toggle("step-card--disabled", !canEditSettlement || (!gate.canCalculate && !gate.isCalculated));
+      }
+      if (step3Card) {
+        step3Card.classList.toggle("step-card--disabled", !canEditSettlement || (!gate.canComplete && !state.settlement.lock));
+      }
+
+      applyRbacToElements();
+    };
+
+    /**
+     * Recalculate payrolls and refresh dependent views.
+     * @param {string} monthLabel
+     * @param {string} notice
+     * @param {string} detailNote
+     * @returns {void}
+     */
+    const applyPayrollCalculation = (monthLabel, notice, detailNote) => {
+      state.payrolls = state.employees.map((employee) => calculatePayroll(employee, monthLabel));
+      updateMonthlyHistory();
+      renderPayroll();
+      renderSummary();
+      renderPayrollNotice(notice);
+      renderPayrollDetail(state.payrolls[0], detailNote);
+      renderChart();
+      renderSettlementDashboard();
+    };
+
+    /**
+     * Mark settlement flow as stale after data changes.
+     * @param {string} reason
+     * @param {{notify?: boolean}} options
+     * @returns {void}
+     */
+    const markSettlementDirty = (reason, options = {}) => {
+      state.settlement.needsConfirm = true;
+      state.settlement.needsRecalc = true;
+      if (state.settlement.completedAt) {
+        state.settlement.completedAt = "";
+      }
+      if (options.notify && reason) {
+        setAction(reason);
+      }
+      renderSettlementDashboard();
+    };
+
+    /**
+     * Apply a demo salary structure change and refresh dependent views.
+     * @param {string} toastMessage
+     * @param {string} activityMessage
+     * @returns {void}
+     */
+    const applySalaryStructureChange = (toastMessage, activityMessage) => {
+      touchSettlementSource("salaryStructure");
+      markSettlementDirty("薪資結構已調整，請重新確認結薪資料。");
+      renderSalaryStructure();
+      renderSettlementDashboard();
+      if (activityMessage) {
+        setAction(activityMessage);
+        logActivity(activityMessage);
+      }
+      if (toastMessage) {
+        showToast(toastMessage);
+      }
+    };
+
+    /**
+     * Handle salary structure submit action.
+     * @returns {void}
+     */
+    const handleSalaryStructureSubmit = () => {
+      if (!ensurePermission("payroll.edit", "權限不足，無法儲存薪資結構")) {
+        return;
+      }
+      const values = collectSalaryStructureFormData();
+      if (!values) {
+        return;
+      }
+      const targetIndex = state.employees.findIndex((item) => item.employeeId === values.employeeId);
+      if (targetIndex < 0) {
+        showToast("找不到員工資料");
+        return;
+      }
+      const targetEmployee = state.employees[targetIndex];
+      const employmentTypeCode = values.employmentTypeCode === "2" ? "2" : "1";
+      const employmentTypeLabel = employmentTypeCode === "2" ? "時薪" : "月薪";
+      const updatedEmployee = {
+        ...targetEmployee,
+        employmentTypeCode,
+        employmentTypeLabel,
+        baseSalary: values.baseSalary,
+        allowances: {
+          ...targetEmployee.allowances,
+          ...values.allowances
+        }
+      };
+      state.employees = state.employees.map((employee) =>
+        employee.employeeId === values.employeeId ? updatedEmployee : employee
+      );
+      const monthLabel = document.getElementById("payrollMonth").value || dayjs().format("YYYY-MM");
+      state.payrolls = state.employees.map((employee) => calculatePayroll(employee, monthLabel));
+      updateMonthlyHistory();
+      renderPayroll();
+      renderSummary();
+      renderEmployeePreview(updatedEmployee, "薪資結構已更新。");
+      renderEmployeeDetail(updatedEmployee);
+      renderPayrollDetail(state.payrolls.find((item) => item.employeeId === values.employeeId));
+
+      const isCreate = state.salaryStructureMode === "create";
+      const actionText = isCreate ? "建立薪資結構" : "調整薪資結構";
+      applySalaryStructureChange(isCreate ? "薪資結構已建立" : "薪資結構已更新", `${actionText}：${updatedEmployee.chineseName} (${updatedEmployee.employeeId})`);
+      state.salaryStructureMode = "edit";
+      openPage("salary-structure", "薪資結構", true, false);
+    };
+
+    /**
+     * Confirm settlement step 1 after validation checks.
+     * @returns {void}
+     */
+    const handleSettlementConfirm = () => {
+      if (!ensurePermission("settlement.edit", "權限不足，無法執行結薪確認")) {
+        return;
+      }
+      const checks = buildSettlementChecks();
+      const sources = buildSettlementSources();
+      const gate = buildSettlementGateState(checks, sources);
+      if (!gate.canConfirm) {
+        showToast("請先排除阻擋項目");
+        return;
+      }
+      const now = dayjs().format("YYYY-MM-DD HH:mm");
+      state.settlement.confirmedAt = now;
+      state.settlement.needsConfirm = false;
+      state.settlement.needsRecalc = true;
+      state.settlement.completedAt = "";
+      setAction("已完成資料確認");
+      logActivity("完成結薪資料確認");
+      showToast("資料確認完成");
+      renderSettlementDashboard();
+    };
+
+    /**
+     * Run settlement calculation step.
+     * @returns {void}
+     */
+    const handleSettlementCalculate = () => {
+      if (!ensurePermission("settlement.edit", "權限不足，無法執行結薪計算")) {
+        return;
+      }
+      const checks = buildSettlementChecks();
+      const sources = buildSettlementSources();
+      const gate = buildSettlementGateState(checks, sources);
+      if (!gate.canCalculate) {
+        showToast("請先完成資料確認");
+        return;
+      }
+      const monthLabel = document.getElementById("payrollMonth").value;
+      applyPayrollCalculation(monthLabel, "由結薪作業執行計算。", "由結薪作業試算。");
+      const now = dayjs().format("YYYY-MM-DD HH:mm");
+      state.settlement.calculatedAt = now;
+      state.settlement.needsRecalc = false;
+      state.settlement.completedAt = "";
+      setAction(`已完成 ${monthLabel} 結薪計算`);
+      logActivity(`執行結薪計算：${monthLabel}`);
+      showToast("資料計算完成");
+      renderSettlementDashboard();
+    };
+
+    /**
+     * Complete settlement step 3 and lock the flow.
+     * @returns {void}
+     */
+    const handleSettlementComplete = () => {
+      if (!ensurePermission("settlement.edit", "權限不足，無法完成結薪")) {
+        return;
+      }
+      const checks = buildSettlementChecks();
+      const sources = buildSettlementSources();
+      const gate = buildSettlementGateState(checks, sources);
+      if (!gate.canComplete) {
+        showToast("請先完成資料計算");
+        return;
+      }
+      const now = dayjs().format("YYYY-MM-DD HH:mm");
+      state.settlement.completedAt = now;
+      state.settlement.lock = true;
+      setAction("結薪已完成並鎖定");
+      logActivity("結薪完成並鎖定");
+      showToast("結薪完成，流程已鎖定");
+      renderSettlementDashboard();
+    };
+
+    /**
+     * Reopen settlement flow after completion.
+     * @returns {void}
+     */
+    const handleSettlementReopen = () => {
+      if (!ensurePermission("settlement.edit", "權限不足，無法重新開帳")) {
+        return;
+      }
+      if (!state.settlement.lock && !state.settlement.completedAt) {
+        showToast("尚未完成結薪");
+        return;
+      }
+      state.settlement.lock = false;
+      state.settlement.completedAt = "";
+      state.settlement.confirmedAt = "";
+      state.settlement.calculatedAt = "";
+      state.settlement.needsConfirm = true;
+      state.settlement.needsRecalc = true;
+      setAction("已重新開帳，請重新確認資料");
+      logActivity("重新開帳");
+      showToast("已重新開帳");
+      renderSettlementDashboard();
+    };
+
+    /**
+     * Generate a summary report entry and refresh report views.
+     * @param {string} note
+     * @param {string} detailNote
+     * @param {boolean} openDetail
+     * @returns {{reportId: string, type: string, format: string, createdAt: string, status: string}}
+     */
+    const generateSummaryReport = (note, detailNote, openDetail) => {
+      const now = dayjs();
+      const report = {
+        reportId: `RPT-${now.format("YYYYMM")}-SUM-${randomInt(10, 99)}`,
+        type: "薪資總表",
+        format: "XLSX",
+        createdAt: now.format("YYYY-MM-DD HH:mm"),
+        status: "已完成"
+      };
+      state.reportHistory.unshift(report);
+      ensureReportFilterForReport(report);
+      populateReportMonthOptions();
+      applyReportFilter();
+      renderReportNotice(report, note);
+      renderReportDetail(report, detailNote);
+      if (openDetail) {
+        openPage("report-detail", "報表明細", true, false);
+      }
+      return report;
+    };
+
+    /**
+     * Generate a payslip report entry and refresh report views.
+     * @param {string} note
+     * @param {string} detailNote
+     * @param {boolean} openDetail
+     * @returns {{report: {reportId: string, type: string, format: string, createdAt: string, status: string}, employee: {employeeId: string, chineseName: string}}}
+     */
+    const generatePayslipReport = (note, detailNote, openDetail) => {
+      const now = dayjs();
+      const employee = randomChoice(state.employees);
+      const report = {
+        reportId: `RPT-${now.format("YYYYMM")}-PS-${employee.employeeId}`,
+        type: `個人薪資單：${employee.chineseName}`,
+        format: "PDF",
+        createdAt: now.format("YYYY-MM-DD HH:mm"),
+        status: "已完成"
+      };
+      state.reportHistory.unshift(report);
+      ensureReportFilterForReport(report);
+      populateReportMonthOptions();
+      applyReportFilter();
+      renderReportNotice(report, note);
+      renderReportDetail(report, detailNote);
+      if (openDetail) {
+        openPage("report-detail", "報表明細", true, false);
+      }
+      return { report, employee };
+    };
+
+    /**
+     * Handle payroll recalculation from the payroll page.
+     * @returns {void}
+     */
+    const handlePayrollRecalc = () => {
+      if (!ensurePermission("payroll.edit", "權限不足，無法執行薪資試算")) {
+        return;
+      }
+      if (state.settlement.lock) {
+        showToast("結薪已完成，請重新開帳");
+        return;
+      }
+      const monthLabel = document.getElementById("payrollMonth").value;
+      applyPayrollCalculation(monthLabel, "已重新產生加班與保險扣款結果。", "由本次試算產生。");
+      const now = dayjs().format("YYYY-MM-DD HH:mm");
+      state.settlement.calculatedAt = now;
+      state.settlement.needsRecalc = false;
+      state.settlement.completedAt = "";
+      setAction(`已完成 ${monthLabel} 薪資試算`);
+      logActivity(`執行薪資試算：${monthLabel}`);
+      showToast("薪資試算完成");
+      openPage("payroll-detail", "薪資明細", true, false);
+      renderSettlementDashboard();
+    };
+
+    /**
+     * Handle payroll month change and refresh views.
+     * @returns {void}
+     */
+    const handlePayrollMonthChange = () => {
+      if (!ensurePermission("payroll.edit", "權限不足，無法變更計薪月份")) {
+        return;
+      }
+      const monthLabel = document.getElementById("payrollMonth").value;
+      applyPayrollCalculation(monthLabel, "已切換月份並更新試算結果。", "已依新月份更新資料。");
+      markSettlementDirty("計薪月份已切換，請重新確認結薪資料。");
+      setAction(`已切換試算月份：${monthLabel}`);
+    };
+
+    /**
+     * Handle report center summary export.
+     * @returns {void}
+     */
+    const handleReportExportSummary = () => {
+      if (!ensurePermission("reports.export", "權限不足，無法產生薪資總表")) {
+        return;
+      }
+      generateSummaryReport("由「產生薪資總表」產出。", "由薪資總表匯出。", true);
+      setAction("已產生薪資總表");
+      logActivity("產生薪資總表");
+      showToast("薪資總表已產生");
+    };
+
+    /**
+     * Handle report center payslip export.
+     * @returns {void}
+     */
+    const handleReportExportPayslip = () => {
+      if (!ensurePermission("reports.export", "權限不足，無法產生個人薪資單")) {
+        return;
+      }
+      const { employee } = generatePayslipReport("由「產生個人薪資單」產出。", "由個人薪資單匯出。", true);
+      setAction(`已產生 ${employee.chineseName} 的薪資單`);
+      logActivity(`產生個人薪資單：${employee.chineseName} (${employee.employeeId})`);
+      showToast("個人薪資單已產生");
+    };
+
+    /**
+     * Handle settlement summary export.
+     * @returns {void}
+     */
+    const handleSettlementExportSummary = () => {
+      if (!ensurePermission("reports.export", "權限不足，無法產生薪資總表")) {
+        return;
+      }
+      const canExport = !state.settlement.needsRecalc && state.settlement.calculatedAt;
+      if (!canExport) {
+        showToast("請先完成資料計算");
+        return;
+      }
+      generateSummaryReport("由結薪作業產出。", "由結薪作業匯出。", false);
+      setAction("已產生薪資總表");
+      logActivity("結薪匯出：薪資總表");
+      showToast("薪資總表已產生");
+    };
+
+    /**
+     * Handle settlement payslip export.
+     * @returns {void}
+     */
+    const handleSettlementExportPayslip = () => {
+      if (!ensurePermission("reports.export", "權限不足，無法產生個人薪資單")) {
+        return;
+      }
+      const canExport = !state.settlement.needsRecalc && state.settlement.calculatedAt;
+      if (!canExport) {
+        showToast("請先完成資料計算");
+        return;
+      }
+      const { employee } = generatePayslipReport("由結薪作業產出。", "由結薪作業匯出。", false);
+      setAction(`已產生 ${employee.chineseName} 的薪資單`);
+      logActivity(`結薪匯出：個人薪資單 ${employee.chineseName} (${employee.employeeId})`);
+      showToast("個人薪資單已產生");
+    };
+
+    /**
      * Recalculate payrolls after grade updates.
      * @param {string} note
      * @returns {void}
      */
     const updatePayrollAfterGradeChange = (note) => {
       const monthLabel = document.getElementById("payrollMonth").value || dayjs().format("YYYY-MM");
-      state.payrolls = state.employees.map((employee) => calculatePayroll(employee, monthLabel));
-      updateMonthlyHistory();
-      renderPayroll();
-      renderSummary();
-      renderPayrollDetail(state.payrolls[0], note);
-      renderChart();
+      applyPayrollCalculation(monthLabel, note, note);
+      markSettlementDirty("級距資料已更新，請重新確認結薪資料。");
     };
 
     const renderActivities = () => {
@@ -3153,6 +5438,20 @@
       setTimeout(() => toast.classList.remove("toast--show"), 2400);
     };
 
+    /**
+     * Validate permission before running an action.
+     * @param {string} permission
+     * @param {string} message
+     * @returns {boolean}
+     */
+    const ensurePermission = (permission, message) => {
+      if (hasPermission(permission)) {
+        return true;
+      }
+      showToast(message || "權限不足");
+      return false;
+    };
+
     const setAction = (message) => {
       const actionText = document.getElementById("actionText");
       if (actionText) {
@@ -3186,6 +5485,19 @@
       select.innerHTML = options.join("");
     };
 
+    const populateRoleOptions = () => {
+      const select = document.getElementById("roleSelect");
+      if (!select) {
+        return;
+      }
+      select.innerHTML = roleDefinitions
+        .map((role) => `<option value="${role.id}">${role.label}</option>`)
+        .join("");
+      select.value = state.currentRole;
+      renderRoleStatus();
+      applyRbacToElements();
+    };
+
     const initData = () => {
       state.employees = Array.from({ length: 8 }, (_, index) => createEmployee(index));
       state.insuranceVersions = generateInsuranceVersions();
@@ -3215,9 +5527,19 @@
         labor: buildGradeData("labor", state.gradeVersion.labor.activeCode),
         health: buildGradeData("health", state.gradeVersion.health.activeCode)
       };
+      state.settlement = {
+        confirmedAt: "",
+        calculatedAt: "",
+        completedAt: "",
+        needsConfirm: true,
+        needsRecalc: true,
+        lock: false
+      };
+      initSettlementData();
       const monthLabel = document.getElementById("payrollMonth").value || dayjs().format("YYYY-MM");
       state.payrolls = state.employees.map((employee) => calculatePayroll(employee, monthLabel));
-      state.reports = generateReports(state.employees);
+      state.reportHistory = generateReportHistory(state.employees);
+      state.reportFilterMonth = "all";
       state.activities = generateActivities();
       updateMonthlyHistory();
 
@@ -3229,10 +5551,11 @@
       renderGradeVersion("health");
       renderGradeTable("health");
       renderPayroll();
-      renderReports();
+      populateReportMonthOptions();
+      applyReportFilter();
       renderActivities();
       state.pendingEmployee = createEmployee(state.employees.length);
-      renderEmployeePreview(state.employees[0], "預設顯示首位員工資料。");
+      renderEmployeePreview(state.employees[0], "預設顯示首位人事資料。");
       renderEmployeeCreate(state.pendingEmployee);
       setEmployeeFormMeta("create");
       renderEmployeeDetail(state.employees[0]);
@@ -3240,15 +5563,23 @@
       renderInsuranceDetail();
       renderPayrollNotice();
       renderPayrollDetail(state.payrolls[0]);
-      renderReportNotice(state.reports[0]);
-      renderReportDetail(state.reports[0]);
       setAction("已載入資料，請選擇功能頁面。");
 
       renderChart();
       updateRangeButtons();
+      renderSettlementDashboard();
     };
 
     const openPage = (pageId, label, updateHash = true, announce = true) => {
+      const fallback = getFallbackPage();
+      if (!canAccessPage(pageId)) {
+        showToast("權限不足，無法進入此功能");
+        if (pageId !== fallback) {
+          history.replaceState(null, "", `#${fallback}`);
+          openPage(fallback, null, false, false);
+        }
+        return;
+      }
       const panel = document.getElementById(pageId);
       if (!panel) {
         return;
@@ -3291,8 +5622,104 @@
     document.addEventListener("DOMContentLoaded", () => {
       populateMonthOptions();
       initData();
+      populateRoleOptions();
       handleHashChange();
       window.addEventListener("hashchange", handleHashChange);
+
+      const roleSelect = document.getElementById("roleSelect");
+      if (roleSelect) {
+        roleSelect.addEventListener("change", () => {
+          state.currentRole = roleSelect.value;
+          const role = getCurrentRole();
+          renderRoleStatus();
+          renderSettlementDashboard();
+          applyRbacToElements();
+          const activePage = document.querySelector(".panel--active")?.id;
+          if (activePage && !canAccessPage(activePage)) {
+            openPage(getFallbackPage(), null, true, false);
+          }
+          showToast(`已切換角色：${role.label}`);
+        });
+      }
+
+      document.getElementById("settlementConfirm").addEventListener("click", handleSettlementConfirm);
+      document.getElementById("settlementCalculate").addEventListener("click", handleSettlementCalculate);
+      document.getElementById("settlementComplete").addEventListener("click", handleSettlementComplete);
+      document.getElementById("settlementReopen").addEventListener("click", handleSettlementReopen);
+      document.getElementById("settlementExportSummary").addEventListener("click", handleSettlementExportSummary);
+      document.getElementById("settlementExportPayslip").addEventListener("click", handleSettlementExportPayslip);
+
+      const addSalaryStructure = document.getElementById("addSalaryStructure");
+      if (addSalaryStructure) {
+        addSalaryStructure.addEventListener("click", () => {
+          if (!ensurePermission("payroll.edit", "權限不足，無法建立薪資結構")) {
+            return;
+          }
+          openSalaryStructureDetail(
+            state.employees[0],
+            "create",
+            "建立薪資結構草稿，請確認本薪與津貼項目。"
+          );
+        });
+      }
+
+      const salaryStructureTable = document.getElementById("salaryStructureTable");
+      if (salaryStructureTable) {
+        salaryStructureTable.addEventListener("click", (event) => {
+          const target = event.target.closest("button[data-action=\"adjust-salary\"]");
+          if (!target) {
+            return;
+          }
+          if (!ensurePermission("payroll.edit", "權限不足，無法調整薪資結構")) {
+            return;
+          }
+          const employeeId = target.dataset.employeeId || "";
+          const employeeName = target.dataset.employeeName || "";
+          const employee = state.employees.find((item) => item.employeeId === employeeId);
+          if (!employee) {
+            showToast("找不到員工資料");
+            return;
+          }
+          openSalaryStructureDetail(
+            employee,
+            "edit",
+            `已載入 ${employeeName || employee.chineseName} 的薪資結構，請完成調整。`
+          );
+        });
+      }
+
+      const submitSalaryStructure = document.getElementById("submitSalaryStructure");
+      if (submitSalaryStructure) {
+        submitSalaryStructure.addEventListener("click", handleSalaryStructureSubmit);
+      }
+
+      document.addEventListener("input", (event) => {
+        const target = event.target.closest("#salaryStructureFormFields .salary-structure-input");
+        if (!target) {
+          return;
+        }
+        updateSalaryStructurePreview();
+      });
+
+      document.addEventListener("change", (event) => {
+        const employeeSelect = event.target.closest("#salaryEmployeeSelect");
+        if (employeeSelect) {
+          const employeeId = employeeSelect.value || "";
+          const employee = state.employees.find((item) => item.employeeId === employeeId);
+          if (!employee) {
+            showToast("找不到員工資料");
+            return;
+          }
+          renderSalaryStructureDetail(employee, "已切換員工，請確認薪資結構內容。");
+          setSalaryStructureMeta(state.salaryStructureMode, employee);
+          return;
+        }
+        const inputTarget = event.target.closest("#salaryStructureFormFields .salary-structure-input");
+        if (!inputTarget) {
+          return;
+        }
+        updateSalaryStructurePreview();
+      });
 
       document.addEventListener("click", (event) => {
         const navTarget = event.target.closest("[data-nav]");
@@ -3323,6 +5750,10 @@
         const type = actionTarget.dataset.gradeType;
         const code = actionTarget.dataset.gradeCode;
         if (!type) {
+          return;
+        }
+        if (action !== "cancel" && !hasPermission("insurance.edit")) {
+          showToast("權限不足，無法操作級距");
           return;
         }
         const typeLabel = type === "labor" ? "勞保" : "健保";
@@ -3372,6 +5803,10 @@
         if (!type) {
           return;
         }
+        if (action !== "cancel" && !hasPermission("insurance.edit")) {
+          showToast("權限不足，無法操作版本");
+          return;
+        }
         const typeLabel = type === "labor" ? "勞保" : "健保";
 
         if (action === "create") {
@@ -3416,6 +5851,7 @@
             activeCode,
             versions: nextVersions
           };
+          touchSettlementSource("insurance");
           renderGradeVersion(type);
           renderGradeTable(type);
           renderInsurance();
@@ -3427,6 +5863,9 @@
       });
 
       document.getElementById("addEmployee").addEventListener("click", () => {
+        if (!ensurePermission("employees.edit", "權限不足，無法新增員工")) {
+          return;
+        }
         const newEmployee = createEmployee(state.employees.length);
         state.pendingEmployee = newEmployee;
         state.employeeFormMode = "create";
@@ -3440,6 +5879,9 @@
       });
 
       document.getElementById("submitEmployeeCreate").addEventListener("click", () => {
+        if (!ensurePermission("employees.edit", "權限不足，無法儲存員工資料")) {
+          return;
+        }
         const baseEmployee = state.employeeFormMode === "edit"
           ? state.employees.find((item) => item.employeeId === state.editingEmployeeId)
           : state.pendingEmployee;
@@ -3463,6 +5905,7 @@
         } else {
           state.employees.unshift(newEmployee);
         }
+        touchSettlementSource("employees");
         state.payrolls = state.employees.map((employee) => calculatePayroll(employee, document.getElementById("payrollMonth").value));
         updateMonthlyHistory();
         renderEmployees();
@@ -3473,9 +5916,10 @@
         renderEmployeeDetail(newEmployee);
         renderPayrollDetail(state.payrolls.find((item) => item.employeeId === newEmployee.employeeId));
         renderChart();
+        markSettlementDirty("員工資料已更新，請重新確認結薪資料。");
         state.pendingEmployee = createEmployee(state.employees.length);
         renderEmployeeCreate(state.pendingEmployee);
-        openPage("employees", "員工管理", true, false);
+        openPage("employees", "人事資料", true, false);
         if (state.employeeFormMode === "edit") {
           setAction(`已更新員工 ${newEmployee.chineseName} (${newEmployee.employeeId})`);
           logActivity(`更新員工資料：${newEmployee.chineseName} (${newEmployee.employeeId})`);
@@ -3490,32 +5934,19 @@
         setEmployeeFormMeta("create");
       });
 
-      document.getElementById("recalcPayroll").addEventListener("click", () => {
-        const monthLabel = document.getElementById("payrollMonth").value;
-        state.payrolls = state.employees.map((employee) => calculatePayroll(employee, monthLabel));
-        updateMonthlyHistory();
-        renderPayroll();
-        renderSummary();
-        renderPayrollNotice("已重新產生加班與保險扣款結果。");
-        renderPayrollDetail(state.payrolls[0], "由本次試算產生。");
-        renderChart();
-        setAction(`已完成 ${monthLabel} 薪資試算`);
-        logActivity(`執行薪資試算：${monthLabel}`);
-        showToast("薪資試算完成");
-        openPage("payroll-detail", "薪資明細", true, false);
-      });
+      document.getElementById("recalcPayroll").addEventListener("click", handlePayrollRecalc);
 
-      document.getElementById("payrollMonth").addEventListener("change", () => {
-        const monthLabel = document.getElementById("payrollMonth").value;
-        state.payrolls = state.employees.map((employee) => calculatePayroll(employee, monthLabel));
-        updateMonthlyHistory();
-        renderPayroll();
-        renderSummary();
-        renderPayrollNotice("已切換月份並更新試算結果。");
-        renderPayrollDetail(state.payrolls[0], "已依新月份更新資料。");
-        renderChart();
-        setAction(`已切換試算月份：${monthLabel}`);
-      });
+      document.getElementById("payrollMonth").addEventListener("change", handlePayrollMonthChange);
+
+      const reportMonthFilter = document.getElementById("reportMonthFilter");
+      if (reportMonthFilter) {
+        reportMonthFilter.addEventListener("change", () => {
+          state.reportFilterMonth = reportMonthFilter.value;
+          applyReportFilter();
+          const label = state.reportFilterMonth === "all" ? "全部月份" : state.reportFilterMonth;
+          setAction(`已切換報表月份：${label}`);
+        });
+      }
 
       const gradeModal = document.getElementById("gradeModal");
       const gradeModalClose = document.getElementById("gradeModalClose");
@@ -3557,44 +5988,14 @@
         });
       }
 
-      document.getElementById("exportSummary").addEventListener("click", () => {
-        const now = dayjs();
-        state.reports.unshift({
-          reportId: `RPT-${now.format("YYYYMM")}-SUM-${randomInt(10, 99)}`,
-          type: "薪資總表",
-          format: "XLSX",
-          createdAt: now.format("YYYY-MM-DD HH:mm"),
-          status: "已完成"
-        });
-        renderReports();
-        renderReportNotice(state.reports[0], "由「產生薪資總表」產出。");
-        renderReportDetail(state.reports[0], "由薪資總表匯出。");
-        setAction("已產生薪資總表");
-        logActivity("產生薪資總表");
-        showToast("薪資總表已產生");
-        openPage("report-detail", "報表明細", true, false);
-      });
+      document.getElementById("exportSummary").addEventListener("click", handleReportExportSummary);
 
-      document.getElementById("exportPayslip").addEventListener("click", () => {
-        const now = dayjs();
-        const employee = randomChoice(state.employees);
-        state.reports.unshift({
-          reportId: `RPT-${now.format("YYYYMM")}-PS-${employee.employeeId}`,
-          type: `個人薪資單：${employee.chineseName}`,
-          format: "PDF",
-          createdAt: now.format("YYYY-MM-DD HH:mm"),
-          status: "已完成"
-        });
-        renderReports();
-        renderReportNotice(state.reports[0], "由「產生個人薪資單」產出。");
-        renderReportDetail(state.reports[0], `個人薪資單：${employee.chineseName}`);
-        setAction(`已產生 ${employee.chineseName} 的薪資單`);
-        logActivity(`產生個人薪資單：${employee.chineseName} (${employee.employeeId})`);
-        showToast("個人薪資單已產生");
-        openPage("report-detail", "報表明細", true, false);
-      });
+      document.getElementById("exportPayslip").addEventListener("click", handleReportExportPayslip);
 
       document.getElementById("toggleVersion").addEventListener("click", () => {
+        if (!ensurePermission("insurance.edit", "權限不足，無法切換保險版本")) {
+          return;
+        }
         const before = state.insuranceVersions.map((item) => ({ ...item }));
         state.insuranceVersions = state.insuranceVersions.map((item) => ({
           ...item,
@@ -3604,9 +6005,11 @@
         }));
         const after = state.insuranceVersions.map((item) => ({ ...item }));
         state.insuranceSnapshots = { before, after };
+        touchSettlementSource("insurance");
         renderInsurance();
         renderInsuranceNotice("已切換至新版版本，生效日更新為 2024-07-01。");
         renderInsuranceDetail("版本已更新為最新資料。");
+        markSettlementDirty("保險版本已更新，請重新確認結薪資料。");
         setAction("已切換保險版本");
         logActivity("切換保險版本：L2024-02 / H2024-02");
         showToast("已切換至新版保險版本");
@@ -3630,6 +6033,9 @@
 
         const editTarget = event.target.closest("button[data-action=\"edit-employee\"]");
         if (!editTarget) {
+          return;
+        }
+        if (!ensurePermission("employees.edit", "權限不足，無法編輯員工")) {
           return;
         }
         const employeeName = editTarget.dataset.employeeName;
