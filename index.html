@@ -897,23 +897,16 @@
         return { isPayable: true, note: "離職日格式未完成，暫以全額計費" };
       }
       const lastDay = exitMoment.endOf("month");
-      const lastDayWeek = lastDay.day();
-      let lastWorkingDay = lastDay;
-      if (lastDayWeek === 6) {
-        lastWorkingDay = lastDay.subtract(1, "day");
-      } else if (lastDayWeek === 0) {
-        lastWorkingDay = lastDay.subtract(2, "day");
-      }
-      const isPayable = exitMoment.isSame(lastWorkingDay, "day");
+      const isPayable = exitMoment.isSame(lastDay, "day");
       if (isPayable) {
         return {
           isPayable: true,
-          note: `離職日為當月最後工作日（${lastWorkingDay.format("MM/DD")}），健保照全月計費`
+          note: `離職日為當月最後日曆日（${lastDay.format("MM/DD")}），健保照全月計費`
         };
       }
       return {
         isPayable: false,
-        note: `當月最後工作日為 ${lastWorkingDay.format("MM/DD")}，離職日非最後工作日，退保當月免繳`
+        note: `當月最後日曆日為 ${lastDay.format("MM/DD")}，離職日非最後日曆日，退保當月免繳`
       };
     };
 
